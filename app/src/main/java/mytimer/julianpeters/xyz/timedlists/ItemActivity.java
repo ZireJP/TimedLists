@@ -14,10 +14,10 @@ public class ItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
         id = (String) getIntent().getSerializableExtra("id");
-        String[] proj = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME};
+        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME};
         String sel = Item.Items.ITEM_ID + " = ?";
         String[] args = {id};
-        Cursor cursor = getContentResolver().query(Item.Items.CONTENT_URI, proj, sel, args, null);
+        Cursor cursor = getContentResolver().query(Item.Items.CONTENT_URI, projection, sel, args, null);
         cursor.moveToFirst();
         String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
         txt = (TextView) findViewById(R.id.textView);

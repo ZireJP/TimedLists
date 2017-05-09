@@ -20,7 +20,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     private SimpleCursorAdapter adapter;
     private TextView textView;
-    private EditText editText;
+    protected EditText editText;
     private MaxListView listView;
     private boolean editIsActive = false;
 
@@ -28,13 +28,13 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        adapter = new MainCursorAdapter(this, null);
+        adapter = adapter();
+        setListAdapter(adapter);
         listView = (MaxListView) findViewById(android.R.id.list);
         editText = (EditText) findViewById(R.id.edit_text);
         editText.setVisibility(View.GONE);
         textView = (TextView) findViewById(R.id.empty);
         textView.setOnClickListener(notListListener());
-        setListAdapter(adapter);
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -58,6 +58,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
+    }
+
+    protected SimpleCursorAdapter adapter() {
+        return new MainCursorAdapter(this, null);
     }
 
     private void slideInAnimation() {
@@ -107,16 +111,17 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         return false;
     }
 
-    private void createItem() {
+    protected void createItem() {
         ContentValues values = new ContentValues();
         values.put(Item.Items.TITLE, editText.getText().toString());
         values.put(Item.Items.TIME, 0);
+        values.put(Item.Items.IS_LIST, false);
         getContentResolver().insert(Item.Items.CONTENT_URI, values);
         editText.setText("");
         createItemAnimation();
     }
 
-    private void createItemAnimation() {
+    protected void createItemAnimation() {
         listView.setVisibility(View.VISIBLE);
         editText.setVisibility(View.GONE);
     }

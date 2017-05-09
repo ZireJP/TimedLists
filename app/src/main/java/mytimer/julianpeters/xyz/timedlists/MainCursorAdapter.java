@@ -13,10 +13,10 @@ import android.widget.SimpleCursorAdapter;
  * Created by julian on 09.05.17.
  */
 
-public class MainCursorAdapter extends SimpleCursorAdapter {
+class MainCursorAdapter extends SimpleCursorAdapter {
 
-    public MainCursorAdapter(Context context, Cursor c) {
-        super(context, R.layout.list_item, c, new String[]{Item.Items.TITLE}, new int[]{R.id.list_label}, 0);
+    MainCursorAdapter(Context context, Cursor c) {
+        super(context, R.layout.main_item, c, new String[]{Item.Items.TITLE}, new int[]{R.id.main_label}, 0);
     }
 
     @Override
@@ -24,14 +24,14 @@ public class MainCursorAdapter extends SimpleCursorAdapter {
         final Context con = context;
         final String id = cursor.getString(cursor.getColumnIndex(Item.Items.ITEM_ID));
         final String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
-        Button title = (Button) view.findViewById(R.id.list_label);
-        Button del = (Button) view.findViewById(R.id.list_button);
+        Button title = (Button) view.findViewById(R.id.main_label);
+        Button del = (Button) view.findViewById(R.id.main_button);
 
         title.setText(name);
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent launchActivity2 = new Intent(con, ItemActivity.class);
+                Intent launchActivity2 = new Intent(con, ListActivity.class);
                 launchActivity2.putExtra("id", id);
                 con.startActivity(launchActivity2);
             }
@@ -49,6 +49,6 @@ public class MainCursorAdapter extends SimpleCursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return ((Activity) context).getLayoutInflater().inflate(R.layout.list_item, parent, false);
+        return ((Activity) context).getLayoutInflater().inflate(R.layout.main_item, parent, false);
     }
 }

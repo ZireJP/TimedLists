@@ -16,6 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="mytimer.julianpeters.xyz.timedlists.ListActivity"></activity>
         <activity android:name="mytimer.julianpeters.xyz.timedlists.ItemActivity"></activity>
         <provider
             android:authorities="mytimer.julianpeters.xyz.timedlists.providers.ListsContentProvider"

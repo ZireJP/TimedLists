@@ -11,15 +11,13 @@ import mytimer.julianpeters.xyz.timedlists.providers.ListsContentProvider;
 
 public class Item {
 
-    public Item() {
-    }
+    public Item() {}
 
     public static final class Items implements BaseColumns {
-        private Items() {
-        }
+        private Items() {}
 
         public static final Uri CONTENT_URI = Uri.parse("content://" +
-                ListsContentProvider.AUTHORITY + "/lists");
+                ListsContentProvider.AUTHORITY + "/" + ListsContentProvider.LISTS_TABLE_NAME);
 
         public static final String CONTENT_TYPE = "item";
 
@@ -28,5 +26,7 @@ public class Item {
         public static final String TITLE = "title";
 
         public static final String TIME = "time";
+
+        public static final String IS_LIST = "is_list";
     }
 }
