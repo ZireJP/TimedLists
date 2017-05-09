@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-    <mytimer.julianpeters.xyz.mytimer.MaxListView
+    <mytimer.julianpeters.xyz.timedlists.MaxListView
         android:id="@+id/android:list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

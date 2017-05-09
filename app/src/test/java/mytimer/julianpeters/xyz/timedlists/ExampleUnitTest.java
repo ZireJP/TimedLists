@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.mytimer;
+package mytimer.julianpeters.xyz.timedlists;
 
 import org.junit.Test;
 
