@@ -1,10 +1,14 @@
 package mytimer.julianpeters.xyz.timedlists;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 
 /**
@@ -12,6 +16,17 @@ import android.widget.SimpleCursorAdapter;
  */
 
 public class ListActivity extends MainActivity {
+
+    private Button runButton;
+    private Context context = this;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        runButton = (Button) findViewById(R.id.run_button);
+        runButton.setOnClickListener(runButtonListener());
+        runButton.setVisibility(View.VISIBLE);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -42,4 +57,19 @@ public class ListActivity extends MainActivity {
         editText.setText("");
         createItemAnimation();
     }
+
+    private View.OnClickListener runButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String _id = getIntent().getStringExtra("id");
+                Intent intent = new Intent(context, RunPopUp.class);
+                intent.putExtra("_id", _id);
+                startActivity(intent);
+            }
+        };
+    }
+
+
+
 }

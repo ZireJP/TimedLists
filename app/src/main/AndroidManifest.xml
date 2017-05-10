@@ -23,6 +23,12 @@
             android:authorities="mytimer.julianpeters.xyz.timedlists.providers.ListsContentProvider"></provider>
 
         <activity android:name=".ItemActivity"></activity>
+        <activity android:name=".Popup"
+            android:theme="@style/AppTheme.PopUpTransparent">
+        </activity>
+        <activity android:name=".RunPopUp"
+            android:theme="@style/AppTheme.PopUpTransparent">
+        </activity>
     </application>
 
 </manifest>

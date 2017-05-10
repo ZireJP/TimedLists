@@ -41,8 +41,7 @@ class MainCursorAdapter extends SimpleCursorAdapter {
         del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sel = Item.Items.ITEM_ID + " = ?";
-                con.getContentResolver().delete(Item.Items.CONTENT_URI, sel, new String[]{id});
+                con.getContentResolver().call(Item.Items.CONTENT_URI, "deleteAllItemsOf", id, null);
             }
         });
 

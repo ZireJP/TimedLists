@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 19;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -144,6 +144,7 @@ public class ListsContentProvider extends ContentProvider {
             case LISTS:
                 rowId = db.insert(LISTS_TABLE_NAME, Item.Items.TIME, val);
                 createNewList(db, Long.toString(rowId));
+                Log.d("Created Table", "table_" + rowId);
                 if (rowId > 0) {
                     Uri itemUri = ContentUris.withAppendedId(Item.Items.CONTENT_URI, rowId);
                     getContext().getContentResolver().notifyChange(itemUri, null);
@@ -160,6 +161,7 @@ public class ListsContentProvider extends ContentProvider {
                 inItem.put(ItemInItem.ItemInItems.FOREIGN_KEY, rowId);
                 long tabRow = db.insert(table, ItemInItem.ItemInItems.REPEAT, inItem);
                 createNewList(db, Long.toString(rowId));
+                Log.d("Created Table", "table_" + rowId);
                 if (rowId > 0) {
                     Uri itemUri = ContentUris.withAppendedId(Item.Items.CONTENT_URI, rowId);
                     Uri tabItemUri = ContentUris.withAppendedId(ItemInItem.ItemInItems.CONTENT_URI, tabRow);
@@ -206,10 +208,14 @@ public class ListsContentProvider extends ContentProvider {
             case LISTS:
                 count = db.update(LISTS_TABLE_NAME, values, selection, selectionArgs);
                 break;
+            case USER_TABLE:
+                String table = values.getAsString("table_id");
+                values.remove("table_id");
+                count = db.update(table, values, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
-
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
@@ -225,10 +231,14 @@ public class ListsContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
+        Bundle bundle = new Bundle();
         switch(method) {
             case "getRows":
-                Bundle bundle = new Bundle();
                 bundle.putInt("rows", getRows(Item.Items.CONTENT_URI, arg));
+                return bundle;
+            case "deleteAllItemsOf":
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                bundle.putInt("deletes", deleteAllItemsOf(db, arg));
                 return bundle;
             default:
                 return null;
@@ -258,6 +268,26 @@ public class ListsContentProvider extends ContentProvider {
 
     public void dropList(SQLiteDatabase db, String _id) {
         db.execSQL("DROP TABLE IF EXISTS " + ItemInItem.ItemInItems.table(_id));
+        Log.d("Dropped Table", "table_" + _id);
+    }
+
+    public int deleteAllItemsOf(SQLiteDatabase db, String _id) {
+        int i = _deleteAllItemsOf(db, _id);
+        getContext().getContentResolver().notifyChange(Item.Items.CONTENT_URI, null);
+        return i;
+    }
+
+    private int _deleteAllItemsOf(SQLiteDatabase db, String _id) {
+        int i = 0;
+        Cursor c = db.query(ItemInItem.ItemInItems.table(_id), new String[]{ItemInItem.ItemInItems.FOREIGN_KEY}, null, null, null, null, null);
+        if (c.moveToFirst()) {
+            do {
+                i += _deleteAllItemsOf(db, c.getString(0));
+            } while(c.moveToNext());
+        }
+        dropList(db, _id);
+        i += db.delete(LISTS_TABLE_NAME, Item.Items.ITEM_ID + " = ?", new String[]{_id});
+        return i;
     }
 
     static {

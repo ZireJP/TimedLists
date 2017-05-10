@@ -22,6 +22,7 @@
         android:layout_height="match_parent"
         android:text="Click to add Workout"
         android:layout_below="@id/android:list"
+        android:layout_above="@+id/run_button"
         android:background="@android:color/holo_green_light"
         />
 
@@ -30,5 +31,14 @@
         android:layout_width="match_parent"
         android:layout_height="200px"
         />
+
+    <Button
+        android:id="@+id/run_button"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@android:color/holo_red_dark"
+        android:layout_width="match_parent"
+        android:text="@string/run"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

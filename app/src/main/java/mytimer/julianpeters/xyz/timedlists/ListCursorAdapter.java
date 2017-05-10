@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.SimpleCursorAdapter;
 
 /**
@@ -25,6 +26,7 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final Context con = context;
+        final String table_id = ((Activity)con).getIntent().getStringExtra("id");
         final String id = cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.ITEM_ID));
         final String time = cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.REPEAT));
         final String foreign = cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY));
@@ -48,6 +50,7 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
         });
 
         repeat.setText(time);
+        repeat.setOnClickListener(showRepeatSetter(con, id, table_id));
 
         del.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,9 +58,8 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
                 ContentResolver resolver = con.getContentResolver();
                 String sel = Item.Items.ITEM_ID + " = ?";
                 String inItemSel = ItemInItem.ItemInItems.ITEM_ID + " = ?";
-                resolver.delete(Item.Items.CONTENT_URI, sel, new String[]{foreign});
-                String _id = ((Activity)con).getIntent().getStringExtra("id");
-                String table = "table_" + _id;
+                resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", foreign, null);
+                String table = "table_" + table_id;
                 resolver.delete(ItemInItem.ItemInItems.CONTENT_URI, inItemSel, new String[]{table, id});
                 Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table, null);
                 int i = rows.getInt("rows");
@@ -65,9 +67,9 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
                     ContentValues type = new ContentValues();
                     type.put(Item.Items.IS_LIST, false);
                     String selection = Item.Items._ID + " = ?";
-                    resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{_id});
+                    resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
                     Intent launchActivity = new Intent(con, ItemActivity.class);
-                    launchActivity.putExtra("id", _id);
+                    launchActivity.putExtra("id", table_id);
                     con.startActivity(launchActivity);
                     ((Activity) con).finish();
                 }
@@ -95,6 +97,18 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
         String selection = Item.Items._ID + " = ?";
         String[] args = {foreign};
         return resolver.query(Item.Items.CONTENT_URI, projection, selection, args, null);
+    }
+
+    public View.OnClickListener showRepeatSetter(final Context con, final String _id, final String table_id) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(con, Popup.class);
+                intent.putExtra("_id", _id);
+                intent.putExtra("table_id", table_id);
+                con.startActivity(intent);
+            }
+        };
     }
 
 }

@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 public class ItemActivity extends Activity {
@@ -23,18 +25,19 @@ public class ItemActivity extends Activity {
     TextView textView;
     Boolean editIsActive;
     EditText editText;
-
+    NumberPicker np1, np2, np3;
+    Button set;
+    Button cancel;
+    NumberPicker empty;
+    Button empty2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
         id = getIntent().getStringExtra("id");
-        time = (Button) findViewById(R.id.item_button_left);
-        right = (Button) findViewById(R.id.item_button_right);
-        name = (TextView) findViewById(R.id.item_name);
-        textView = (TextView) findViewById(R.id.item_tw_bottom);
-        editText = (EditText) findViewById(R.id.item_edit_text);
+        findViews();
+        setTimeRange();
         editText.setVisibility(View.GONE);
         editIsActive = false;
         textView.setOnClickListener(notListListener());
@@ -49,15 +52,12 @@ public class ItemActivity extends Activity {
 
     private void setText(Cursor c) {
         c.moveToFirst();
-        time.setText(c.getString(c.getColumnIndex(Item.Items.TIME)));
+        setTimeText(c.getInt(c.getColumnIndex(Item.Items.TIME)));
         name.setText(c.getString(c.getColumnIndex(Item.Items.TITLE)));
     }
 
     private void slideInAnimation() {
-        editText.setVisibility(View.VISIBLE);
-        name.setVisibility(View.GONE);
-        time.setVisibility(View.GONE);
-        right.setVisibility(View.GONE);
+        switchVisibility(View.GONE, View.VISIBLE);
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.slidein);
         Animation anim2 = AnimationUtils.loadAnimation(this, R.anim.pushdown);
         editText.startAnimation(anim);
@@ -75,10 +75,7 @@ public class ItemActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                name.setVisibility(View.VISIBLE);
-                time.setVisibility(View.VISIBLE);
-                right.setVisibility(View.VISIBLE);
-                editText.setVisibility(View.GONE);
+                switchVisibility(View.VISIBLE, View.GONE);
             }
 
             @Override
@@ -119,6 +116,10 @@ public class ItemActivity extends Activity {
         createItemAnimation();
     }
 
+    public void showTimeSpinner(View v) {
+        v.setVisibility(View.INVISIBLE);
+    }
+
     protected void createItemAnimation() {
         Intent launchActivity = new Intent(this, ListActivity.class);
         launchActivity.putExtra("id", id);
@@ -144,5 +145,61 @@ public class ItemActivity extends Activity {
                 }
             }
         };
+    }
+
+    private void switchVisibility(int from, int to) {
+        editText.setVisibility(to);
+        name.setVisibility(from);
+        time.setVisibility(from);
+        right.setVisibility(from);
+        np1.setVisibility(from);
+        np2.setVisibility(from);
+        np3.setVisibility(from);
+        set.setVisibility(from);
+        cancel.setVisibility(from);
+        empty.setVisibility(from);
+        empty2.setVisibility(from);
+    }
+
+    private void setTimeRange() {
+        np1.setMaxValue(99);
+        np2.setMaxValue(59);
+        np3.setMaxValue(59);
+    }
+
+    private void findViews() {
+        time = (Button) findViewById(R.id.item_button_left);
+        right = (Button) findViewById(R.id.item_button_right);
+        name = (TextView) findViewById(R.id.item_name);
+        textView = (TextView) findViewById(R.id.item_tw_bottom);
+        editText = (EditText) findViewById(R.id.item_edit_text);
+        np1 = (NumberPicker) findViewById(R.id.item_hours);
+        np2 = (NumberPicker) findViewById(R.id.item_minute);
+        np3 = (NumberPicker) findViewById(R.id.item_second);
+        set = (Button) findViewById(R.id.item_set);
+        cancel = (Button) findViewById(R.id.item_cancel);
+        empty = (NumberPicker) findViewById(R.id.item_empty_height);
+        empty2 = (Button) findViewById(R.id.item_empty_height2);
+    }
+
+    public void cancel(View w) {
+        time.setVisibility(View.VISIBLE);
+    }
+
+    public void setTime(View w) {
+        int hour = np1.getValue();
+        int minute = np2.getValue();
+        int second = np3.getValue();
+        int inSeconds = Time.getSeconds(hour, minute, second);
+        ContentValues value = new ContentValues();
+        value.put(Item.Items.TIME, inSeconds);
+        String selection = Item.Items.ITEM_ID + " = ?";
+        getContentResolver().update(Item.Items.CONTENT_URI, value, selection, new String[]{id});
+        setTimeText(inSeconds);
+        time.setVisibility(View.VISIBLE);
+    }
+
+    private void setTimeText(int seconds) {
+        time.setText(Time.getTimeString(seconds));
     }
 }
