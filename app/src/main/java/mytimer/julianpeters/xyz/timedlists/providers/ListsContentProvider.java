@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 14;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -57,7 +57,8 @@ public class ListsContentProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + LISTS_TABLE_NAME + " (" + Item.Items.ITEM_ID
                     + " INTEGER PRIMARY KEY AUTOINCREMENT, " + Item.Items.TITLE + " VARCHAR(255), "
-                    + Item.Items.TIME + " INTEGER, " + Item.Items.IS_LIST + " BOOLEAN);");
+                    + Item.Items.TIME + " INTEGER, " + Item.Items.IS_LIST + " BOOLEAN, "
+                    + Item.Items.TAG + " VARCHAR(8));");
         }
 
         @Override
@@ -65,6 +66,15 @@ public class ListsContentProvider extends ContentProvider {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
                     + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + LISTS_TABLE_NAME);
+            Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE name LIKE 'table_%'", null);
+            if (c.moveToFirst()) {
+                do {
+                    String table = c.getString(0);
+                    Log.w(TAG, "Dropped table " + table);
+                    db.execSQL("DROP TABLE IF EXISTS " + table);
+                } while (c.moveToNext());
+            }
+            c.close();
             onCreate(db);
         }
     }
@@ -169,13 +179,13 @@ public class ListsContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case LISTS:
-                count = db.delete(LISTS_TABLE_NAME, selection, selectionArgs);
                 dropLists(db, selection, selectionArgs);
+                count = db.delete(LISTS_TABLE_NAME, selection, selectionArgs);
                 break;
             case LISTS_ID:
                 selection = selection + "_id = " + uri.getLastPathSegment();
-                count = db.delete(LISTS_TABLE_NAME, selection, selectionArgs);
                 dropLists(db, selection, selectionArgs);
+                count = db.delete(LISTS_TABLE_NAME, selection, selectionArgs);
                 break;
             case USER_TABLE:
                 count = db.delete(selectionArgs[0], selection, new String[]{selectionArgs[1]});
@@ -211,7 +221,6 @@ public class ListsContentProvider extends ContentProvider {
         cursor.moveToFirst();
         return cursor.getInt(0);
     }
-
 
     @Nullable
     @Override
@@ -262,5 +271,6 @@ public class ListsContentProvider extends ContentProvider {
         listsProjectionMap.put(Item.Items.TITLE, Item.Items.TITLE);
         listsProjectionMap.put(Item.Items.TIME, Item.Items.TIME);
         listsProjectionMap.put(Item.Items.IS_LIST, Item.Items.IS_LIST);
+        listsProjectionMap.put(Item.Items.TAG, Item.Items.TAG);
     }
 }

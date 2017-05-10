@@ -41,11 +41,13 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] proj = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.IS_LIST};
+        String selection = Item.Items.TAG + " = ?";
+        String[] selectionArgs = {"fav"};
         CursorLoader loader = new CursorLoader(this,
                 Item.Items.CONTENT_URI,
                 proj,
-                null,
-                null,
+                selection,
+                selectionArgs,
                 Item.Items.ITEM_ID + " DESC");
         return loader;
     }
@@ -116,6 +118,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         values.put(Item.Items.TITLE, editText.getText().toString());
         values.put(Item.Items.TIME, 0);
         values.put(Item.Items.IS_LIST, false);
+        values.put(Item.Items.TAG, "fav");
         getContentResolver().insert(Item.Items.CONTENT_URI, values);
         editText.setText("");
         createItemAnimation();
@@ -144,5 +147,12 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                 }
             }
         };
+    }
+
+    @Override
+    protected void onDestroy() {
+        // TODO: Clean database here
+        // --> delete/drop all items not tagged "fav" and not referenced in other item
+        super.onDestroy();
     }
 }
