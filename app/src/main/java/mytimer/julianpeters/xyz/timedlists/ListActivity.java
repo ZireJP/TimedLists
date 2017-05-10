@@ -41,6 +41,5 @@ public class ListActivity extends MainActivity {
         getContentResolver().insert(ItemInItem.ItemInItems.CONTENT_URI, values);
         editText.setText("");
         createItemAnimation();
-
     }
 }

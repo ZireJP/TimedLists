@@ -24,6 +24,7 @@ class MainCursorAdapter extends SimpleCursorAdapter {
         final Context con = context;
         final String id = cursor.getString(cursor.getColumnIndex(Item.Items.ITEM_ID));
         final String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
+        final boolean isList = cursor.getInt(cursor.getColumnIndex(Item.Items.IS_LIST)) > 0;
         Button title = (Button) view.findViewById(R.id.main_label);
         Button del = (Button) view.findViewById(R.id.main_button);
 
@@ -31,9 +32,9 @@ class MainCursorAdapter extends SimpleCursorAdapter {
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent launchActivity2 = new Intent(con, ListActivity.class);
-                launchActivity2.putExtra("id", id);
-                con.startActivity(launchActivity2);
+                Intent launchActivity = whichActivity(con, isList);
+                launchActivity.putExtra("id", id);
+                con.startActivity(launchActivity);
             }
         });
 
@@ -50,5 +51,13 @@ class MainCursorAdapter extends SimpleCursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return ((Activity) context).getLayoutInflater().inflate(R.layout.main_item, parent, false);
+    }
+
+    private Intent whichActivity(Context context, Boolean isList) {
+        if (isList) {
+            return new Intent(context, ListActivity.class);
+        } else {
+            return new Intent(context, ItemActivity.class);
+        }
     }
 }

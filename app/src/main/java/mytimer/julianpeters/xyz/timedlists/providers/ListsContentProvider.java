@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -201,6 +202,29 @@ public class ListsContentProvider extends ContentProvider {
 
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
+    }
+
+    public int getRows(@NonNull Uri uri, String table_id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String count = "SELECT count(*) FROM " + table_id;
+        Cursor cursor = db.rawQuery(count, null);
+        cursor.moveToFirst();
+        return cursor.getInt(0);
+    }
+
+
+    @Nullable
+    @Override
+    public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
+        switch(method) {
+            case "getRows":
+                Bundle bundle = new Bundle();
+                bundle.putInt("rows", getRows(Item.Items.CONTENT_URI, arg));
+                return bundle;
+            default:
+                return null;
+        }
+
     }
 
     public void createNewList(SQLiteDatabase db, String _id) {

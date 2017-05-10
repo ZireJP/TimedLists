@@ -40,13 +40,13 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] proj = {Item.Items.ITEM_ID, Item.Items.TITLE};
+        String[] proj = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.IS_LIST};
         CursorLoader loader = new CursorLoader(this,
                 Item.Items.CONTENT_URI,
                 proj,
                 null,
                 null,
-                null);
+                Item.Items.ITEM_ID + " DESC");
         return loader;
     }
 

@@ -1,16 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mytimer.julianpeters.xyz.timedlists.WorkoutActivity">
+    >
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/item_name"
+        android:layout_below="@+id/item_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/item_buttons"
+        android:layout_below="@id/item_name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
-</android.support.constraint.ConstraintLayout>
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/item_button_left"
+            android:layout_width="0dp"
+            android:background="@android:color/darker_gray"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/item_button_right"
+            android:layout_width="0dp"
+            android:background="@android:color/darker_gray"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/item_tw_bottom"
+        android:layout_below="@id/item_buttons"
+        android:background="@android:color/holo_green_light"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <EditText
+        android:id="@+id/item_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="200px"
+        />
+
+</RelativeLayout>
+
