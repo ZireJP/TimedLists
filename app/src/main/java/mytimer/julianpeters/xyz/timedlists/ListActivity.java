@@ -6,6 +6,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -52,8 +53,8 @@ public class ListActivity extends MainActivity {
         values.put(Item.Items.TITLE, name);
         values.put(Item.Items.TIME, 0);
         values.put(Item.Items.IS_LIST, false);
-        values.put("table", "table_" + getIntent().getStringExtra("id"));
-        getContentResolver().insert(ItemInItem.ItemInItems.CONTENT_URI, values);
+        Uri content_uri = Uri.parse(ItemInItem.ItemInItems.CONTENT_URI + "/" + getIntent().getStringExtra("id"));
+        getContentResolver().insert(content_uri, values);
         editText.setText("");
         createItemAnimation();
     }

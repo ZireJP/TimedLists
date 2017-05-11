@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -106,12 +107,12 @@ public class ItemActivity extends Activity {
         values.put(Item.Items.TITLE, editText.getText().toString());
         values.put(Item.Items.TIME, 0);
         values.put(Item.Items.IS_LIST, false);
-        values.put("table", "table_" + getIntent().getStringExtra("id"));
-        getContentResolver().insert(ItemInItem.ItemInItems.CONTENT_URI, values);
+        Uri content_uri = Uri.parse(ItemInItem.ItemInItems.CONTENT_URI + "/" + getIntent().getStringExtra("id"));
+        getContentResolver().insert(content_uri, values);
         ContentValues type = new ContentValues();
         type.put(Item.Items.IS_LIST, true);
-        String selection = Item.Items._ID + " = ?";
-        getContentResolver().update(Item.Items.CONTENT_URI, type, selection, new String[]{id});
+        Uri uri = Uri.parse(Item.Items.CONTENT_URI + "/" + id);
+        getContentResolver().update(uri, type, null, null);
         editText.setText("");
         createItemAnimation();
     }

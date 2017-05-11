@@ -16,7 +16,7 @@ public class ItemInItem {
     public static final class ItemInItems implements BaseColumns {
         private ItemInItems() {}
 
-        public static final Uri CONTENT_URI = Uri.parse("content://" + ListsContentProvider.AUTHORITY + "/user_table");
+        public static final Uri CONTENT_URI = Uri.parse("content://" + ListsContentProvider.AUTHORITY +  "/" + ListsContentProvider.USER_TABLE_NAME);
 
         public static final String CONTENT_TYPE = "item";
 

@@ -35,6 +35,8 @@ public class ListsContentProvider extends ContentProvider {
 
     public static final String LISTS_TABLE_NAME = "lists";
 
+    public static final String USER_TABLE_NAME = "table_";
+
     public static final String AUTHORITY = "mytimer.julianpeters.xyz.timedlists.providers.ListsContentProvider";
 
     private static final UriMatcher sUriMatcher;
@@ -44,6 +46,8 @@ public class ListsContentProvider extends ContentProvider {
     private static final int LISTS_ID = 2;
 
     private static final int USER_TABLE = 3;
+
+    private static final int USER_TABLE_ID = 4;
 
     private static HashMap<String, String> listsProjectionMap;
 
@@ -139,6 +143,7 @@ public class ListsContentProvider extends ContentProvider {
         }
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         long rowId;
+        long tabRow;
 
         switch (sUriMatcher.match(uri)) {
             case LISTS:
@@ -151,22 +156,17 @@ public class ListsContentProvider extends ContentProvider {
                     return itemUri;
                 }
                 throw new SQLException("Failed to insert row into " + uri);
-            case USER_TABLE:
-                String table = val.getAsString("table");
-                val.remove("table");
-                ContentValues inItem = new ContentValues();
+            case USER_TABLE_ID:
+                String tableId = uri.getLastPathSegment();
                 rowId = db.insert(LISTS_TABLE_NAME, Item.Items.TIME, val);
-                inItem.put(ItemInItem.ItemInItems.NAME, (String) val.get(Item.Items.TITLE));
-                inItem.put(ItemInItem.ItemInItems.REPEAT, 0);
+                ContentValues inItem = new ContentValues();
                 inItem.put(ItemInItem.ItemInItems.FOREIGN_KEY, rowId);
-                long tabRow = db.insert(table, ItemInItem.ItemInItems.REPEAT, inItem);
+                inItem.put(ItemInItem.ItemInItems.REPEAT, 1);
+                tabRow = db.insert(USER_TABLE_NAME + tableId, ItemInItem.ItemInItems.REPEAT, inItem);
                 createNewList(db, Long.toString(rowId));
-                Log.d("Created Table", "table_" + rowId);
-                if (rowId > 0) {
-                    Uri itemUri = ContentUris.withAppendedId(Item.Items.CONTENT_URI, rowId);
-                    Uri tabItemUri = ContentUris.withAppendedId(ItemInItem.ItemInItems.CONTENT_URI, tabRow);
+                if (rowId > 0 && tabRow > 0) {
+                    Uri itemUri = ContentUris.withAppendedId(ItemInItem.ItemInItems.CONTENT_URI, tabRow);
                     getContext().getContentResolver().notifyChange(itemUri, null);
-                    getContext().getContentResolver().notifyChange(tabItemUri, null);
                     return itemUri;
                 }
                 throw new SQLException("Failed to insert row into " + uri);
@@ -206,6 +206,10 @@ public class ListsContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case LISTS:
+                count = db.update(LISTS_TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case LISTS_ID:
+                selection = Item.Items.ITEM_ID + " = " + uri.getLastPathSegment();
                 count = db.update(LISTS_TABLE_NAME, values, selection, selectionArgs);
                 break;
             case USER_TABLE:
@@ -294,7 +298,8 @@ public class ListsContentProvider extends ContentProvider {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AUTHORITY, LISTS_TABLE_NAME, LISTS);
         sUriMatcher.addURI(AUTHORITY, LISTS_TABLE_NAME + "/#", LISTS_ID);
-        sUriMatcher.addURI(AUTHORITY, "user_table", USER_TABLE);
+        sUriMatcher.addURI(AUTHORITY, USER_TABLE_NAME, USER_TABLE);
+        sUriMatcher.addURI(AUTHORITY, USER_TABLE_NAME + "/*", USER_TABLE_ID);
 
         listsProjectionMap = new HashMap<String, String>();
         listsProjectionMap.put(Item.Items.ITEM_ID, Item.Items.ITEM_ID);

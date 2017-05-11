@@ -3,9 +3,12 @@ package mytimer.julianpeters.xyz.timedlists;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,12 +21,17 @@ public class RunPopUp extends Activity {
 
     ArrayList<String[]> allItems;
     TextView textView;
+    TextView countdown;
+    Button run_continue;
+    int secondsLeft;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
         textView = (TextView) findViewById(R.id.run_text);
+        countdown = (TextView) findViewById(R.id.run_countdown);
+        run_continue = (Button) findViewById(R.id.run_continue);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -40,6 +48,52 @@ public class RunPopUp extends Activity {
             text += duo[0] + " : " + duo[1] + "\n";
         }
         textView.setText(text);
+        int max = allItems.size();
+        String[] item = allItems.get(0);
+        timer(item, 0, max);
+    }
+
+    private void timer(final String[] item, final int i, final int items) {
+        if (item[1].equals("0")) {
+            run_continue.setOnClickListener(newClick(i, items));
+            run_continue.setVisibility(View.VISIBLE);
+        } else {
+            secondsLeft = 0;
+            CountDownTimer cd = new CountDownTimer(Integer.parseInt(item[1]) * 1000, 250) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
+                        secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
+                        countdown.setText(item[0] + " : " + secondsLeft);
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    if (i < items - 1) {
+                        final String[] item = allItems.get(i + 1);
+                        timer(item, i + 1, items);
+                    } else {
+                        countdown.setText("Finished");
+                    }
+                }
+            };
+            cd.start();
+        }
+    }
+    private View.OnClickListener newClick(final int i, final int items) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                run_continue.setVisibility(View.GONE);
+                if (i < items-1) {
+                    final String[] item = allItems.get(i + 1);
+                    timer(item, i+1, items);
+                } else {
+                    countdown.setText("Finished");
+                }
+            }
+        };
     }
 
     private void newArray(String _id) {
