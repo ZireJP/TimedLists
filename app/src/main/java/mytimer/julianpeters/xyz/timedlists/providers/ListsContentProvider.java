@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 21;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -61,6 +61,7 @@ public class ListsContentProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + LISTS_TABLE_NAME + " (" + Item.Items.ITEM_ID
                     + " INTEGER PRIMARY KEY AUTOINCREMENT, " + Item.Items.TITLE + " VARCHAR(255), "
+                    + Item.Items.NOTES + " VARCHAR(8000), "
                     + Item.Items.TIME + " INTEGER, " + Item.Items.IS_LIST + " BOOLEAN, "
                     + Item.Items.TAG + " VARCHAR(8));");
         }
@@ -104,7 +105,7 @@ public class ListsContentProvider extends ContentProvider {
             case LISTS_ID:
                 qb.setTables(LISTS_TABLE_NAME);
                 qb.setProjectionMap(listsProjectionMap);
-                selection = selection + "_id = " + uri.getLastPathSegment();
+                selection = Item.Items.ITEM_ID + " = " +uri.getLastPathSegment();
                 break;
             case USER_TABLE:
                 qb.setTables(selection);
@@ -307,5 +308,6 @@ public class ListsContentProvider extends ContentProvider {
         listsProjectionMap.put(Item.Items.TIME, Item.Items.TIME);
         listsProjectionMap.put(Item.Items.IS_LIST, Item.Items.IS_LIST);
         listsProjectionMap.put(Item.Items.TAG, Item.Items.TAG);
+        listsProjectionMap.put(Item.Items.NOTES, Item.Items.NOTES);
     }
 }

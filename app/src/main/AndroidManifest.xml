@@ -9,14 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ListActivity" />
+        <activity android:name=".ListActivity"
+        android:windowSoftInputMode="adjustNothing"/>
 
         <provider
             android:name=".providers.ListsContentProvider"
@@ -27,7 +29,11 @@
             android:theme="@style/AppTheme.PopUpTransparent">
         </activity>
         <activity android:name=".RunPopUp"
-            android:theme="@style/AppTheme.PopUpTransparent">
+            android:windowSoftInputMode="adjustNothing">
+        </activity>
+        <activity android:name=".NotePopUp"
+            android:theme="@style/AppTheme.PopUpTransparent"
+            android:windowSoftInputMode="adjustResize">
         </activity>
     </application>
 

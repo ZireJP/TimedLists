@@ -27,6 +27,8 @@ public class Item {
 
         public static final String TIME = "time";
 
+        public static final String NOTES = "notes";
+
         public static final String IS_LIST = "is_list";
 
         public static final String TAG = "tag";
