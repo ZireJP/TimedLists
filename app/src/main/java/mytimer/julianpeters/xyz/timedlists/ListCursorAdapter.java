@@ -43,10 +43,15 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent launchActivity = whichActivity(con, isList);
-                launchActivity.putExtra("id", foreign);
-                con.startActivity(launchActivity);
+                if (((MainActivity)con).editIsActive) {
+                    ((MainActivity)con).checkEdit();
+                } else {
+                    Intent launchActivity = whichActivity(con, isList);
+                    launchActivity.putExtra("id", foreign);
+                    con.startActivity(launchActivity);
+                }
             }
+
         });
 
         repeat.setText(time);
@@ -55,23 +60,27 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
         del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContentResolver resolver = con.getContentResolver();
-                String sel = Item.Items.ITEM_ID + " = ?";
-                String inItemSel = ItemInItem.ItemInItems.ITEM_ID + " = ?";
-                resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", foreign, null);
-                String table = "table_" + table_id;
-                resolver.delete(ItemInItem.ItemInItems.CONTENT_URI, inItemSel, new String[]{table, id});
-                Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table, null);
-                int i = rows.getInt("rows");
-                if (i==0) {
-                    ContentValues type = new ContentValues();
-                    type.put(Item.Items.IS_LIST, false);
-                    String selection = Item.Items._ID + " = ?";
-                    resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
-                    Intent launchActivity = new Intent(con, ItemActivity.class);
-                    launchActivity.putExtra("id", table_id);
-                    con.startActivity(launchActivity);
-                    ((Activity) con).finish();
+                if (((MainActivity)con).editIsActive) {
+                    ((MainActivity)con).checkEdit();
+                } else {
+                    ContentResolver resolver = con.getContentResolver();
+                    String sel = Item.Items.ITEM_ID + " = ?";
+                    String inItemSel = ItemInItem.ItemInItems.ITEM_ID + " = ?";
+                    resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", foreign, null);
+                    String table = "table_" + table_id;
+                    resolver.delete(ItemInItem.ItemInItems.CONTENT_URI, inItemSel, new String[]{table, id});
+                    Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table, null);
+                    int i = rows.getInt("rows");
+                    if (i == 0) {
+                        ContentValues type = new ContentValues();
+                        type.put(Item.Items.IS_LIST, false);
+                        String selection = Item.Items._ID + " = ?";
+                        resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
+                        Intent launchActivity = new Intent(con, ItemActivity.class);
+                        launchActivity.putExtra("id", table_id);
+                        con.startActivity(launchActivity);
+                        ((Activity) con).finish();
+                    }
                 }
             }
         });
@@ -103,10 +112,14 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(con, Popup.class);
-                intent.putExtra("_id", _id);
-                intent.putExtra("table_id", table_id);
-                con.startActivity(intent);
+                if (((MainActivity)con).editIsActive) {
+                    ((MainActivity)con).checkEdit();
+                } else {
+                    Intent intent = new Intent(con, Popup.class);
+                    intent.putExtra("_id", _id);
+                    intent.putExtra("table_id", table_id);
+                    con.startActivity(intent);
+                }
             }
         };
     }

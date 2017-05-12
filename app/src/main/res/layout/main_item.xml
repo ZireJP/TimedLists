@@ -10,8 +10,9 @@
         android:layout_height="match_parent"
         android:layout_toLeftOf="@+id/main_button"
         android:gravity="center"
-        android:textSize="100px"
-        android:background="@null"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_size"
+        android:background="@android:color/holo_orange_light"
         android:textStyle="bold" />
 
     <Button
@@ -20,6 +21,10 @@
         android:layout_height="match_parent"
         android:layout_alignTop="@id/main_label"
         android:layout_alignBottom="@id/main_label"
+        android:text="X"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_red_light"
         android:background="@android:color/background_dark"
         android:layout_alignParentRight="true" />
 </RelativeLayout>

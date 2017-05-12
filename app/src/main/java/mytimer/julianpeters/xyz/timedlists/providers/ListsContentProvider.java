@@ -99,19 +99,28 @@ public class ListsContentProvider extends ContentProvider {
 
         switch (sUriMatcher.match(uri)) {
             case LISTS:
+                Log.d("CALLED", "LISTS");
                 qb.setTables(LISTS_TABLE_NAME);
                 qb.setProjectionMap(listsProjectionMap);
                 break;
             case LISTS_ID:
+                Log.d("CALLED", "LISTS_ID");
                 qb.setTables(LISTS_TABLE_NAME);
                 qb.setProjectionMap(listsProjectionMap);
                 selection = Item.Items.ITEM_ID + " = " +uri.getLastPathSegment();
                 break;
             case USER_TABLE:
+                Log.d("CALLED", "USER_TABLE");
                 qb.setTables(selection);
                 selection = null;
                 break;
+            case USER_TABLE_ID:
+                Log.d("CALLED", "USER_TABLE_ID");
+                qb.setTables(ItemInItem.ItemInItems.table(uri.getLastPathSegment()));
+                selection = Item.Items.ITEM_ID + " = ?";
+                break;
             default:
+                Log.d("CALLED", "DEFAULT");
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 

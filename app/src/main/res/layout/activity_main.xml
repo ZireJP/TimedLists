@@ -1,45 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    >
+    <TextView
+        android:id="@+id/empty"
+        android:layout_below="@+id/item_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/click_to_add"
+        android:gravity="center"
+        android:background="@android:color/holo_green_light"
+        />
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="match_parent"
+        android:background="@android:color/holo_blue_light"
+        android:text="@string/main_title"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_height="48dip" />
+
+
+    <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_below="@id/item_name"
+        android:layout_above="@+id/clickview"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+        <EditText
+    android:id="@+id/edit_text"
+    android:layout_width="match_parent"
+    android:layout_height="48dip"
+    />
+        <RelativeLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity" >
 
     <mytimer.julianpeters.xyz.timedlists.MaxListView
         android:id="@+id/android:list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/edit_text"
         />
 
-    <TextView
-        android:id="@+id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/click_to_add"
-        android:gravity="center"
-        android:layout_below="@id/android:list"
+</LinearLayout>
+            <View
+                android:id="@+id/main_overlay"
+                android:visibility="invisible"
+                android:background="@android:color/black"
+                android:alpha="@dimen/disabled_alpha"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <View
+        android:id="@+id/clickview"
+        android:visibility="invisible"
         android:layout_above="@+id/run_button"
-        android:background="@android:color/holo_green_light"
-        />
-
-    <EditText
-        android:id="@+id/edit_text"
         android:layout_width="match_parent"
-        android:layout_height="200px"
-        />
+        android:layout_height="48dp"/>
 
     <Button
         android:id="@+id/run_button"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        android:background="@android:color/holo_red_dark"
+        android:visibility="invisible"
+        android:background="@android:color/holo_red_light"
         android:layout_width="match_parent"
         android:text="@string/run"
-        android:layout_height="wrap_content" />
-
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size"
+        android:layout_alignParentBottom="true"
+        android:layout_height="48dip" />
 </RelativeLayout>
+
+

@@ -24,6 +24,13 @@ public class ListActivity extends MainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Uri uri = Uri.parse(Item.Items.CONTENT_URI + "/" + getIntent().getStringExtra("id"));
+        Cursor c = getContentResolver().query(uri, new String[]{Item.Items.TITLE}, null, null, null);
+        c.moveToFirst();
+        name.setText(c.getString(0));
+        c.close();
+
         runButton = (Button) findViewById(R.id.run_button);
         runButton.setOnClickListener(runButtonListener());
         runButton.setVisibility(View.VISIBLE);

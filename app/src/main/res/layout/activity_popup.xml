@@ -13,6 +13,7 @@
         android:id="@+id/popup_button"
         android:text="@string/set"
         android:onClick="setRepeatTime"
+        android:background="@android:color/holo_orange_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

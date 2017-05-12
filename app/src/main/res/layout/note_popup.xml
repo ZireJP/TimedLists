@@ -4,13 +4,28 @@
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/notes_id"
-        android:background="@android:color/holo_blue_bright"
+        android:background="@android:color/holo_blue_light"
+        android:layout_alignParentTop="true"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="48dip" />
     <EditText
         android:id="@+id/notes_text"
         android:layout_below="@id/notes_id"
+        android:layout_above="@+id/notes_set"
         android:gravity="top"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <Button
+        android:id="@+id/notes_set"
+        android:onClick="set"
+        android:background="@android:color/holo_orange_light"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size"
+        android:text="@string/set"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="48dip" />
 </RelativeLayout>

@@ -8,6 +8,8 @@
     <string name="run">Run</string>
     <string name="run_continue">CLICK TO CONTINUE</string>
     <string name="stop">STOP TIMER</string>
-    <string name="note_title">Notes of: %1s</string>
+    <string name="note_title">Notes of %1s</string>
     <string name="click_to_add">Click to add item</string>
+    <string name="notes">Notes</string>
+    <string name="main_title">LISTS</string>
 </resources>

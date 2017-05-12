@@ -10,8 +10,11 @@ import android.widget.ListView;
 
 public class MaxListView extends ListView {
 
+    private int max;
+
     public MaxListView(Context context) {
         super(context);
+        max = 0;
     }
 
     public MaxListView(Context context, AttributeSet attrs) {
@@ -24,7 +27,11 @@ public class MaxListView extends ListView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        heightMeasureSpec = heightMeasureSpec - 200;
+        heightMeasureSpec = heightMeasureSpec - max;
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public void setMax(int max) {
+        this.max =  max;
     }
 }

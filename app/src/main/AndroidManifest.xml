@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoAnimation"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,13 +19,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".ListActivity"
+            android:theme="@style/AppTheme.NoAnimation"
         android:windowSoftInputMode="adjustNothing"/>
 
         <provider
             android:name=".providers.ListsContentProvider"
             android:authorities="mytimer.julianpeters.xyz.timedlists.providers.ListsContentProvider"></provider>
 
-        <activity android:name=".ItemActivity"></activity>
+        <activity android:name=".ItemActivity"
+            android:theme="@style/AppTheme.NoAnimation"
+            >
+        </activity>
         <activity android:name=".Popup"
             android:theme="@style/AppTheme.PopUpTransparent">
         </activity>

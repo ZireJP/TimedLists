@@ -2,6 +2,8 @@ package mytimer.julianpeters.xyz.timedlists;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -16,6 +18,9 @@ import android.widget.NumberPicker;
 public class Popup extends Activity {
 
     NumberPicker np;
+    String _id;
+    String table_id;
+    Uri uri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +38,14 @@ public class Popup extends Activity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int)(width * .8), (int)(height * .6));
+        table_id = getIntent().getStringExtra("table_id");
+        _id = getIntent().getStringExtra("_id");
+        uri = Uri.parse(ItemInItem.ItemInItems.CONTENT_URI + "/" + table_id);
+        Cursor c = getContentResolver().query(uri, new String[]{ItemInItem.ItemInItems.REPEAT}, null, new String[]{_id}, null);
+        c.moveToFirst();
+        int repeat = c.getInt(0);
+        c.close();
+        np.setValue(repeat);
     }
 
     public void setRepeatTime(View v) {

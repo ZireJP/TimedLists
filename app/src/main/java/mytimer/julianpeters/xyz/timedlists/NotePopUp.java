@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -47,6 +48,10 @@ public class NotePopUp extends Activity {
         }
         c.close();
 
+    }
+
+    public void set(View v) {
+        finish();
     }
 
     @Override

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,16 +34,24 @@ class MainCursorAdapter extends SimpleCursorAdapter {
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent launchActivity = whichActivity(con, isList);
-                launchActivity.putExtra("id", id);
-                con.startActivity(launchActivity);
+                if (((MainActivity)con).editIsActive) {
+                    ((MainActivity)con).checkEdit();
+                } else {
+                    Intent launchActivity = whichActivity(con, isList);
+                    launchActivity.putExtra("id", id);
+                    con.startActivity(launchActivity);
+                }
             }
         });
 
         del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                con.getContentResolver().call(Item.Items.CONTENT_URI, "deleteAllItemsOf", id, null);
+                if (((MainActivity) con).editIsActive) {
+                    ((MainActivity) con).checkEdit();
+                } else {
+                    con.getContentResolver().call(Item.Items.CONTENT_URI, "deleteAllItemsOf", id, null);
+                }
             }
         });
 

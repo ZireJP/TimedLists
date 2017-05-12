@@ -47,7 +47,6 @@ public class RunPopUp extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
-        textView = (TextView) findViewById(R.id.run_text);
         countdown = (TextView) findViewById(R.id.run_countdown);
         run_continue = (Button) findViewById(R.id.run_continue);
         bar = (ProgressBar) findViewById(R.id.run_progressbar);
@@ -67,7 +66,6 @@ public class RunPopUp extends Activity {
     }
 
     private void timer(final String[] item, final int i, final int items) {
-        setTextHighlight(i);
         if (item[1].equals("0")) {
             run_continue.setOnClickListener(newClick(i, items));
             run_continue.setText(item[0] + "\n" + getString(R.string.run_continue));
@@ -95,6 +93,7 @@ public class RunPopUp extends Activity {
                             current++;
                             list.setCurrent(current);
                             list.notifyDataSetChanged();
+                            listView.setSelection(current);
                             timer(item, i + 1, items);
                         } else {
                             countdown.setText("Finished");
@@ -116,28 +115,13 @@ public class RunPopUp extends Activity {
                     current++;
                     list.setCurrent(current);
                     list.notifyDataSetChanged();
+                    listView.setSelection(current);
                     timer(item, i+1, items);
                 } else {
                     countdown.setText("Finished");
                 }
             }
         };
-    }
-
-    private void setTextHighlight(int current) {
-        String text = "<font color=#cc0029>";
-        int i = 0;
-        for (String[] duo : allItems) {
-            if (i == current) {
-                text += "</font><font color=#ffcc00>" + duo[0] + " : " + duo[1] + "</font><font color=#cc0029><br>";
-            } else {
-                text += duo[0] + " : " + duo[1] + "<br>";
-            }
-            i++;
-        }
-        text += "</font>";
-        textView.setText(Html.fromHtml(text));
-
     }
 
     private void newArray(String _id) {

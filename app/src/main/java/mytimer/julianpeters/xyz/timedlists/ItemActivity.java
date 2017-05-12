@@ -5,16 +5,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ItemActivity extends Activity {
@@ -27,10 +33,8 @@ public class ItemActivity extends Activity {
     Boolean editIsActive;
     EditText editText;
     NumberPicker np1, np2, np3;
-    Button set;
-    Button cancel;
-    NumberPicker empty;
-    Button empty2;
+    RelativeLayout layout;
+    View overlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,8 @@ public class ItemActivity extends Activity {
         editIsActive = false;
         textView.setOnClickListener(notListListener());
         setText(getItemCursor());
+        Point dimension = DisplayDimension.getDisplayDimensions(this);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(dimension.x, dimension.y));
     }
 
     private Cursor getItemCursor() {
@@ -58,16 +64,11 @@ public class ItemActivity extends Activity {
     }
 
     private void slideInAnimation() {
-        switchVisibility(View.GONE, View.VISIBLE);
+        editText.setVisibility(View.VISIBLE);
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.slidein);
-        Animation anim2 = AnimationUtils.loadAnimation(this, R.anim.pushdown);
-        editText.startAnimation(anim);
-        textView.startAnimation(anim2);
-    }
-
-    private void slideOutAnimation() {
-        Animation anim = AnimationUtils.loadAnimation(this, R.anim.slideout);
-        Animation anim2 = AnimationUtils.loadAnimation(this, R.anim.pushup);
+        Animation anim2 = new TranslateAnimation(0, 0, -name.getMeasuredHeight(), 0);
+        anim2.setDuration(400);
+        anim2.setFillAfter(true);
         anim2.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -76,7 +77,9 @@ public class ItemActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                switchVisibility(View.VISIBLE, View.GONE);
+                editText.clearAnimation();
+                textView.clearAnimation();
+                overlay.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -85,7 +88,35 @@ public class ItemActivity extends Activity {
             }
         });
         editText.startAnimation(anim);
-        textView.startAnimation(anim2);
+        layout.startAnimation(anim2);
+    }
+
+    private void slideOutAnimation() {
+        Animation anim = AnimationUtils.loadAnimation(this, R.anim.slideout);
+        Animation anim2 = new TranslateAnimation(0, 0, 0, -editText.getHeight());
+        anim2.setDuration(400);
+        anim2.setFillAfter(true);
+        anim2.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                overlay.setVisibility(View.INVISIBLE);
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                editText.clearAnimation();
+                layout.clearAnimation();
+                editText.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        editText.startAnimation(anim);
+        layout.startAnimation(anim2);
     }
 
     private boolean focusEdit() {
@@ -95,10 +126,10 @@ public class ItemActivity extends Activity {
         return true;
     }
 
-    private boolean unfocusEdit(View v) {
-        v.clearFocus();
+    private boolean unfocusEdit() {
+        editText.clearFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         return false;
     }
 
@@ -118,7 +149,11 @@ public class ItemActivity extends Activity {
     }
 
     public void showTimeSpinner(View v) {
-        v.setVisibility(View.INVISIBLE);
+        if (editIsActive) {
+            checkEdit();
+        } else {
+            v.setVisibility(View.INVISIBLE);
+        }
     }
 
     protected void createItemAnimation() {
@@ -137,29 +172,19 @@ public class ItemActivity extends Activity {
                     slideInAnimation();
                     editIsActive = focusEdit();
                 } else {
-                    editIsActive = unfocusEdit(v);
-                    if (!editText.getText().toString().equals("")) {
-                        createItem();
-                    } else {
-                        slideOutAnimation();
-                    }
+                    checkEdit();
                 }
             }
         };
     }
 
-    private void switchVisibility(int from, int to) {
-        editText.setVisibility(to);
-        name.setVisibility(from);
-        time.setVisibility(from);
-        right.setVisibility(from);
-        np1.setVisibility(from);
-        np2.setVisibility(from);
-        np3.setVisibility(from);
-        set.setVisibility(from);
-        cancel.setVisibility(from);
-        empty.setVisibility(from);
-        empty2.setVisibility(from);
+    private void checkEdit() {
+        editIsActive = unfocusEdit();
+        if (!editText.getText().toString().equals("")) {
+            createItem();
+        } else {
+            slideOutAnimation();
+        }
     }
 
     private void setTimeRange() {
@@ -171,16 +196,14 @@ public class ItemActivity extends Activity {
     private void findViews() {
         time = (Button) findViewById(R.id.item_button_left);
         right = (Button) findViewById(R.id.item_button_right);
-        name = (TextView) findViewById(R.id.item_name);
+        name = (TextView) findViewById(R.id.item_item_name);
         textView = (TextView) findViewById(R.id.item_tw_bottom);
         editText = (EditText) findViewById(R.id.item_edit_text);
+        layout = (RelativeLayout) findViewById(R.id.item_layout);
+        overlay = findViewById(R.id.item_overlay);
         np1 = (NumberPicker) findViewById(R.id.item_hours);
         np2 = (NumberPicker) findViewById(R.id.item_minute);
         np3 = (NumberPicker) findViewById(R.id.item_second);
-        set = (Button) findViewById(R.id.item_set);
-        cancel = (Button) findViewById(R.id.item_cancel);
-        empty = (NumberPicker) findViewById(R.id.item_empty_height);
-        empty2 = (Button) findViewById(R.id.item_empty_height2);
     }
 
     public void cancel(View w) {
@@ -202,5 +225,28 @@ public class ItemActivity extends Activity {
 
     private void setTimeText(int seconds) {
         time.setText(Time.getTimeString(seconds));
+        int second = Time.getSeconds(seconds);
+        int minute = Time.getMinutes(seconds);
+        int hour = Time.getHours(seconds);
+        np1.setValue(hour);
+        np2.setValue(minute);
+        np3.setValue(second);
+    }
+
+    public void showNotes(View v) {
+        if (editIsActive) {
+            checkEdit();
+        } else {
+            Intent intent = new Intent(this, NotePopUp.class);
+            intent.putExtra("id", id);
+            startActivity(intent);
+        }
+    }
+
+    public void runItem(View v) {
+            String _id = getIntent().getStringExtra("id");
+            Intent intent = new Intent(this, RunPopUp.class);
+            intent.putExtra("_id", _id);
+            startActivity(intent);
     }
 }

@@ -21,4 +21,8 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
+
+    <style name="AppTheme.NoAnimation">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
 </resources>

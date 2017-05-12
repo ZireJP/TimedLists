@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +56,7 @@ public class RunListAdapter extends ArrayAdapter<String[]> {
                 }
             });
             if (i == position) {
-                v.setBackgroundColor(Color.YELLOW);
+                v.setBackgroundColor(getContext().getResources().getColor(R.color.highlight));
             } else {
                 v.setBackgroundColor(Color.WHITE);
             }

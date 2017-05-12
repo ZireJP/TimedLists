@@ -9,17 +9,20 @@
         android:layout_toLeftOf="@+id/list_repeat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:textAllCaps="false"
         android:gravity="center"
-        android:textSize="100px"
-        android:background="@null"
+        android:textSize="@dimen/text_size"
+        android:background="@android:color/holo_orange_light"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/list_repeat"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
         android:layout_toLeftOf="@+id/list_button"
-        android:background="@android:color/darker_gray"
+        android:background="@android:color/holo_purple"
         />
 
     <Button
@@ -27,5 +30,9 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:background="@android:color/background_dark"/>
+        android:text="X"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size"
+        android:textColor="@android:color/holo_red_light"
+        android:background="@android:color/black"/>
 </RelativeLayout>

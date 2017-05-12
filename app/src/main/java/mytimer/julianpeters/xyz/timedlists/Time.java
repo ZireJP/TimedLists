@@ -10,6 +10,20 @@ public class Time {
         return second + minute * 60;
     }
 
+    public static int getSeconds(int seconds) {
+        return seconds % 60;
+    }
+
+    public static int getMinutes(int seconds) {
+        seconds = seconds / 60;
+        return seconds % 60;
+    }
+
+    public static int getHours(int seconds) {
+        seconds = seconds / 360;
+        return seconds % 60;
+    }
+
     public static String getTimeString(int seconds) {
         int second = seconds % 60;
         int minutes = seconds / 60;
