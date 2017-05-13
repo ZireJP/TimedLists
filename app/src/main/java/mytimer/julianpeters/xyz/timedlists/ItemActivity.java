@@ -182,19 +182,6 @@ public class ItemActivity extends Activity {
         timeButton = (Button) findViewById(R.id.item_time_button);
     }
 
-    /*public void setTime(View w) {
-        int hour = np1.getValue();
-        int minute = np2.getValue();
-        int second = np3.getValue();
-        int inSeconds = Time.getSeconds(hour, minute, second);
-        ContentValues value = new ContentValues();
-        value.put(Item.Items.TIME, inSeconds);
-        String selection = Item.Items.ITEM_ID + " = ?";
-        getContentResolver().update(Item.Items.CONTENT_URI, value, selection, new String[]{_id});
-        setTimeText(inSeconds);
-        time.setVisibility(View.VISIBLE);
-    }*/
-
     private void setTimeText(int seconds) {
         timeButton.setText(Time.getTimeString(seconds));
     }

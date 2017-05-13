@@ -39,6 +39,9 @@
 
         <EditText
             android:id="@+id/item_edit_text"
+            android:background="@android:color/holo_orange_light"
+            android:textSize="@dimen/text_size"
+            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="48dip" />
 

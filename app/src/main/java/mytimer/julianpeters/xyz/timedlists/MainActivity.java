@@ -25,7 +25,6 @@ import android.widget.TextView;
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private SimpleCursorAdapter adapter;
-    private TextView textView;
     protected TextView name;
     protected EditText editText;
     public boolean editIsActive = false;
@@ -42,8 +41,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         name = (TextView) findViewById(R.id.item_name);
         editText = (EditText) findViewById(R.id.edit_text);
         editText.setVisibility(View.GONE);
-        textView = (TextView) findViewById(R.id.empty);
-        textView.setOnClickListener(notListListener());
         listView = (MaxListView) getListView();
         View footer = ((LayoutInflater)this.getSystemService(this.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer_layout, null);
         listView.addFooterView(footer);
@@ -112,6 +109,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
             public void onAnimationEnd(Animation animation) {
                 editText.clearAnimation();
                 overlay.setVisibility(View.VISIBLE);
+                focusEdit();
             }
 
             @Override
@@ -196,19 +194,13 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         slideOutAnimation();
     }
 
-    private View.OnClickListener notListListener() {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (!editIsActive) {
-                    slideInAnimation();
-                    editIsActive = focusEdit();
-                } else {
-                    checkEdit();
-                }
-            }
-        };
+    public void showAddItem(View v) {
+        if (!editIsActive) {
+            slideInAnimation();
+            editIsActive = focusEdit();
+        } else {
+            checkEdit();
+        }
     }
 
     public void addItemMenu(View v) {
