@@ -92,6 +92,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                 listView.setVisibility(View.GONE);
                 editText.startAnimation(anim);
                 listView.clearAnimation();
+                focusEdit();
             }
 
             @Override
@@ -109,7 +110,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
             public void onAnimationEnd(Animation animation) {
                 editText.clearAnimation();
                 overlay.setVisibility(View.VISIBLE);
-                focusEdit();
             }
 
             @Override
