@@ -39,11 +39,15 @@ public class RunPopUp extends Activity {
     Button run_continue;
     public int current;
     int secondsLeft;
-    boolean active;
     Ringtone ringtone;
     ProgressBar bar;
     ListView listView;
     RunListAdapter list;
+    boolean paused;
+    long saveTime;
+    int size;
+    CountDownTimer cd;
+    ObjectAnimator animation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,19 +62,54 @@ public class RunPopUp extends Activity {
         ringtone = RingtoneManager.getRingtone(this, notification);
 
         setProgressbarSize();
-        active = true;
         String _id = getIntent().getStringExtra("_id");
         newArray(_id);
         list = new RunListAdapter(this, R.layout.run_list, allItems);
         listView.setAdapter(list);
         int max = allItems.size();
+        size = allItems.size();
         String[] item = allItems.get(0);
         timer(item, 0, max);
     }
 
     private void setProgressbarSize() {
         Point height = DisplayDimension.getDisplayDimensions(this);
-        bar.setLayoutParams(new LinearLayout.LayoutParams(height.y/2, height.y/2));
+        int h = (height.y - ((int) getResources().getDimension(R.dimen.list_item_size) * 2)) / 2;
+        bar.setLayoutParams(new LinearLayout.LayoutParams(h, h));
+    }
+
+    public void back(View v) {
+        cd.cancel();
+        animation.cancel();
+        current--;
+        if (current < 0) {
+            current = 0;
+        }
+        list.setCurrent(current);
+        list.notifyDataSetChanged();
+        listView.smoothScrollToPosition(current);
+        timer(allItems.get(current), current, size);
+    }
+
+    public void skip(View v) {
+        cd.cancel();
+        animation.cancel();
+        current++;
+        if (current > size-1) {
+            current = size - 1;
+        }
+        list.setCurrent(current);
+        list.notifyDataSetChanged();
+        listView.smoothScrollToPosition(current);
+        timer(allItems.get(current), current, size);
+    }
+
+    public void pause(View v) {
+        if (paused) {
+            cd = new MyCd(saveTime).start();
+            setProgressAnimate(bar, saveTime);
+        }
+        paused = !paused;
     }
 
     private void timer(final String[] item, final int i, final int items) {
@@ -82,34 +121,45 @@ public class RunPopUp extends Activity {
             secondsLeft = 0;
             int time = Integer.parseInt(item[1]);
             setProgressMax(bar, 1000);
-            setProgressAnimate(bar, time);
-            CountDownTimer cd = new CountDownTimer(Integer.parseInt(item[1]) * 1000, 250) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
-                        secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
-                        countdown.setText(item[0] + "\n" + Time.getTimeString(secondsLeft));
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-                    if (active) {
-                        ringtone.play();
-                        if (i < items - 1) {
-                            final String[] item = allItems.get(i + 1);
-                            current++;
-                            list.setCurrent(current);
-                            list.notifyDataSetChanged();
-                            listView.smoothScrollToPosition(current);
-                            timer(item, i + 1, items);
-                        } else {
-                            countdown.setText("Finished");
-                        }
-                    }
-                }
-            };
+            setProgressAnimate(bar, time * 1000);
+            cd = new MyCd(Integer.parseInt(item[1]) * 1000);
             cd.start();
+        }
+    }
+
+    private class MyCd extends CountDownTimer {
+
+        MyCd(long millisInFuture) {
+            super(millisInFuture, 250);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            if (paused) {
+                //
+                this.cancel();
+                animation.cancel();
+                saveTime = millisUntilFinished;
+            }
+            if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
+                secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
+                countdown.setText(allItems.get(current)[0] + "\n" + Time.getTimeString(secondsLeft));
+            }
+        }
+
+        @Override
+        public void onFinish() {
+            ringtone.play();
+            if (current < size - 1) {
+                final String[] item = allItems.get(current + 1);
+                current++;
+                list.setCurrent(current);
+                list.notifyDataSetChanged();
+                listView.smoothScrollToPosition(current);
+                timer(item, current, size);
+            } else {
+                countdown.setText("Finished");
+            }
         }
     }
 
@@ -118,13 +168,13 @@ public class RunPopUp extends Activity {
             @Override
             public void onClick(View v) {
                 run_continue.setVisibility(View.GONE);
-                if (i < items-1) {
+                if (i < items - 1) {
                     final String[] item = allItems.get(i + 1);
                     current++;
                     list.setCurrent(current);
                     list.notifyDataSetChanged();
                     listView.smoothScrollToPosition(current);
-                    timer(item, i+1, items);
+                    timer(item, i + 1, items);
                 } else {
                     countdown.setText("Finished");
                 }
@@ -150,18 +200,18 @@ public class RunPopUp extends Activity {
         cursor.moveToFirst();
         String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
         if (cursor.getInt(cursor.getColumnIndex(Item.Items.IS_LIST)) == 0) {
-            for(int i = 0; i < repeat; i++) {
+            for (int i = 0; i < repeat; i++) {
                 allItems.add(new String[]{name, cursor.getString(cursor.getColumnIndex(Item.Items.TIME)), cursor.getString(cursor.getColumnIndex(Item.Items.ITEM_ID))});
             }
         } else {
             cursor.close();
             cursor = getAllItems("table_" + _id);
-            for(int i = 0; i < repeat; i++) {
+            for (int i = 0; i < repeat; i++) {
                 if (cursor.moveToFirst()) {
                     do {
                         fillArray(cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY)),
                                 cursor.getInt(cursor.getColumnIndex(ItemInItem.ItemInItems.REPEAT)));
-                    } while(cursor.moveToNext());
+                    } while (cursor.moveToNext());
                 }
             }
         }
@@ -170,7 +220,7 @@ public class RunPopUp extends Activity {
 
     @Override
     protected void onDestroy() {
-        active = false;
+        cd.cancel();
         super.onDestroy();
     }
 
@@ -179,10 +229,9 @@ public class RunPopUp extends Activity {
         pb.setProgress(max);
     }
 
-    private void setProgressAnimate(ProgressBar pb, int duration)
-    {
-        ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", pb.getProgress(), -1);
-        animation.setDuration(duration*1000);
+    private void setProgressAnimate(ProgressBar pb, long duration) {
+        animation = ObjectAnimator.ofInt(pb, "progress", pb.getProgress(), -1);
+        animation.setDuration(duration);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
     }
@@ -192,7 +241,7 @@ public class RunPopUp extends Activity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         moveTaskToBack(true);
     }
 

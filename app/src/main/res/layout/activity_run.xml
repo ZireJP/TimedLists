@@ -2,62 +2,103 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:layout_above="@+id/run_stop"
-    android:weightSum="2"
-    android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/run_layout_top"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-        <TextView
-            android:id="@+id/run_countdown"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/run_stop"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            />
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <LinearLayout
+            <RelativeLayout
+                android:id="@+id/run_layout_top"
+                android:layout_width="match_parent"
+                android:layout_above="@+id/run_buttons"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/run_countdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ProgressBar
+                        android:id="@+id/run_progressbar"
+                        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:progressDrawable="@drawable/progressbar" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/run_continue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:text="@string/run_continue"
+                    android:visibility="gone" />
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/run_buttons"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <Button
+                    android:background="@android:color/holo_orange_light"
+                    android:textStyle="bold"
+                    android:onClick="back"
+                    android:textSize="@dimen/text_size"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/list_item_size"
+                    android:layout_weight="1"/>
+                <Button
+                    android:background="@android:color/holo_orange_light"
+                    android:onClick="pause"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_size"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/list_item_size"
+                    android:layout_weight="1"/>
+                <Button
+                    android:background="@android:color/holo_orange_light"
+                    android:textStyle="bold"
+                    android:onClick="skip"
+                    android:textSize="@dimen/text_size"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/list_item_size"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/run_listview"
             android:layout_width="match_parent"
-            android:gravity="center"
-            android:layout_height="match_parent">
-        <ProgressBar
-            android:id="@+id/run_progressbar"
-            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-            android:progressDrawable="@drawable/progressbar"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"/>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/run_continue"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:text="@string/run_continue"
-            android:background="@android:color/white"/>
-    </RelativeLayout>
-
-    <ListView
-        android:id="@+id/run_listview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </ListView>
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
 
+    </LinearLayout>
 
-</LinearLayout>
     <Button
         android:id="@+id/run_stop"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:background="@android:color/holo_red_light"
-        android:text="@string/stop"
         android:onClick="stop"
-        />
+        android:text="@string/stop" />
 </RelativeLayout>
