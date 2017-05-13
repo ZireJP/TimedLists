@@ -2,7 +2,9 @@ package mytimer.julianpeters.xyz.timedlists;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.shapes.Shape;
 import android.media.Ringtone;
@@ -21,6 +23,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,7 +35,6 @@ import java.util.ArrayList;
 public class RunPopUp extends Activity {
 
     ArrayList<String[]> allItems;
-    TextView textView;
     TextView countdown;
     Button run_continue;
     public int current;
@@ -55,6 +57,7 @@ public class RunPopUp extends Activity {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         ringtone = RingtoneManager.getRingtone(this, notification);
 
+        setProgressbarSize();
         active = true;
         String _id = getIntent().getStringExtra("_id");
         newArray(_id);
@@ -63,6 +66,11 @@ public class RunPopUp extends Activity {
         int max = allItems.size();
         String[] item = allItems.get(0);
         timer(item, 0, max);
+    }
+
+    private void setProgressbarSize() {
+        Point height = DisplayDimension.getDisplayDimensions(this);
+        bar.setLayoutParams(new LinearLayout.LayoutParams(height.y/2, height.y/2));
     }
 
     private void timer(final String[] item, final int i, final int items) {
@@ -93,7 +101,7 @@ public class RunPopUp extends Activity {
                             current++;
                             list.setCurrent(current);
                             list.notifyDataSetChanged();
-                            listView.setSelection(current);
+                            listView.smoothScrollToPosition(current);
                             timer(item, i + 1, items);
                         } else {
                             countdown.setText("Finished");
@@ -115,7 +123,7 @@ public class RunPopUp extends Activity {
                     current++;
                     list.setCurrent(current);
                     list.notifyDataSetChanged();
-                    listView.setSelection(current);
+                    listView.smoothScrollToPosition(current);
                     timer(item, i+1, items);
                 } else {
                     countdown.setText("Finished");
@@ -186,5 +194,11 @@ public class RunPopUp extends Activity {
     @Override
     public void onBackPressed(){
         moveTaskToBack(true);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setProgressbarSize();
     }
 }

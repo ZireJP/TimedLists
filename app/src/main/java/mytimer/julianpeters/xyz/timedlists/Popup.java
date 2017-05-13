@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 
@@ -34,10 +33,12 @@ public class Popup extends Activity {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
+        Float d = getResources().getDimension(R.dimen.list_item_size);
+        Float b = getResources().getDimension(R.dimen.border_size);
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(width * .8), (int)(height * .6));
+        getWindow().setLayout((int)(width * .8), Math.round(4*d+ 2*b));
         table_id = getIntent().getStringExtra("table_id");
         _id = getIntent().getStringExtra("_id");
         uri = Uri.parse(ItemInItem.ItemInItems.CONTENT_URI + "/" + table_id);
@@ -57,4 +58,5 @@ public class Popup extends Activity {
         getContentResolver().update(ItemInItem.ItemInItems.CONTENT_URI, values, selection, id);
         finish();
     }
+
 }

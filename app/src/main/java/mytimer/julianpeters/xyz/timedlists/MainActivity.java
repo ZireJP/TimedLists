@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +17,10 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-
-import java.util.zip.Inflater;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -40,6 +35,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.list_switch_in, R.anim.list_switch_out);
         setContentView(R.layout.activity_main);
         adapter = adapter();
         setListAdapter(adapter);
@@ -128,6 +124,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     private void slideOutAnimation() {
         int test = listView.getHeight();
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slideout);
         final Animation anim2 = new TranslateAnimation(0, 0, -test, 0);
         anim2.setDuration(400);
@@ -140,6 +137,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
                 listView.clearAnimation();
             }
 
@@ -236,5 +234,21 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+       super.onBackPressed();
+        overridePendingTransition(R.anim.list_switch_in_back,R.anim.list_switch_out_back);
+    }
+
+    public void showNotes(View v) {
+
+    }
+
+    protected void setEditable(View v) {
+    }
+
+    public void editName(View v) {
     }
 }

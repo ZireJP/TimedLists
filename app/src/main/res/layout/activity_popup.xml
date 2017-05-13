@@ -8,7 +8,7 @@
         android:id="@+id/popup_picker"
         android:layout_above="@+id/popup_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="@dimen/number_picker"/>
 
     <Button
         android:layout_alignParentBottom="true"
@@ -17,6 +17,6 @@
         android:onClick="setRepeatTime"
         android:background="@android:color/holo_orange_light"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="@dimen/list_item_size" />
 
 </RelativeLayout>

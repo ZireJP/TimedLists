@@ -1,172 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/item_tw_bottom"
-        android:background="@android:color/holo_green_light"
-        android:text="@string/click_to_add"
-        android:gravity="center"
-        android:layout_below="@+id/item_item_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/item_item_name"
+        android:background="@android:color/holo_green_light"
+        android:gravity="center"
+        android:onClick="notListListener"
+        android:text="@string/click_to_add" />
 
     <TextView
         android:id="@+id/item_item_name"
         android:layout_width="match_parent"
-        android:gravity="center"
+        android:layout_height="wrap_content"
         android:height="48dip"
-        android:textSize="@dimen/text_size"
-        android:textStyle="bold"
         android:background="@android:color/holo_blue_light"
-        android:layout_height="wrap_content" />
-    <LinearLayout
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_below="@+id/item_item_name"
-    android:layout_height="match_parent">
-        <EditText
-        android:id="@+id/item_edit_text"
+        android:gravity="center"
+        android:onClick="showNotes"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/item_placeholder"
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        />
-        <RelativeLayout
-            android:id="@+id/item_layout"
-            android:layout_width="0dp"
-            android:layout_height="0dp">
-        <LinearLayout
+        android:layout_below="@id/item_item_name"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/item_item_name"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/item_edit_text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-                <RelativeLayout
-                android:orientation="vertical"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent">
-                <LinearLayout
-                    android:id="@+id/item_inner_linear_layout"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <LinearLayout
-                                     android:id="@+id/item_time_spinner"
-                                     android:layout_width="match_parent"
-                                     android:layout_height="wrap_content"
-                                     android:weightSum="6">
+            android:layout_height="48dip" />
 
-                                     <NumberPicker
-                                     android:id="@+id/item_hours"
-                                     android:layout_width="0dp"
-                                     android:layout_height="wrap_content"
-                                     android:layout_weight="1"
-                                         android:background="@android:color/holo_orange_light"
-                                     />
+        <ScrollView
+            android:id="@+id/item_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-                                     <NumberPicker
-                                     android:id="@+id/item_minute"
-                                         android:background="@android:color/holo_orange_light"
-                                     android:layout_width="0dp"
-                                     android:layout_height="wrap_content"
-                                     android:layout_weight="1"
-                                     />
-
-                                     <NumberPicker
-                                     android:id="@+id/item_second"
-                                     android:layout_width="0dp"
-                                     android:layout_height="wrap_content"
-                                         android:background="@android:color/holo_orange_light"
-                                     android:layout_weight="1" />
-                                     </LinearLayout>
-
-                    <LinearLayout
-                                     android:layout_width="match_parent"
-                                     android:layout_height="wrap_content"
-                                     android:weightSum="4">
-
-                                     <Button
-                                     android:id="@+id/item_set"
-                                     android:text="@string/set"
-                                     android:layout_width="0dp"
-                                     android:layout_height="wrap_content"
-                                     android:onClick="setTime"
-                                         android:background="@android:color/holo_orange_light"
-                                     android:layout_weight="1"/>
-
-                                     <Button
-                                     android:id="@+id/item_cancel"
-                                     android:text="@string/cancel"
-                                     android:layout_width="0dp"
-                                     android:layout_height="wrap_content"
-                                     android:onClick="cancel"
-                                         android:background="@android:color/holo_orange_light"
-                                     android:layout_weight="1"/>
-                                     </LinearLayout>
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/item_buttons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="2">
-
-                    <Button
-                               android:id="@+id/item_button_left"
-                               android:layout_width="0dp"
-                               android:layout_height="match_parent"
-                               android:layout_weight="1"
-                        android:textSize="@dimen/text_size"
-                        android:textStyle="bold"
-                        android:background="@android:color/holo_orange_light"
-                               android:onClick="showTimeSpinner"/>
-
-                    <Button
-                               android:id="@+id/item_button_right"
-                               android:layout_width="0dp"
-                               android:layout_height="match_parent"
-                        android:background="@android:color/holo_orange_light"
-                        android:text="@string/notes"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_size"
-                               android:onClick="showNotes"
-                               android:layout_weight="1"
-                               />
-                <LinearLayout
-                                 android:orientation="vertical"
-                                 android:layout_width="wrap_content"
-                                 android:layout_height="wrap_content"
-                                 android:layout_weight="0">
-
-                                 <NumberPicker
-                                 android:id="@+id/item_empty_height"
-                                 android:layout_width="0dp"
-                                 android:layout_height="wrap_content" />
-                                 <Button
-                                 android:id="@+id/item_empty_height2"
-                                 android:layout_width="0dp"
-                                 android:layout_height="wrap_content" />
-                                 </LinearLayout>
-
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
-            <View
-                android:visibility="invisible"
-                android:id="@+id/item_overlay"
-                android:background="@android:color/black"
-                android:alpha="@dimen/disabled_alpha"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </RelativeLayout>
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/item_time_button"
+                android:layout_width="match_parent"
+                android:textSize="@dimen/text_size"
+                android:textStyle="bold"
+                android:background="@android:color/holo_orange_light"
+                android:onClick="showTimeSpinner"
+                android:layout_height="@dimen/list_item_size" />
+
+            <View
+                android:id="@+id/item_footer"
+                android:layout_width="match_parent"
+                android:onClick="notListListener"
+                android:layout_height="@dimen/list_item_size"/>
+
+            </LinearLayout>
+
+        </ScrollView>
     </LinearLayout>
+
     <Button
         android:id="@+id/item_run_button"
         android:layout_width="match_parent"
+        android:layout_height="48dip"
         android:layout_alignParentBottom="true"
-        android:text="@string/run"
-        android:textSize="@dimen/text_size"
-        android:textStyle="bold"
         android:background="@android:color/holo_red_light"
         android:onClick="runItem"
-        android:layout_height="48dip" />
+        android:text="@string/run"
+        android:textSize="@dimen/text_size"
+        android:stateListAnimator="@null"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/item_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/item_placeholder"
+        android:alpha="@dimen/disabled_alpha"
+        android:background="@android:color/black"
+        android:visibility="invisible" />
 
 </RelativeLayout>
 

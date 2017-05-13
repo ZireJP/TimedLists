@@ -3,4 +3,5 @@
     <dimen name="text_size">20sp</dimen>
     <dimen name="border_size">5dip</dimen>
     <dimen name="list_item_size">48dip</dimen>
+    <dimen name="number_picker">144dip</dimen>
 </resources>

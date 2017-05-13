@@ -28,18 +28,22 @@
 
         <activity android:name=".ItemActivity"
             android:theme="@style/AppTheme.NoAnimation"
+            android:windowSoftInputMode="adjustNothing"
             >
         </activity>
         <activity android:name=".Popup"
             android:theme="@style/AppTheme.PopUpTransparent">
         </activity>
         <activity android:name=".RunPopUp"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustNothing">
         </activity>
         <activity android:name=".NotePopUp"
             android:theme="@style/AppTheme.PopUpTransparent"
             android:windowSoftInputMode="adjustResize">
         </activity>
+        <activity android:name=".SetTimePopUp"
+            android:theme="@style/AppTheme.PopUpTransparent"/>
     </application>
 
 </manifest>

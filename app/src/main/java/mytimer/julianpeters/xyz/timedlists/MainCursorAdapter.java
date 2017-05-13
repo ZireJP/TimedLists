@@ -38,7 +38,7 @@ class MainCursorAdapter extends SimpleCursorAdapter {
                     ((MainActivity)con).checkEdit();
                 } else {
                     Intent launchActivity = whichActivity(con, isList);
-                    launchActivity.putExtra("id", id);
+                    launchActivity.putExtra("_id", id);
                     con.startActivity(launchActivity);
                 }
             }

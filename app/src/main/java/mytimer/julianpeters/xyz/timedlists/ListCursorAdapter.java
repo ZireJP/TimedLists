@@ -26,7 +26,7 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final Context con = context;
-        final String table_id = ((Activity)con).getIntent().getStringExtra("id");
+        final String table_id = ((Activity)con).getIntent().getStringExtra("_id");
         final String id = cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.ITEM_ID));
         final String time = cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.REPEAT));
         final String foreign = cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY));
@@ -47,7 +47,7 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
                     ((MainActivity)con).checkEdit();
                 } else {
                     Intent launchActivity = whichActivity(con, isList);
-                    launchActivity.putExtra("id", foreign);
+                    launchActivity.putExtra("_id", foreign);
                     con.startActivity(launchActivity);
                 }
             }
@@ -77,7 +77,7 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
                         String selection = Item.Items._ID + " = ?";
                         resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
                         Intent launchActivity = new Intent(con, ItemActivity.class);
-                        launchActivity.putExtra("id", table_id);
+                        launchActivity.putExtra("_id", table_id);
                         con.startActivity(launchActivity);
                         ((Activity) con).finish();
                     }

@@ -51,7 +51,7 @@ public class RunListAdapter extends ArrayAdapter<String[]> {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), NotePopUp.class);
-                    intent.putExtra("id", fP);
+                    intent.putExtra("_id", fP);
                     getContext().startActivity(intent);
                 }
             });

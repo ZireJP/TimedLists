@@ -25,4 +25,5 @@
     <style name="AppTheme.NoAnimation">
         <item name="android:windowAnimationStyle">@null</item>
     </style>
+
 </resources>

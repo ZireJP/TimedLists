@@ -37,7 +37,7 @@ public class NotePopUp extends Activity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int) (width * .8), (int) (height * .8));
-        String _id = getIntent().getStringExtra("id");
+        String _id = getIntent().getStringExtra("_id");
         String[] projection = {Item.Items.TITLE, Item.Items.NOTES};
         uri = Uri.parse(Item.Items.CONTENT_URI + "/" + _id);
         Cursor c = getContentResolver().query(uri, projection, null, null, null);

@@ -5,7 +5,7 @@ package mytimer.julianpeters.xyz.timedlists;
  */
 
 public class Time {
-    public static int getSeconds(int hour, int minute, int second) {
+    public static int getTimeInSeconds(int hour, int minute, int second) {
         minute = minute + hour * 60;
         return second + minute * 60;
     }
@@ -20,8 +20,7 @@ public class Time {
     }
 
     public static int getHours(int seconds) {
-        seconds = seconds / 360;
-        return seconds % 60;
+        return seconds / 3600;
     }
 
     public static String getTimeString(int seconds) {
