@@ -35,7 +35,7 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             android:text="@string/run_continue"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/white"/>
     </RelativeLayout>
 
     <ListView

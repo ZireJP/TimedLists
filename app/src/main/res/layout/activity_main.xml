@@ -1,87 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/empty"
-        android:layout_below="@+id/item_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/click_to_add"
-        android:gravity="center"
+        android:layout_below="@+id/item_name"
         android:background="@android:color/holo_green_light"
-        />
+        android:gravity="center"
+        android:text="@string/click_to_add" />
+
     <TextView
         android:id="@+id/item_name"
         android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:layout_alignParentTop="true"
         android:background="@android:color/holo_blue_light"
+        android:gravity="center"
         android:text="@string/main_title"
         android:textSize="@dimen/text_size"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_height="48dip" />
+        android:textStyle="bold" />
 
+    <View
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:layout_below="@id/item_name"
+        android:visibility="invisible" />
 
-    <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_below="@id/item_name"
-        android:layout_above="@+id/clickview"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/run_button"
+        android:layout_below="@id/item_name"
+        android:orientation="vertical">
 
         <EditText
-    android:id="@+id/edit_text"
-    android:layout_width="match_parent"
-    android:layout_height="48dip"
-    />
-        <RelativeLayout
-            android:id="@+id/layout"
+            android:id="@+id/edit_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity" >
+            android:layout_height="48dip" />
 
-    <mytimer.julianpeters.xyz.timedlists.MaxListView
-        android:id="@+id/android:list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        <mytimer.julianpeters.xyz.timedlists.MaxListView
+            android:id="@+id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</LinearLayout>
-            <View
-                android:id="@+id/main_overlay"
-                android:visibility="invisible"
-                android:background="@android:color/black"
-                android:alpha="@dimen/disabled_alpha"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </RelativeLayout>
     </LinearLayout>
-    <View
-        android:id="@+id/clickview"
-        android:visibility="invisible"
-        android:layout_above="@+id/run_button"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"/>
+
 
     <Button
         android:id="@+id/run_button"
-        android:visibility="invisible"
-        android:background="@android:color/holo_red_light"
         android:layout_width="match_parent"
-        android:text="@string/run"
-        android:textStyle="bold"
-        android:textSize="@dimen/text_size"
+        android:layout_height="48dip"
         android:layout_alignParentBottom="true"
-        android:layout_height="48dip" />
+        android:background="@android:color/holo_red_light"
+        android:stateListAnimator="@null"
+        android:text="@string/run"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/main_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/placeholder"
+        android:alpha="@dimen/disabled_alpha"
+        android:background="@android:color/black"
+        android:visibility="invisible" />
 </RelativeLayout>
 
 
