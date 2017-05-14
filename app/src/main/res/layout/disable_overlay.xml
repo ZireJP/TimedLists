@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/placeholder1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_size"
+        android:visibility="invisible"/>
+
+    <View
+        android:id="@+id/placeholder2"
+        android:layout_below="@id/placeholder1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_size"
+        android:visibility="invisible"/>
+
+    <View
+        android:id="@+id/main_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/placeholder2"
+        android:alpha="@dimen/disabled_alpha"
+        android:background="@android:color/black"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@+id/full_overlay"
+        android:alpha="@dimen/disabled_alpha"
+        android:layout_below="@id/placeholder1"
+        android:layout_width="match_parent"
+        android:background="@android:color/black"
+        android:visibility="invisible"
+        android:onClick="unFocusTitle"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

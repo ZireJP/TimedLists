@@ -27,10 +27,10 @@ import android.widget.TextView;
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private SimpleCursorAdapter adapter;
-    protected TextView name;
+    protected EditText name;
     protected EditText editText;
     public boolean editIsActive = false;
-    private View overlay;
+    protected View overlay;
     protected MaxListView listView;
 
     @Override
@@ -53,9 +53,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         //iTouch.attachToRecyclerView();
         adapter = adapter();
         setListAdapter(adapter);
-        name = (TextView) findViewById(R.id.item_name);
+        name = (EditText) findViewById(R.id.edit_name);
         editText = (EditText) findViewById(R.id.edit_text);
         editText.setVisibility(View.GONE);
+        name.setEnabled(false);
         listView = (MaxListView) getListView();
         View footer = ((LayoutInflater)this.getSystemService(this.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer_layout, null);
         listView.addFooterView(footer);
@@ -187,10 +188,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         return true;
     }
 
-    private boolean unfocusEdit() {
-        editText.clearFocus();
+    protected boolean unfocusEdit(View v) {
+        v.clearFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         return false;
     }
 
@@ -229,7 +230,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     }
 
     public void checkEdit() {
-        editIsActive = unfocusEdit();
+        editIsActive = unfocusEdit(editText);
         if (!editText.getText().toString().equals("")) {
             createItem();
         } else {
@@ -253,9 +254,12 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     }
 
-    protected void setEditable(View v) {
+    public void disableElse(View v) {
+
     }
 
-    public void editName(View v) {
+    public void unFocusTitle(View v) {
+
     }
+
 }

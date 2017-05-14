@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -27,6 +28,8 @@ public class ItemActivity extends Activity {
     Button timeButton;
     ScrollView scrollView;
     View overlay;
+    boolean editTitle = false;
+    View fullOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class ItemActivity extends Activity {
         findViews();
         editText.setVisibility(View.GONE);
         editIsActive = false;
+        name.setOnTouchListener(onTouch());
         setText(getItemCursor());
     }
 
@@ -116,10 +120,10 @@ public class ItemActivity extends Activity {
         return true;
     }
 
-    private boolean unfocusEdit() {
-        editText.clearFocus();
+    private boolean unfocusEdit(View v) {
+        v.clearFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         return false;
     }
 
@@ -165,7 +169,7 @@ public class ItemActivity extends Activity {
     }
 
     private void checkEdit() {
-        editIsActive = unfocusEdit();
+        editIsActive = unfocusEdit(editText);
         if (!editText.getText().toString().equals("")) {
             createItem();
         } else {
@@ -174,12 +178,13 @@ public class ItemActivity extends Activity {
     }
 
     private void findViews() {
-        name = (TextView) findViewById(R.id.item_item_name);
+        name = (TextView) findViewById(R.id.edit_name);
         textView = (TextView) findViewById(R.id.item_tw_bottom);
         editText = (EditText) findViewById(R.id.item_edit_text);
-        overlay = findViewById(R.id.item_overlay);
+        overlay = findViewById(R.id.main_overlay);
         scrollView = (ScrollView) findViewById(R.id.item_scroll);
         timeButton = (Button) findViewById(R.id.item_time_button);
+        fullOverlay = findViewById(R.id.full_overlay);
     }
 
     private void setTimeText(int seconds) {
@@ -194,9 +199,11 @@ public class ItemActivity extends Activity {
     }
     
     public void showNotes(View v) {
-        Intent intent = new Intent(this, NotePopUp.class);
-        intent.putExtra("_id", _id);
-        startActivity(intent);
+        if (!editTitle) {
+            Intent intent = new Intent(this, NotePopUp.class);
+            intent.putExtra("_id", _id);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -209,5 +216,32 @@ public class ItemActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.list_switch_in_back,R.anim.list_switch_out_back);
+    }
+
+    public void unFocusTitle(View v) {
+        fullOverlay.setVisibility(View.INVISIBLE);
+        editTitle = unfocusEdit(name);
+        ContentValues values = new ContentValues();
+        values.put(Item.Items.TITLE, name.getText().toString());
+        Uri uri_id = Uri.parse(Item.Items.CONTENT_URI + "/" + _id);
+        getContentResolver().update(uri_id, values, null, null);
+    }
+
+    private View.OnTouchListener onTouch() {
+        return new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                disableElse(v);
+                return false;
+            }
+        };
+    }
+
+    public void disableElse(View v) {
+        if (!editTitle) {
+            editTitle = true;
+            fullOverlay.setVisibility(View.VISIBLE);
+        }
     }
 }

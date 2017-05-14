@@ -8,8 +8,10 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -20,21 +22,26 @@ import android.widget.TextView;
 public class ListActivity extends MainActivity {
 
     private Button runButton;
+    private boolean editTitle = false;
     private Context context = this;
+    private View fullOverlay;
     private String _id;
+    private Uri uri_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         _id = getIntent().getStringExtra("_id");
-        Uri uri = Uri.parse(Item.Items.CONTENT_URI + "/" + _id);
-        Cursor c = getContentResolver().query(uri, new String[]{Item.Items.TITLE}, null, null, null);
+        uri_id = Uri.parse(Item.Items.CONTENT_URI + "/" + _id);
+        Cursor c = getContentResolver().query(uri_id, new String[]{Item.Items.TITLE}, null, null, null);
         c.moveToFirst();
         name.setText(c.getString(0));
+        name.setOnTouchListener(onTouch());
         c.close();
+        name.setEnabled(true);
 
-        setEditable(name);
+        fullOverlay = findViewById(R.id.full_overlay);
         runButton = (Button) findViewById(R.id.run_button);
         runButton.setOnClickListener(runButtonListener());
         runButton.setVisibility(View.VISIBLE);
@@ -83,27 +90,39 @@ public class ListActivity extends MainActivity {
 
     @Override
     public void showNotes(View v) {
+        if (!editTitle) {
             Intent intent = new Intent(this, NotePopUp.class);
             intent.putExtra("_id", _id);
             startActivity(intent);
+        }
     }
 
-    @Override
-    protected void setEditable(View v) {
-        v.setOnLongClickListener(new View.OnLongClickListener() {
+    private View.OnTouchListener onTouch() {
+        return new View.OnTouchListener() {
+
             @Override
-            public boolean onLongClick(View v) {
-                editName(v);
-                return true;
+            public boolean onTouch(View v, MotionEvent event) {
+                disableElse(v);
+                return false;
             }
-        });
+        };
     }
 
     @Override
-    public void editName(View v) {
-        String editable = "editable placeholder";
-        ((TextView)v).setText(editable);
+    public void disableElse(View v) {
+        if (!editTitle) {
+            editTitle = true;
+            fullOverlay.setVisibility(View.VISIBLE);
+        }
     }
 
+    @Override
+    public void unFocusTitle(View v) {
+        fullOverlay.setVisibility(View.INVISIBLE);
+        editTitle = unfocusEdit(name);
+        ContentValues values = new ContentValues();
+        values.put(Item.Items.TITLE, name.getText().toString());
+        getContentResolver().update(uri_id, values, null, null);
+    }
 
 }

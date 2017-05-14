@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,34 +9,26 @@
         android:id="@+id/item_tw_bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/item_item_name"
+        android:layout_below="@+id/editable_title"
         android:background="@android:color/holo_green_light"
         android:gravity="center"
         android:onClick="notListListener"
         android:text="@string/click_to_add" />
 
-    <TextView
-        android:id="@+id/item_item_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:height="48dip"
-        android:background="@android:color/holo_blue_light"
-        android:gravity="center"
-        android:onClick="showNotes"
-        android:textSize="@dimen/text_size"
-        android:textStyle="bold" />
+    <include
+        layout="@layout/editable_title"/>
 
     <View
         android:id="@+id/item_placeholder"
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        android:layout_below="@id/item_item_name"
+        android:layout_below="@id/editable_title"
         android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/item_item_name"
+        android:layout_below="@id/editable_title"
         android:orientation="vertical">
 
         <EditText
@@ -86,14 +80,7 @@
         android:stateListAnimator="@null"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/item_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/item_placeholder"
-        android:alpha="@dimen/disabled_alpha"
-        android:background="@android:color/black"
-        android:visibility="invisible" />
+    <include layout="@layout/disable_overlay"/>
 
 </RelativeLayout>
 
