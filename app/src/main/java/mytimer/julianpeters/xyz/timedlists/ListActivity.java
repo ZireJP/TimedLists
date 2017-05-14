@@ -125,4 +125,10 @@ public class ListActivity extends MainActivity {
         getContentResolver().update(uri_id, values, null, null);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getContentResolver().notifyChange(ItemInItem.ItemInItems.CONTENT_URI, null);
+    }
+
 }
