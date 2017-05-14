@@ -55,28 +55,35 @@
                 android:layout_height="wrap_content"
                 android:weightSum="3">
 
-                <Button
+                <ImageButton
+                    android:id="@+id/back_button"
                     android:background="@android:color/holo_orange_light"
                     android:textStyle="bold"
                     android:onClick="back"
                     android:textSize="@dimen/text_size"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/list_item_size"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/back"
                     android:layout_weight="1"/>
-                <Button
+                <ImageButton
+                    android:id="@+id/play_button"
                     android:background="@android:color/holo_orange_light"
                     android:onClick="pause"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/list_item_size"
+                    android:src="@drawable/pause"
                     android:layout_weight="1"/>
-                <Button
+                <ImageButton
+                    android:id="@+id/forw_button"
                     android:background="@android:color/holo_orange_light"
                     android:textStyle="bold"
                     android:onClick="skip"
                     android:textSize="@dimen/text_size"
                     android:layout_width="0dp"
+                    android:src="@drawable/forward"
                     android:layout_height="@dimen/list_item_size"
                     android:layout_weight="1"/>
 

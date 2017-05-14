@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -48,6 +49,7 @@ public class RunPopUp extends Activity {
     int size;
     CountDownTimer cd;
     ObjectAnimator animation;
+    ImageButton pauseButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class RunPopUp extends Activity {
         run_continue = (Button) findViewById(R.id.run_continue);
         bar = (ProgressBar) findViewById(R.id.run_progressbar);
         listView = (ListView) findViewById(R.id.run_listview);
+        pauseButton = (ImageButton) findViewById(R.id.play_button);
 
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         ringtone = RingtoneManager.getRingtone(this, notification);
@@ -106,8 +109,11 @@ public class RunPopUp extends Activity {
 
     public void pause(View v) {
         if (paused) {
+            pauseButton.setImageDrawable(getDrawable(R.drawable.pause));
             cd = new MyCd(saveTime).start();
             setProgressAnimate(bar, saveTime);
+        } else {
+            pauseButton.setImageDrawable(getDrawable(R.drawable.play));
         }
         paused = !paused;
     }
