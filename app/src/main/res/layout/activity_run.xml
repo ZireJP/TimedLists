@@ -58,6 +58,7 @@
                 <ImageButton
                     android:id="@+id/back_button"
                     android:background="@android:color/holo_orange_light"
+                    android:scaleType="fitCenter"
                     android:textStyle="bold"
                     android:onClick="back"
                     android:textSize="@dimen/text_size"
@@ -70,6 +71,7 @@
                     android:id="@+id/play_button"
                     android:background="@android:color/holo_orange_light"
                     android:onClick="pause"
+                    android:scaleType="fitCenter"
                     android:textStyle="bold"
                     android:textSize="@dimen/text_size"
                     android:layout_width="0dp"
@@ -79,6 +81,7 @@
                 <ImageButton
                     android:id="@+id/forw_button"
                     android:background="@android:color/holo_orange_light"
+                    android:scaleType="fitCenter"
                     android:textStyle="bold"
                     android:onClick="skip"
                     android:textSize="@dimen/text_size"

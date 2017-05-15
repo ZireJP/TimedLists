@@ -2,12 +2,12 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="wrap_content" >
 
     <Button
         android:id="@+id/main_label"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/list_item_size"
         android:layout_toLeftOf="@+id/main_button"
         android:gravity="center"
         android:textAllCaps="false"
@@ -18,7 +18,7 @@
     <Button
         android:id="@id/main_button"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/list_item_size"
         android:layout_alignTop="@id/main_label"
         android:layout_alignBottom="@id/main_label"
         android:text="X"

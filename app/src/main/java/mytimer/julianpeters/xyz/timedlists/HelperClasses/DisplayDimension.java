@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.HelperClasses;
 
 import android.content.Context;
 import android.content.res.Resources;

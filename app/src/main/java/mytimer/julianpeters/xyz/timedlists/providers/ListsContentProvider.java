@@ -18,8 +18,8 @@ import android.util.Log;
 
 import java.util.HashMap;
 
-import mytimer.julianpeters.xyz.timedlists.Item;
-import mytimer.julianpeters.xyz.timedlists.ItemInItem;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.ItemInItem;
 
 /**
  * Created by julian on 08.05.17.
@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 24;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -117,7 +117,6 @@ public class ListsContentProvider extends ContentProvider {
             case USER_TABLE_ID:
                 Log.d("CALLED", "USER_TABLE_ID");
                 qb.setTables(ItemInItem.ItemInItems.table(uri.getLastPathSegment()));
-                selection = Item.Items.ITEM_ID + " = ?";
                 break;
             default:
                 Log.d("CALLED", "DEFAULT");
@@ -168,13 +167,8 @@ public class ListsContentProvider extends ContentProvider {
                 throw new SQLException("Failed to insert row into " + uri);
             case USER_TABLE_ID:
                 String tableId = uri.getLastPathSegment();
-                rowId = db.insert(LISTS_TABLE_NAME, Item.Items.TIME, val);
-                ContentValues inItem = new ContentValues();
-                inItem.put(ItemInItem.ItemInItems.FOREIGN_KEY, rowId);
-                inItem.put(ItemInItem.ItemInItems.REPEAT, 1);
-                tabRow = db.insert(USER_TABLE_NAME + tableId, ItemInItem.ItemInItems.REPEAT, inItem);
-                createNewList(db, Long.toString(rowId));
-                if (rowId > 0 && tabRow > 0) {
+                tabRow = db.insert(USER_TABLE_NAME + tableId, ItemInItem.ItemInItems.REPEAT, val);
+                if (tabRow > 0) {
                     Uri itemUri = ContentUris.withAppendedId(ItemInItem.ItemInItems.CONTENT_URI, tabRow);
                     getContext().getContentResolver().notifyChange(itemUri, null);
                     return itemUri;

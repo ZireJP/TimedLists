@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
+import mytimer.julianpeters.xyz.timedlists.R;
 
 /**
  * Created by julian on 11.05.17.

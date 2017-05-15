@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -18,6 +18,10 @@ public class Item {
 
         public static final Uri CONTENT_URI = Uri.parse("content://" +
                 ListsContentProvider.AUTHORITY + "/" + ListsContentProvider.LISTS_TABLE_NAME);
+
+        public static Uri getIdUri(String _id) {
+            return Uri.parse(CONTENT_URI + "/" + _id);
+        }
 
         public static final String CONTENT_TYPE = "item";
 

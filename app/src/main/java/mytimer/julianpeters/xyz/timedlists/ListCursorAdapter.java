@@ -10,8 +10,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.NumberPicker;
 import android.widget.SimpleCursorAdapter;
+
+import mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities.SetRepeatPopup;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.ItemInItem;
 
 /**
  * Created by julian on 09.05.17.
@@ -115,7 +118,7 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
                 if (((MainActivity)con).editIsActive) {
                     ((MainActivity)con).checkEdit();
                 } else {
-                    Intent intent = new Intent(con, Popup.class);
+                    Intent intent = new Intent(con, SetRepeatPopup.class);
                     intent.putExtra("_id", _id);
                     intent.putExtra("table_id", table_id);
                     con.startActivity(intent);
@@ -123,5 +126,4 @@ public class ListCursorAdapter extends SimpleCursorAdapter {
             }
         };
     }
-
 }

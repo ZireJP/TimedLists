@@ -11,9 +11,12 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+
+import mytimer.julianpeters.xyz.timedlists.Activities.MainActivities.RunActivity;
+import mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities.NotePopUp;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.ItemInItem;
 
 /**
  * Created by julian on 09.05.17.
@@ -45,6 +48,10 @@ public class ListActivity extends MainActivity {
         runButton = (Button) findViewById(R.id.run_button);
         runButton.setOnClickListener(runButtonListener());
         runButton.setVisibility(View.VISIBLE);
+
+        listView.setVisibility(View.INVISIBLE);
+        rV.setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -57,6 +64,16 @@ public class ListActivity extends MainActivity {
                 "table_" + getIntent().getStringExtra("_id"),
                 null,
                 null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        rVAdap.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        rVAdap.swapCursor(null);
     }
 
     @Override
@@ -77,11 +94,12 @@ public class ListActivity extends MainActivity {
         createItemAnimation();
     }
 
+
     private View.OnClickListener runButtonListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, RunPopUp.class);
+                Intent intent = new Intent(context, RunActivity.class);
                 intent.putExtra("_id", _id);
                 startActivity(intent);
             }

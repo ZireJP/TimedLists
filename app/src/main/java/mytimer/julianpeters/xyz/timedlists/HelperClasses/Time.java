@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.HelperClasses;
 
 /**
  * Created by julian on 10.05.17.

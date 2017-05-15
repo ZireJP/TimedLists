@@ -10,19 +10,19 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+
+import mytimer.julianpeters.xyz.timedlists.CustomAdapters.SubListCursorAdapter;
+import mytimer.julianpeters.xyz.timedlists.CustomViews.MaxListView;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -32,6 +32,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     public boolean editIsActive = false;
     protected View overlay;
     protected MaxListView listView;
+    protected RecyclerView rV;
+    protected SubListCursorAdapter rVAdap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         //iTouch.attachToRecyclerView();
         adapter = adapter();
         setListAdapter(adapter);
-        name = (EditText) findViewById(R.id.edit_name);
+        name = (EditText) findViewById(R.id.edit_title);
         editText = (EditText) findViewById(R.id.edit_text);
         editText.setVisibility(View.GONE);
         name.setEnabled(false);
@@ -61,6 +63,9 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         View footer = ((LayoutInflater)this.getSystemService(this.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer_layout, null);
         listView.addFooterView(footer);
         overlay = findViewById(R.id.main_overlay);
+        rV = (RecyclerView) findViewById(R.id.recycler_view);
+        rVAdap = new SubListCursorAdapter(this, null);
+        rV.setAdapter(rVAdap);
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -80,6 +85,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
+
     }
 
     @Override

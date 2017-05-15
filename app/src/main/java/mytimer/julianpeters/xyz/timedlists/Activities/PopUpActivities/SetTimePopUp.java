@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -7,8 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
+
+import mytimer.julianpeters.xyz.timedlists.CustomViews.CustomNumberPicker;
+import mytimer.julianpeters.xyz.timedlists.HelperClasses.Time;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
+import mytimer.julianpeters.xyz.timedlists.R;
 
 /**
  * Created by julian on 10.05.17.

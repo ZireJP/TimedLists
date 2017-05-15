@@ -23,6 +23,7 @@
         android:layout_below="@id/placeholder2"
         android:alpha="@dimen/disabled_alpha"
         android:background="@android:color/black"
+        android:onClick="checkEdit"
         android:visibility="invisible" />
 
     <View

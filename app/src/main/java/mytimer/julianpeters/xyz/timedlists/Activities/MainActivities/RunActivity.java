@@ -1,39 +1,40 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.Activities.MainActivities;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.shapes.Shape;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.text.Html;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import mytimer.julianpeters.xyz.timedlists.HelperClasses.DisplayDimension;
+import mytimer.julianpeters.xyz.timedlists.HelperClasses.Time;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.ItemInItem;
+import mytimer.julianpeters.xyz.timedlists.R;
+import mytimer.julianpeters.xyz.timedlists.CustomAdapters.RunArrayAdapter;
 
 /**
  * Created by julian on 10.05.17.
  */
 
-public class RunPopUp extends Activity {
+public class RunActivity extends Activity {
 
     ArrayList<String[]> allItems;
     TextView countdown;
@@ -43,7 +44,7 @@ public class RunPopUp extends Activity {
     Ringtone ringtone;
     ProgressBar bar;
     ListView listView;
-    RunListAdapter list;
+    RunArrayAdapter list;
     boolean paused;
     long saveTime;
     int size;
@@ -67,7 +68,7 @@ public class RunPopUp extends Activity {
         setProgressbarSize();
         String _id = getIntent().getStringExtra("_id");
         newArray(_id);
-        list = new RunListAdapter(this, R.layout.run_list, allItems);
+        list = new RunArrayAdapter(this, R.layout.run_list, allItems);
         listView.setAdapter(list);
         int max = allItems.size();
         size = allItems.size();
@@ -83,6 +84,7 @@ public class RunPopUp extends Activity {
 
     public void back(View v) {
         cd.cancel();
+        run_continue.setVisibility(View.GONE);
         animation.cancel();
         current--;
         if (current < 0) {
@@ -96,6 +98,7 @@ public class RunPopUp extends Activity {
 
     public void skip(View v) {
         cd.cancel();
+        run_continue.setVisibility(View.GONE);
         animation.cancel();
         current++;
         if (current > size-1) {
@@ -226,8 +229,13 @@ public class RunPopUp extends Activity {
 
     @Override
     protected void onDestroy() {
-        cd.cancel();
-        super.onDestroy();
+        try {
+            cd.cancel();
+        } catch (NullPointerException e) {
+            Log.d("NullPointerException" ,"timer already finished");
+        } finally {
+            super.onDestroy();
+        }
     }
 
     private void setProgressMax(ProgressBar pb, int max) {

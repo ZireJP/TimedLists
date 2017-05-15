@@ -31,19 +31,36 @@
             android:windowSoftInputMode="adjustNothing"
             >
         </activity>
-        <activity android:name=".Popup"
+        <activity android:name=".Activities.MainActivities.ItemActivity"
+        android:theme="@style/AppTheme.NoAnimation"
+        android:windowSoftInputMode="adjustNothing"/>
+        <activity android:name=".Activities.MainActivities.ListActivitySub"
+            android:theme="@style/AppTheme.NoAnimation"
+            android:windowSoftInputMode="adjustNothing"/>
+
+        <activity android:name=".Activities.PopUpActivities.SetRepeatPopup"
             android:theme="@style/AppTheme.PopUpTransparent">
         </activity>
-        <activity android:name=".RunPopUp"
+        <activity android:name=".Activities.MainActivities.RunActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustNothing">
         </activity>
-        <activity android:name=".NotePopUp"
+        <activity android:name=".Activities.PopUpActivities.NotePopUp"
             android:theme="@style/AppTheme.PopUpTransparent"
             android:windowSoftInputMode="adjustResize">
         </activity>
-        <activity android:name=".SetTimePopUp"
+        <activity android:name=".Activities.PopUpActivities.SetTimePopUp"
             android:theme="@style/AppTheme.PopUpTransparent"/>
+
+        <activity android:name=".Activities.MainActivities.ListActivityMain"
+            android:theme="@style/AppTheme.NoAnimation"
+            android:windowSoftInputMode="adjustNothing">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+            </activity>
     </application>
 
 </manifest>

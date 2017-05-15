@@ -18,6 +18,13 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import mytimer.julianpeters.xyz.timedlists.Activities.MainActivities.RunActivity;
+import mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities.NotePopUp;
+import mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities.SetTimePopUp;
+import mytimer.julianpeters.xyz.timedlists.HelperClasses.Time;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.ItemInItem;
+
 public class ItemActivity extends Activity {
 
     String _id;
@@ -178,7 +185,7 @@ public class ItemActivity extends Activity {
     }
 
     private void findViews() {
-        name = (TextView) findViewById(R.id.edit_name);
+        name = (TextView) findViewById(R.id.edit_title);
         textView = (TextView) findViewById(R.id.item_tw_bottom);
         editText = (EditText) findViewById(R.id.item_edit_text);
         overlay = findViewById(R.id.main_overlay);
@@ -193,7 +200,7 @@ public class ItemActivity extends Activity {
 
     public void runItem(View v) {
             String _id = getIntent().getStringExtra("_id");
-            Intent intent = new Intent(this, RunPopUp.class);
+            Intent intent = new Intent(this, RunActivity.class);
             intent.putExtra("_id", _id);
             startActivity(intent);
     }

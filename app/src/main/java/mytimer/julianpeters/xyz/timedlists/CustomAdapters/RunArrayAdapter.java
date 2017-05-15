@@ -1,12 +1,10 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.CustomAdapters;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +12,26 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import java.util.List;
 
+import mytimer.julianpeters.xyz.timedlists.Activities.MainActivities.RunActivity;
+import mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities.NotePopUp;
+import mytimer.julianpeters.xyz.timedlists.HelperClasses.Time;
+import mytimer.julianpeters.xyz.timedlists.R;
+
 /**
  * Created by julian on 11.05.17.
  */
 
-public class RunListAdapter extends ArrayAdapter<String[]> {
+public class RunArrayAdapter extends ArrayAdapter<String[]> {
 
     int i;
 
-    public RunListAdapter(Context context, int textViewResourceId) {
+    public RunArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
-    public RunListAdapter(Context context, int resource, List<String[]> items) {
+    public RunArrayAdapter(Context context, int resource, List<String[]> items) {
        super(context, resource, items);
-       i = ((RunPopUp) context).current;
+       i = ((RunActivity) context).current;
     }
 
     @NonNull

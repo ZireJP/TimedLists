@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.CustomViews;
 
 import android.content.Context;
 import android.util.AttributeSet;

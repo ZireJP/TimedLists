@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.Activities.PopUpActivities;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -10,11 +10,14 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.NumberPicker;
 
+import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.ItemInItem;
+import mytimer.julianpeters.xyz.timedlists.R;
+
 /**
  * Created by julian on 10.05.17.
  */
 
-public class Popup extends Activity {
+public class SetRepeatPopup extends Activity {
 
     NumberPicker np;
     String _id;
