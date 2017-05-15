@@ -20,19 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textSize="@dimen/text_size"
+        android:layout_alignParentRight="true"
         android:textStyle="bold"
-        android:layout_toLeftOf="@+id/list_button"
         android:background="@android:color/holo_purple"
         />
-
-    <Button
-        android:id="@+id/list_button"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:text="X"
-        android:textStyle="bold"
-        android:textSize="@dimen/text_size"
-        android:textColor="@android:color/holo_red_light"
-        android:background="@android:color/black"/>
 </RelativeLayout>

@@ -28,23 +28,50 @@ import mytimer.julianpeters.xyz.timedlists.providers.helpers.ItemInItem;
 public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCursorAdapter.ViewHolder> {
 
     Context mContext;
+    final String table_id;
 
     public SubListCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor);
         mContext = context;
+        table_id = ((Activity) mContext).getIntent().getStringExtra("_id");
+    }
 
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        Cursor c = getCursor();
+        c.moveToPosition(position);
+        ContentResolver resolver = mContext.getContentResolver();
+        String foreign_id = c.getString(c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY));
+        resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", foreign_id, null);
+
+        String _id = c.getString(c.getColumnIndex(ItemInItem.ItemInItems.ITEM_ID));
+        String selection = ItemInItem.ItemInItems.ITEM_ID + " = ?";
+        resolver.delete(ItemInItem.ItemInItems.getContentUri(table_id), selection, new String[]{_id});
+        Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table_id, null);
+        int i = rows.getInt("rows");
+        if (i == 0) {
+            ContentValues type = new ContentValues();
+            type.put(Item.Items.IS_LIST, false);
+            selection = Item.Items._ID + " = ?";
+            resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
+            Helper.launchIntent(mContext, false, table_id);
+            ((Activity) mContext).finish();
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         Button text;
         Button repeat;
-        Button del;
 
         ViewHolder(View view) {
             super(view);
             text = (Button) view.findViewById(R.id.list_label);
             repeat = (Button) view.findViewById(R.id.list_repeat);
-            del = (Button) view.findViewById(R.id.list_button);
         }
     }
 
@@ -62,7 +89,6 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
         viewHolder.repeat.setText(Integer.toString(subListItem.getRepeat()));
         final boolean isList = subListItem.isList();
 
-        final String table_id = ((Activity) mContext).getIntent().getStringExtra("_id");
         viewHolder.text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,27 +97,6 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
         });
 
         viewHolder.repeat.setOnClickListener(showRepeatSetter(mContext, subListItem.getId(), table_id));
-
-        viewHolder.del.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContentResolver resolver = mContext.getContentResolver();
-                String inItemSel = ItemInItem.ItemInItems.ITEM_ID + " = ?";
-                resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", subListItem.getForeign(), null);
-                String table = "table_" + table_id;
-                resolver.delete(ItemInItem.ItemInItems.CONTENT_URI, inItemSel, new String[]{table, subListItem.getId()});
-                Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table, null);
-                int i = rows.getInt("rows");
-                if (i == 0) {
-                    ContentValues type = new ContentValues();
-                    type.put(Item.Items.IS_LIST, false);
-                    String selection = Item.Items._ID + " = ?";
-                    resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
-                    Helper.launchIntent(mContext, false, table_id);
-                    ((Activity) mContext).finish();
-                }
-            }
-        });
     }
 
     public View.OnClickListener showRepeatSetter(final Context con, final String _id, final String table_id) {

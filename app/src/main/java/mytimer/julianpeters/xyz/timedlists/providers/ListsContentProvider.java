@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 24;
+    private static final int DATABASE_VERSION = 25;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -196,6 +196,9 @@ public class ListsContentProvider extends ContentProvider {
             case USER_TABLE:
                 count = db.delete(selectionArgs[0], selection, new String[]{selectionArgs[1]});
                 break;
+            case USER_TABLE_ID:
+                count = db.delete(USER_TABLE_NAME + uri.getLastPathSegment(), selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -243,7 +246,7 @@ public class ListsContentProvider extends ContentProvider {
         Bundle bundle = new Bundle();
         switch(method) {
             case "getRows":
-                bundle.putInt("rows", getRows(Item.Items.CONTENT_URI, arg));
+                bundle.putInt("rows", getRows(Item.Items.CONTENT_URI, USER_TABLE_NAME + arg));
                 return bundle;
             case "deleteAllItemsOf":
                 SQLiteDatabase db = dbHelper.getWritableDatabase();

@@ -21,18 +21,35 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<MainCursorAdapt
 
     Context mContext;
 
-    public MainCursorAdapter(Context context, Cursor cursor){
+    public MainCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor);
         mContext = context;
     }
 
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+
+        } else {
+
+        }
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        Cursor c = getCursor();
+        c.moveToPosition(position);
+        String _id = c.getString(c.getColumnIndex(Item.Items.ITEM_ID));
+        mContext.getContentResolver().call(Item.Items.CONTENT_URI, "deleteAllItemsOf", _id, null);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         Button text;
-        Button del;
+
         ViewHolder(View view) {
             super(view);
             text = (Button) view.findViewById(R.id.main_label);
-            del = (Button) view.findViewById(R.id.main_button);
         }
     }
 
@@ -56,15 +73,6 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<MainCursorAdapt
                 Helper.launchIntent(mContext, isList, _id);
             }
         });
-
-        viewHolder.del.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContext.getContentResolver().call(Item.Items.CONTENT_URI, "deleteAllItemsOf", _id, null);
-
-            }
-        });
-
     }
 
 }

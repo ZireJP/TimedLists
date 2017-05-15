@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
+import mytimer.julianpeters.xyz.timedlists.MyTouchHelper;
 import mytimer.julianpeters.xyz.timedlists.adapters.*;
 import mytimer.julianpeters.xyz.timedlists.R;
 
@@ -23,6 +25,9 @@ abstract class ListActivityBase extends BaseActivity {
         super.onCreate(savedInstanceState);
         rvAdapter = getAdapter();
         ((RecyclerView)itemView).setAdapter(rvAdapter);
+        ItemTouchHelper.Callback callback = new MyTouchHelper(rvAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView((RecyclerView)itemView);
     }
 
     @Override
