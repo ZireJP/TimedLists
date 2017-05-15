@@ -51,4 +51,6 @@ abstract class ListActivityBase extends BaseActivity {
     public void onLoaderReset(Loader<Cursor> loader) {
         rvAdapter.swapCursor(null);
     }
+
+    abstract int getRowNumber();
 }

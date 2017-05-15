@@ -36,5 +36,7 @@ public class Item {
         public static final String IS_LIST = "is_list";
 
         public static final String TAG = "tag";
+
+        public static final String ORDER = "item_order";
     }
 }

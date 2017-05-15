@@ -55,11 +55,10 @@ public class SetRepeatPopup extends Activity {
     public void setRepeatTime(View v) {
         ContentValues values = new ContentValues();
         String[] id = {getIntent().getStringExtra("_id")};
-        values.put("table_id", ItemInItem.ItemInItems.table(getIntent().getStringExtra("table_id")));
+        table_id = getIntent().getStringExtra("table_id");
         values.put(ItemInItem.ItemInItems.REPEAT, np.getValue());
         String selection = ItemInItem.ItemInItems.ITEM_ID + " = ?";
-        getContentResolver().update(ItemInItem.ItemInItems.CONTENT_URI, values, selection, id);
+        getContentResolver().update(ItemInItem.ItemInItems.getContentUri(table_id), values, selection, id);
         finish();
     }
-
 }

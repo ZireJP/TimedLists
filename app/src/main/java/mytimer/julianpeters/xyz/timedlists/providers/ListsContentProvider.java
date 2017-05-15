@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 25;
+    private static final int DATABASE_VERSION = 27;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -63,6 +63,7 @@ public class ListsContentProvider extends ContentProvider {
                     + " INTEGER PRIMARY KEY AUTOINCREMENT, " + Item.Items.TITLE + " VARCHAR(255), "
                     + Item.Items.NOTES + " VARCHAR(8000), "
                     + Item.Items.TIME + " INTEGER, " + Item.Items.IS_LIST + " BOOLEAN, "
+                    + Item.Items.ORDER + " INTEGER, "
                     + Item.Items.TAG + " VARCHAR(8));");
         }
 
@@ -220,9 +221,10 @@ public class ListsContentProvider extends ContentProvider {
                 count = db.update(LISTS_TABLE_NAME, values, selection, selectionArgs);
                 break;
             case USER_TABLE:
-                String table = values.getAsString("table_id");
-                values.remove("table_id");
-                count = db.update(table, values, selection, selectionArgs);
+                count = 0;
+                break;
+            case USER_TABLE_ID:
+                count = db.update(USER_TABLE_NAME + uri.getLastPathSegment(), values, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -232,12 +234,14 @@ public class ListsContentProvider extends ContentProvider {
         return count;
     }
 
-    public int getRows(@NonNull Uri uri, String table_id) {
+    public int getRows(String table_id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String count = "SELECT count(*) FROM " + table_id;
         Cursor cursor = db.rawQuery(count, null);
         cursor.moveToFirst();
-        return cursor.getInt(0);
+        int i =  cursor.getInt(0);
+        cursor.close();
+        return i;
     }
 
     @Nullable
@@ -246,15 +250,28 @@ public class ListsContentProvider extends ContentProvider {
         Bundle bundle = new Bundle();
         switch(method) {
             case "getRows":
-                bundle.putInt("rows", getRows(Item.Items.CONTENT_URI, USER_TABLE_NAME + arg));
+                bundle.putInt("rows", getRows(USER_TABLE_NAME + arg));
                 return bundle;
             case "deleteAllItemsOf":
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 bundle.putInt("deletes", deleteAllItemsOf(db, arg));
                 return bundle;
+            case "increment":
+                SQLiteDatabase db2 = dbHelper.getWritableDatabase();
+                String i = extras.getString("toPosition");
+                String _id = extras.getString("_id");
+                String[] args = extras.getStringArray("args");
+                String increment = extras.getString("increment");
+                db2.execSQL("UPDATE " + LISTS_TABLE_NAME + " SET " + Item.Items.ORDER + " = " + Item.Items.ORDER + " " + increment + " WHERE " + Item.Items.ITEM_ID + " = ?", args);
+                db2.execSQL("UPDATE " + LISTS_TABLE_NAME + " SET " + Item.Items.ORDER + " = " + i + " WHERE " + Item.Items.ITEM_ID + " = ?" , new String[]{_id});
+                getContext().getContentResolver().notifyChange(Item.Items.CONTENT_URI, null);
             default:
                 return null;
         }
+
+    }
+
+    public void increment() {
 
     }
 
@@ -263,6 +280,7 @@ public class ListsContentProvider extends ContentProvider {
                 + Item.Items.ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ItemInItem.ItemInItems.NAME + " VARCHAR(255),"
                 + ItemInItem.ItemInItems.REPEAT + " INTEGER, "
+                + ItemInItem.ItemInItems.ORDER + " INTEGER, "
                 + ItemInItem.ItemInItems.FOREIGN_KEY + " INTEGER, FOREIGN KEY ("
                 + ItemInItem.ItemInItems.FOREIGN_KEY + ") REFERENCES "
                 + LISTS_TABLE_NAME + "(" + Item.Items.ITEM_ID + "));");
@@ -316,5 +334,6 @@ public class ListsContentProvider extends ContentProvider {
         listsProjectionMap.put(Item.Items.IS_LIST, Item.Items.IS_LIST);
         listsProjectionMap.put(Item.Items.TAG, Item.Items.TAG);
         listsProjectionMap.put(Item.Items.NOTES, Item.Items.NOTES);
+        listsProjectionMap.put(Item.Items.ORDER, Item.Items.ORDER);
     }
 }

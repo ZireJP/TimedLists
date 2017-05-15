@@ -32,6 +32,8 @@ public class ItemInItem {
 
         public static final String NAME = "name";
 
+        public static final String ORDER = "item_order";
+
         public static String table(String _id) {
             return "table_" + _id;
         }

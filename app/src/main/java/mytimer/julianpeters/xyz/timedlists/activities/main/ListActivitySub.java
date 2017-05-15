@@ -30,6 +30,11 @@ public class ListActivitySub extends ListActivityBase {
     }
 
     @Override
+    int getRowNumber() {
+        return 0;
+    }
+
+    @Override
     void setTitle() {
         Cursor c = getContentResolver().query(Item.Items.getIdUri(_id),
                 new String[]{Item.Items.TITLE}, null, null, null);

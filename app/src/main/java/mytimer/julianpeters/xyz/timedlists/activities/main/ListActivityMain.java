@@ -6,6 +6,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 
 import mytimer.julianpeters.xyz.timedlists.adapters.*;
@@ -51,13 +52,22 @@ public class ListActivityMain extends ListActivityBase {
                 proj,
                 selection,
                 selectionArgs,
-                null);
+                Item.Items.ORDER);
     }
 
     @Override
     public ContentValues getContentValues() {
         ContentValues values = super.getContentValues();
         values.put(Item.Items.TAG, "fav");
+        Log.d("ROW NUMBER", "" + getRowNumber());
+        values.put(Item.Items.ORDER, getRowNumber());
         return values;
+    }
+
+    int getRowNumber() {
+        Cursor c = getContentResolver().query(Item.Items.CONTENT_URI, null, Item.Items.TAG + " = ?", new String[]{"fav"}, null);
+        int i = c.getCount();
+        c.close();
+        return i;
     }
 }
