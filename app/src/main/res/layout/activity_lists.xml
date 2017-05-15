@@ -9,22 +9,20 @@
     <include layout="@layout/fragment_et_title"/>
 
     <LinearLayout
-        android:layout_below="@+id/editable_title"
-        android:layout_above="@+id/run_button"
+        android:layout_below="@id/editable_title"
+        android:layout_above="@id/run_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <include layout="@layout/fragment_et_new"/>
 
-        <Button
-            android:id="@+id/time_button"
-            android:background="@android:color/holo_orange_light"
-            android:textStyle="bold"
-            android:textSize="@dimen/text_size"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
             android:layout_width="match_parent"
-            android:onClick="showTimeSpinner"
-            android:layout_height="@dimen/list_item_size"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <include layout="@layout/fragment_button_run"/>

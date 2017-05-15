@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">MyTimer</string>
-    <string name="title_activity_exercise">ExerciseActivity</string>
-    <string name="title_activity_workout">WorkoutActivity</string>
+    <string name="app_name">TimedLists</string>
 
     <string name="set">Set</string>
     <string name="cancel">Cancel</string>

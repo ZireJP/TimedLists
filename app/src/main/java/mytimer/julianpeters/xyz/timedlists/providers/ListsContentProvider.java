@@ -18,8 +18,8 @@ import android.util.Log;
 
 import java.util.HashMap;
 
-import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.Item;
-import mytimer.julianpeters.xyz.timedlists.providers.ProviderHelperClasses.ItemInItem;
+import mytimer.julianpeters.xyz.timedlists.providers.helpers.Item;
+import mytimer.julianpeters.xyz.timedlists.providers.helpers.ItemInItem;
 
 /**
  * Created by julian on 08.05.17.
@@ -225,6 +225,7 @@ public class ListsContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(ItemInItem.ItemInItems.CONTENT_URI, null);
         return count;
     }
 

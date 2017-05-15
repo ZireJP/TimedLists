@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border"
+    android:padding="@dimen/border_size">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3">
+
+        <mytimer.julianpeters.xyz.timedlists.views.CustomNumberPicker
+            android:id="@+id/set_item_hours"
+            max="99"
+            min="0"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/number_picker"/>
+
+        <mytimer.julianpeters.xyz.timedlists.views.CustomNumberPicker
+            android:id="@+id/set_item_minutes"
+            max="59"
+            min="0"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/number_picker"/>
+
+        <mytimer.julianpeters.xyz.timedlists.views.CustomNumberPicker
+            android:id="@+id/set_item_seconds"
+            max="59"
+            min="0"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/number_picker"/>
+
+    </LinearLayout>
+
+    <Button
+        android:onClick="setTime"
+        android:background="@android:color/holo_orange_light"
+        android:text="@string/set"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_size" />
+
+
+
+</LinearLayout>
