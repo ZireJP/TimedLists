@@ -10,4 +10,6 @@
     <string name="click_to_add">Click to add item</string>
     <string name="notes">Notes</string>
     <string name="main_title">LISTS</string>
+    <string name="add_date">Add Date</string>
+    <string name="date_format">\n&lt;++&gt; %1$s, %2$s:\n</string>
 </resources>

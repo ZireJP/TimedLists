@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -53,6 +55,7 @@ public class RunActivity extends Activity {
     CountDownTimer cd = null;
     ObjectAnimator animation;
     ImageButton pauseButton;
+    MediaPlayer mp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,8 +67,9 @@ public class RunActivity extends Activity {
         listView = (ListView) findViewById(R.id.run_listview);
         pauseButton = (ImageButton) findViewById(R.id.play_button);
 
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        ringtone = RingtoneManager.getRingtone(this, notification);
+        //Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //ringtone = RingtoneManager.getRingtone(this, notification);
+        mp = MediaPlayer.create(this, R.raw.short_sound);
 
         setProgressbarSize();
         String _id = getIntent().getStringExtra("_id");
@@ -167,7 +171,8 @@ public class RunActivity extends Activity {
 
         @Override
         public void onFinish() {
-            ringtone.play();
+            //ringtone.play();
+            mp.start();
             if (current < size - 1) {
                 final String[] item = allItems.get(current + 1);
                 current++;

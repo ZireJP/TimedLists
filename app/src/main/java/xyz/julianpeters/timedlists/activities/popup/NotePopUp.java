@@ -3,6 +3,7 @@ package xyz.julianpeters.timedlists.activities.popup;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -54,6 +55,18 @@ public class NotePopUp extends Activity {
 
     public void set(View v) {
         finish();
+    }
+
+    public void addDate(View v) {
+        Calendar c = Calendar.getInstance();
+        String date = c.get(Calendar.DATE) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.YEAR);
+        String time;
+        if (c.get(Calendar.AM_PM) == 1) {
+            time = c.get(Calendar.HOUR)+12 + ":" + c.get(Calendar.MINUTE);
+        } else {
+            time = c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE);
+        }
+        notes.append(getResources().getString(R.string.date_format, date, time));
     }
 
     @Override
