@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:weightSum="3">
 
-        <mytimer.julianpeters.xyz.timedlists.views.CustomNumberPicker
+        <xyz.julianpeters.timedlists.views.CustomNumberPicker
             android:id="@+id/set_item_hours"
             max="99"
             min="0"
@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/number_picker"/>
 
-        <mytimer.julianpeters.xyz.timedlists.views.CustomNumberPicker
+        <xyz.julianpeters.timedlists.views.CustomNumberPicker
             android:id="@+id/set_item_minutes"
             max="59"
             min="0"
@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/number_picker"/>
 
-        <mytimer.julianpeters.xyz.timedlists.views.CustomNumberPicker
+        <xyz.julianpeters.timedlists.views.CustomNumberPicker
             android:id="@+id/set_item_seconds"
             max="59"
             min="0"

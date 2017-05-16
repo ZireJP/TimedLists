@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="mytimer.julianpeters.xyz.timedlists">
+    package="xyz.julianpeters.timedlists">
 
     <application
         android:allowBackup="true"
@@ -11,11 +11,11 @@
         android:theme="@style/AppTheme">
 
         <provider
-            android:name=".providers.ListsContentProvider"
-            android:authorities="mytimer.julianpeters.xyz.timedlists.providers.ListsContentProvider" />
+            android:name="xyz.julianpeters.timedlists.providers.ListsContentProvider"
+            android:authorities="xyz.julianpeters.timedlists.providers.ListsContentProvider" />
 
         <activity
-            android:name=".activities.main.ListActivityMain"
+            android:name="xyz.julianpeters.timedlists.activities.main.ListActivityMain"
             android:theme="@style/AppTheme.NoAnimation"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
@@ -25,25 +25,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.main.ItemActivity"
+            android:name="xyz.julianpeters.timedlists.activities.main.ItemActivity"
             android:theme="@style/AppTheme.NoAnimation"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name=".activities.main.ListActivitySub"
+            android:name="xyz.julianpeters.timedlists.activities.main.ListActivitySub"
             android:theme="@style/AppTheme.NoAnimation"/>
         <activity
-            android:name=".activities.popup.SetRepeatPopup"
+            android:name="xyz.julianpeters.timedlists.activities.popup.SetRepeatPopup"
             android:theme="@style/AppTheme.PopUpTransparent"/>
         <activity
-            android:name=".activities.main.RunActivity"
+            android:name="xyz.julianpeters.timedlists.activities.main.RunActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustNothing"/>
         <activity
-            android:name=".activities.popup.NotePopUp"
+            android:name="xyz.julianpeters.timedlists.activities.popup.NotePopUp"
             android:theme="@style/AppTheme.PopUpTransparent"
             android:windowSoftInputMode="adjustResize"/>
         <activity
-            android:name=".activities.popup.SetTimePopUp"
+            android:name="xyz.julianpeters.timedlists.activities.popup.SetTimePopUp"
             android:theme="@style/AppTheme.PopUpTransparent"/>
 
     </application>
