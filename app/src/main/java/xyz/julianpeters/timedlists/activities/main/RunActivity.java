@@ -36,6 +36,8 @@ import xyz.julianpeters.timedlists.adapters.RunArrayAdapter;
 
 public class RunActivity extends Activity {
 
+    int SCROLL_TIME = 200;
+
     ArrayList<String[]> allItems;
     TextView countdown;
     Button run_continue;
@@ -94,7 +96,7 @@ public class RunActivity extends Activity {
         }
         list.setCurrent(current);
         list.notifyDataSetChanged();
-        listView.smoothScrollToPosition(current);
+        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer(allItems.get(current), current, size);
     }
 
@@ -110,7 +112,7 @@ public class RunActivity extends Activity {
         }
         list.setCurrent(current);
         list.notifyDataSetChanged();
-        listView.smoothScrollToPosition(current);
+        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer(allItems.get(current), current, size);
     }
 
@@ -171,7 +173,7 @@ public class RunActivity extends Activity {
                 current++;
                 list.setCurrent(current);
                 list.notifyDataSetChanged();
-                listView.smoothScrollToPosition(current);
+                listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
                 timer(item, current, size);
             } else {
                 countdown.setText("Finished");
@@ -189,7 +191,7 @@ public class RunActivity extends Activity {
                     current++;
                     list.setCurrent(current);
                     list.notifyDataSetChanged();
-                    listView.smoothScrollToPosition(current);
+                    listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
                     timer(item, i + 1, items);
                 } else {
                     countdown.setText("Finished");

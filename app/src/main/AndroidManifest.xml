@@ -30,7 +30,8 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="xyz.julianpeters.timedlists.activities.main.ListActivitySub"
-            android:theme="@style/AppTheme.NoAnimation"/>
+            android:theme="@style/AppTheme.NoAnimation"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name="xyz.julianpeters.timedlists.activities.popup.SetRepeatPopup"
             android:theme="@style/AppTheme.PopUpTransparent"/>
