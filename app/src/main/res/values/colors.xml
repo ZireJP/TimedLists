@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="highlight">#33b5e5</color>
     <color name="textColor">#303F9F</color>
+    <color name="deleteColor">#ffff4444</color>
+
 </resources>

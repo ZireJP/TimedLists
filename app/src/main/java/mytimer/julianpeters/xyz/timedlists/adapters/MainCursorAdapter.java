@@ -12,12 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import mytimer.julianpeters.xyz.timedlists.adapters.helpers.MainListItem;
 import mytimer.julianpeters.xyz.timedlists.helpers.Helper;
 import mytimer.julianpeters.xyz.timedlists.R;
+import mytimer.julianpeters.xyz.timedlists.providers.ListsContentProvider;
 import mytimer.julianpeters.xyz.timedlists.providers.helpers.Item;
 
 /**
@@ -34,45 +36,6 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<MainCursorAdapt
     }
 
     @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
-        ContentResolver resolver = mContext.getContentResolver();
-        ContentValues values;
-        Cursor c = getCursor();
-        int i = c.getColumnIndex(Item.Items.ITEM_ID);
-        if (fromPosition < toPosition) {
-            c.moveToPosition(fromPosition);
-            String[] items = new String[toPosition - fromPosition];
-            String _id = c.getString(i);
-            c.moveToNext();
-            for (int j = 0; j < toPosition - fromPosition; j++) {
-                items[j] = c.getString(i);
-                c.moveToNext();
-            }
-            Bundle bundle = new Bundle();
-            bundle.putString("_id", _id);
-            bundle.putStringArray("args", items);
-            bundle.putString("toPosition", Integer.toString(toPosition));
-            bundle.putString("increment", "-1");
-            resolver.call(Item.Items.CONTENT_URI, "increment", null, bundle);
-        } else {
-            c.moveToPosition(toPosition);
-            String[] items = new String[fromPosition - toPosition];
-            for (int j = 0; j < fromPosition - toPosition; j++) {
-                items[j] = c.getString(i);
-                c.moveToNext();
-            }
-            String _id = c.getString(i);
-            Bundle bundle = new Bundle();
-            bundle.putString("_id", _id);
-            bundle.putStringArray("args", items);
-            bundle.putString("toPosition", Integer.toString(toPosition));
-            bundle.putString("increment", "+1");
-            resolver.call(Item.Items.CONTENT_URI, "increment", null, bundle);
-        }
-        return true;
-    }
-
-    @Override
     public void onItemDismiss(int position) {
         Cursor c = getCursor();
         c.moveToPosition(position);
@@ -80,12 +43,23 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<MainCursorAdapt
         String _id = c.getString(i);
         ContentResolver resolver = mContext.getContentResolver();
         resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", _id, null);
-        while (c.moveToNext()) {
-            _id = c.getString(i);
-            ContentValues values = new ContentValues();
-            values.put(Item.Items.ORDER, position);
-            int y = resolver.update(Item.Items.getIdUri(_id), values, null, null);
-            position++;
+        Bundle b = new Bundle();
+        b.putString("position", Integer.toString(position));
+        b.putString("table", ListsContentProvider.LISTS_TABLE_NAME);
+        b.putString("order", Item.Items.ORDER);
+        resolver.call(Item.Items.CONTENT_URI, "deleteIncrement", null, b);
+        notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onReleased() {
+        int i = 0;
+        ContentResolver resolver = mContext.getContentResolver();
+        ContentValues values = new ContentValues();
+        for (String id : ids) {
+            values.put(Item.Items.ORDER, i);
+            resolver.update(Item.Items.getIdUri(id), values, null, null);
+            i++;
         }
     }
 
@@ -95,6 +69,13 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<MainCursorAdapt
         ViewHolder(View view) {
             super(view);
             text = (Button) view.findViewById(R.id.main_label);
+        }
+    }
+
+    static class FooterHolder extends RecyclerView.ViewHolder {
+
+        public FooterHolder(View itemView) {
+            super(itemView);
         }
     }
 
@@ -111,6 +92,7 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<MainCursorAdapt
         viewHolder.text.setText(mainListItem.getName());
         final String _id = mainListItem.get_id();
         final boolean isList = mainListItem.isList();
+        ids.add(_id);
 
         viewHolder.text.setOnClickListener(new View.OnClickListener() {
             @Override

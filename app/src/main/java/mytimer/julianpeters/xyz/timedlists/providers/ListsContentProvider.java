@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 27;
+    private static final int DATABASE_VERSION = 29;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -256,23 +256,16 @@ public class ListsContentProvider extends ContentProvider {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 bundle.putInt("deletes", deleteAllItemsOf(db, arg));
                 return bundle;
-            case "increment":
-                SQLiteDatabase db2 = dbHelper.getWritableDatabase();
-                String i = extras.getString("toPosition");
-                String _id = extras.getString("_id");
-                String[] args = extras.getStringArray("args");
-                String increment = extras.getString("increment");
-                db2.execSQL("UPDATE " + LISTS_TABLE_NAME + " SET " + Item.Items.ORDER + " = " + Item.Items.ORDER + " " + increment + " WHERE " + Item.Items.ITEM_ID + " = ?", args);
-                db2.execSQL("UPDATE " + LISTS_TABLE_NAME + " SET " + Item.Items.ORDER + " = " + i + " WHERE " + Item.Items.ITEM_ID + " = ?" , new String[]{_id});
-                getContext().getContentResolver().notifyChange(Item.Items.CONTENT_URI, null);
+            case "deleteIncrement":
+                SQLiteDatabase db3 = dbHelper.getWritableDatabase();
+                String y = extras.getString("position");
+                String tabley = extras.getString("table");
+                String ordery = extras.getString("order");
+                db3.execSQL("UPDATE " + tabley + " SET " + ordery + " = " + ordery + " -1" + " WHERE " + ordery + " > " + y);
+                return null;
             default:
                 return null;
         }
-
-    }
-
-    public void increment() {
-
     }
 
     public void createNewList(SQLiteDatabase db, String _id) {

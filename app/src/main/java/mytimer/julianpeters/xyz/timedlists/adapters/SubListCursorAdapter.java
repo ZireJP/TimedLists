@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +38,6 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
     }
 
     @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
-        return true;
-    }
-
-    @Override
     public void onItemDismiss(int position) {
         Cursor c = getCursor();
         c.moveToPosition(position);
@@ -52,6 +48,13 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
         String _id = c.getString(c.getColumnIndex(ItemInItem.ItemInItems.ITEM_ID));
         String selection = ItemInItem.ItemInItems.ITEM_ID + " = ?";
         resolver.delete(ItemInItem.ItemInItems.getContentUri(table_id), selection, new String[]{_id});
+
+        ContentValues values = new ContentValues();
+        values.put(Item.Items.ORDER, Item.Items.ORDER + " -1");
+        selection = ItemInItem.ItemInItems.ORDER + " > " + position;
+        int updates = resolver.update(ItemInItem.ItemInItems.getContentUri(table_id), values, selection, null);
+        Log.d("Table updates", "" + updates);
+
         Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table_id, null);
         int i = rows.getInt("rows");
         if (i == 0) {
@@ -61,6 +64,19 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
             resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
             Helper.launchIntent(mContext, false, table_id);
             ((Activity) mContext).finish();
+        }
+    }
+
+    @Override
+    public void onReleased() {
+        int i = 0;
+        ContentResolver resolver = mContext.getContentResolver();
+        ContentValues values = new ContentValues();
+        for (String id : ids) {
+            values.put(ItemInItem.ItemInItems.ORDER, i);
+            String selection = ItemInItem.ItemInItems.ITEM_ID + " = " + id;
+            resolver.update(ItemInItem.ItemInItems.getContentUri(table_id), values, selection, null);
+            i++;
         }
     }
 
@@ -88,6 +104,7 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
         viewHolder.text.setText(subListItem.getName());
         viewHolder.repeat.setText(Integer.toString(subListItem.getRepeat()));
         final boolean isList = subListItem.isList();
+        ids.add(subListItem.getId());
 
         viewHolder.text.setOnClickListener(new View.OnClickListener() {
             @Override

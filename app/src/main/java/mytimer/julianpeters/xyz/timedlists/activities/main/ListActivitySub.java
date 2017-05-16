@@ -57,7 +57,7 @@ public class ListActivitySub extends ListActivityBase {
                 projection,
                 null,
                 null,
-                null);
+                ItemInItem.ItemInItems.ORDER);
     }
 
     @Override
@@ -70,6 +70,8 @@ public class ListActivitySub extends ListActivityBase {
         values = new ContentValues();
         values.put(ItemInItem.ItemInItems.FOREIGN_KEY, foreignKey);
         values.put(ItemInItem.ItemInItems.REPEAT, 1);
+        int rows = getContentResolver().call(Item.Items.CONTENT_URI, "getRows", _id, null).getInt("rows");
+        values.put(ItemInItem.ItemInItems.ORDER, rows);
         return getContentResolver().insert(ItemInItem.ItemInItems.getContentUri(_id), values);
     }
 }

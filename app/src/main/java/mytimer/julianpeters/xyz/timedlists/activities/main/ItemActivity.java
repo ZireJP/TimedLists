@@ -92,6 +92,7 @@ public class ItemActivity extends BaseActivity {
         values = new ContentValues();
         values.put(ItemInItem.ItemInItems.FOREIGN_KEY, foreignKey);
         values.put(ItemInItem.ItemInItems.REPEAT, 1);
+        values.put(ItemInItem.ItemInItems.ORDER, 0);
         return getContentResolver().insert(ItemInItem.ItemInItems.getContentUri(_id), values);
     }
 

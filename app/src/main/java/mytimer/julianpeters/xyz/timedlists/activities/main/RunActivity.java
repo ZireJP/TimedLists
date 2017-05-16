@@ -206,7 +206,7 @@ public class RunActivity extends Activity {
     private Cursor getAllItems(String table_id) {
         String[] projection = {ItemInItem.ItemInItems.FOREIGN_KEY,
                 ItemInItem.ItemInItems.REPEAT};
-        return getContentResolver().query(ItemInItem.ItemInItems.CONTENT_URI, projection, table_id, null, null);
+        return getContentResolver().query(ItemInItem.ItemInItems.CONTENT_URI, projection, table_id, null, ItemInItem.ItemInItems.ORDER);
     }
 
     private void fillArray(String _id, int repeat) {
@@ -231,7 +231,6 @@ public class RunActivity extends Activity {
                 }
             }
         }
-
     }
 
     @Override

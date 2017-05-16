@@ -12,7 +12,7 @@
         android:textAllCaps="false"
         android:gravity="center"
         android:textSize="@dimen/text_size"
-        android:background="@android:color/holo_orange_light"
+        android:background="@drawable/border_rv"
         android:textStyle="bold" />
 
     <Button
@@ -22,6 +22,6 @@
         android:textSize="@dimen/text_size"
         android:layout_alignParentRight="true"
         android:textStyle="bold"
-        android:background="@android:color/holo_purple"
+        android:background="@drawable/border_rv_repeat"
         />
 </RelativeLayout>

@@ -25,4 +25,5 @@ public class Helper {
         launchActivity.putExtra("_id", _id);
         context.startActivity(launchActivity);
     }
+
 }

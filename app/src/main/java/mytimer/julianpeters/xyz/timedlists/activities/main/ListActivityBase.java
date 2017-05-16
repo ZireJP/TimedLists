@@ -25,7 +25,7 @@ abstract class ListActivityBase extends BaseActivity {
         super.onCreate(savedInstanceState);
         rvAdapter = getAdapter();
         ((RecyclerView)itemView).setAdapter(rvAdapter);
-        ItemTouchHelper.Callback callback = new MyTouchHelper(rvAdapter);
+        ItemTouchHelper.Callback callback = new MyTouchHelper(rvAdapter, this);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView((RecyclerView)itemView);
     }

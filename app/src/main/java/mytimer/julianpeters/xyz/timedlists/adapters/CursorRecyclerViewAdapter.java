@@ -23,6 +23,9 @@ import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import mytimer.julianpeters.xyz.timedlists.ItemTouchHelperAdapter;
 
 /**
@@ -40,6 +43,8 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     private int mRowIdColumn;
 
     private DataSetObserver mDataSetObserver;
+
+    protected ArrayList<String> ids;
 
     public CursorRecyclerViewAdapter(Context context, Cursor cursor) {
         mContext = context;
@@ -115,6 +120,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             oldCursor.unregisterDataSetObserver(mDataSetObserver);
         }
         mCursor = newCursor;
+        ids = new ArrayList<>();
         if (mCursor != null) {
             if (mDataSetObserver != null) {
                 mCursor.registerDataSetObserver(mDataSetObserver);
@@ -146,5 +152,12 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             notifyDataSetChanged();
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(ids, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 }

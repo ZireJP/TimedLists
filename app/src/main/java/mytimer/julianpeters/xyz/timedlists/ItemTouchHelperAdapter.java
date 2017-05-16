@@ -10,4 +10,6 @@ public interface ItemTouchHelperAdapter {
 
     void onItemDismiss(int position);
 
+    void onReleased();
+
 }

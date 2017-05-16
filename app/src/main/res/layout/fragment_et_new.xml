@@ -6,9 +6,10 @@
 
     <EditText
         android:id="@+id/new_item_edit"
+        android:visibility="gone"
         android:textSize="@dimen/text_size"
         android:textStyle="bold"
-        android:background="@android:color/holo_orange_light"
+        android:background="@drawable/border_rv"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_size" />
 
