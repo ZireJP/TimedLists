@@ -1,15 +1,17 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.adapters.itemtouchhelpers;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+
+import mytimer.julianpeters.xyz.timedlists.R;
+import mytimer.julianpeters.xyz.timedlists.adapters.MainCursorAdapter;
+import mytimer.julianpeters.xyz.timedlists.adapters.SubListCursorAdapter;
+import mytimer.julianpeters.xyz.timedlists.adapters.itemtouchhelpers.ItemTouchHelperAdapter;
 
 /**
  * Created by julian on 15.05.17.
@@ -37,9 +39,12 @@ public class MyTouchHelper extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        int swipeFlags = ItemTouchHelper.START;
-        return makeMovementFlags(dragFlags, swipeFlags);
+        if (viewHolder instanceof SubListCursorAdapter.ViewHolder || viewHolder instanceof MainCursorAdapter.ViewHolder) {
+            int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            int swipeFlags = ItemTouchHelper.START;
+            return makeMovementFlags(dragFlags, swipeFlags);
+        }
+        return makeMovementFlags(0, 0);
     }
 
     @Override
@@ -50,7 +55,9 @@ public class MyTouchHelper extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        if (viewHolder instanceof SubListCursorAdapter.ViewHolder || viewHolder instanceof MainCursorAdapter.ViewHolder) {
+            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        }
     }
 
     @Override
@@ -64,16 +71,17 @@ public class MyTouchHelper extends ItemTouchHelper.Callback {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             View itemView = viewHolder.itemView;
 
-            Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.trash);
             Paint p = new Paint();
             p.setColor(context.getColor(R.color.deleteColor));
-            if (dX > 0) {
-                c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), p);
-            } else {
-                c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), p);
-            }
-            p.setColor(context.getColor(R.color.textColor));
-            c.drawBitmap(bm, itemView.getRight() - 3 * (itemView.getBottom() - itemView.getTop()), itemView.getTop(), p);
+            float r = itemView.getRight();
+            float t = itemView.getTop();
+            float b = itemView.getBottom();
+            int height = (int)(b-t);
+            c.drawRect(r + dX, t, r, b, p);
+            Drawable draw = context.getDrawable(R.drawable.ic_trash);
+            draw.setBounds((int)r-height-height, (int)t, (int)r-height, (int)b);
+            draw.draw(c);
+
         }
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
     }

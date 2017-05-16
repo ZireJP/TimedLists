@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import mytimer.julianpeters.xyz.timedlists.MyTouchHelper;
+import mytimer.julianpeters.xyz.timedlists.adapters.itemtouchhelpers.MyTouchHelper;
 import mytimer.julianpeters.xyz.timedlists.adapters.*;
 import mytimer.julianpeters.xyz.timedlists.R;
 
@@ -53,4 +53,9 @@ abstract class ListActivityBase extends BaseActivity {
     }
 
     abstract int getRowNumber();
+
+    @Override
+    public int adjustHeight() {
+        return (int)getResources().getDimension(R.dimen.list_item_size);
+    }
 }

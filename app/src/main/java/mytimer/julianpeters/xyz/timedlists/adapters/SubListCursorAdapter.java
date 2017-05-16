@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import mytimer.julianpeters.xyz.timedlists.activities.main.ListActivitySub;
 import mytimer.julianpeters.xyz.timedlists.activities.popup.SetRepeatPopup;
 import mytimer.julianpeters.xyz.timedlists.adapters.helpers.SubListItem;
 import mytimer.julianpeters.xyz.timedlists.helpers.Helper;
@@ -26,7 +27,7 @@ import mytimer.julianpeters.xyz.timedlists.providers.helpers.ItemInItem;
  * Created by skyfishjy on 10/31/14.
  */
 
-public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCursorAdapter.ViewHolder> {
+public class SubListCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder> {
 
     Context mContext;
     final String table_id;
@@ -80,7 +81,7 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
         }
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         Button text;
         Button repeat;
 
@@ -91,29 +92,49 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<SubListCurso
         }
     }
 
+    public static class FooterHolder extends RecyclerView.ViewHolder {
+
+        public FooterHolder(View itemView, final Context context) {
+            super(itemView);
+            itemView.findViewById(R.id.footer).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((ListActivitySub)context).showAddItem(null);
+                }
+            });
+        }
+    }
+
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == FOOTER_VIEW) {
+            View footer = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.adapter_footer, parent, false);
+            return new FooterHolder(footer, mContext);
+        }
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_item_sublist, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-        final SubListItem subListItem = SubListItem.fromCursor(cursor, mContext);
-        viewHolder.text.setText(subListItem.getName());
-        viewHolder.repeat.setText(Integer.toString(subListItem.getRepeat()));
-        final boolean isList = subListItem.isList();
-        ids.add(subListItem.getId());
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
+        if (viewHolder instanceof ViewHolder) {
+            final SubListItem subListItem = SubListItem.fromCursor(cursor, mContext);
+            ((ViewHolder) viewHolder).text.setText(subListItem.getName());
+            ((ViewHolder) viewHolder).repeat.setText(Integer.toString(subListItem.getRepeat()));
+            final boolean isList = subListItem.isList();
+            ids.add(subListItem.getId());
 
-        viewHolder.text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Helper.launchIntent(mContext, isList, subListItem.getForeign());
-            }
-        });
+            ((ViewHolder) viewHolder).text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Helper.launchIntent(mContext, isList, subListItem.getForeign());
+                }
+            });
 
-        viewHolder.repeat.setOnClickListener(showRepeatSetter(mContext, subListItem.getId(), table_id));
+            ((ViewHolder) viewHolder).repeat.setOnClickListener(showRepeatSetter(mContext, subListItem.getId(), table_id));
+        }
     }
 
     public View.OnClickListener showRepeatSetter(final Context con, final String _id, final String table_id) {

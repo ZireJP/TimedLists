@@ -21,18 +21,19 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import mytimer.julianpeters.xyz.timedlists.ItemTouchHelperAdapter;
+import mytimer.julianpeters.xyz.timedlists.adapters.itemtouchhelpers.ItemTouchHelperAdapter;
 
 /**
  * Created by skyfishjy on 10/31/14.
  */
 
 public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> implements ItemTouchHelperAdapter {
+
+    protected static final int FOOTER_VIEW = 1;
 
     private Context mContext;
 
@@ -64,7 +65,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         if (mDataValid && mCursor != null) {
-            return mCursor.getCount();
+            return mCursor.getCount()+1;
         }
         return 0;
     }
@@ -90,7 +91,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             throw new IllegalStateException("this should only be called when the cursor is valid");
         }
         if (!mCursor.moveToPosition(position)) {
-            throw new IllegalStateException("couldn't move cursor to position " + position);
+            //throw new IllegalStateException("couldn't move cursor to position " + position);
         }
         onBindViewHolder(viewHolder, mCursor);
     }
@@ -156,8 +157,20 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+        if (toPosition == getItemCount()-1 || fromPosition == getItemCount()-1) {
+            return false;
+        }
         Collections.swap(ids, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         return true;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == getItemCount()-1) {
+            return FOOTER_VIEW;
+        }
+
+        return super.getItemViewType(position);
     }
 }

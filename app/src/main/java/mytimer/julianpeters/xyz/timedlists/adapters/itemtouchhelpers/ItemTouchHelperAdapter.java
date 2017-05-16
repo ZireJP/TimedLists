@@ -1,4 +1,4 @@
-package mytimer.julianpeters.xyz.timedlists;
+package mytimer.julianpeters.xyz.timedlists.adapters.itemtouchhelpers;
 
 /**
  * Created by julian on 15.05.17.

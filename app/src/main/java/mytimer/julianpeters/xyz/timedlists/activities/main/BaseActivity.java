@@ -73,8 +73,12 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     public void slideInAnimation() {
         final Animation anim = AnimationUtils.loadAnimation(this, R.anim.slidein);
         int test = itemView.getHeight();
-        Animation anim2 = new TranslateAnimation(0, 0, 0, -test);
-        anim2.setDuration(400);
+        Animation anim2 = new TranslateAnimation(0, 0, 0, -test+adjustHeight());
+        if (test-adjustHeight()!=0) {
+            anim2.setDuration(400);
+        } else {
+            anim2.setDuration(0);
+        }
         anim2.setFillAfter(true);
         anim2.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -115,12 +119,15 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         itemView.startAnimation(anim2);
     }
 
+    public int adjustHeight() {
+        return 0;
+    }
     public void slideOutAnimation(boolean newItem) {
         int test = itemView.getHeight();
         int size = (int)getResources().getDimension(R.dimen.list_item_size);
         final Animation anim2;
         if (!newItem) {
-            anim2 = createAnim(-test, 0);
+            anim2 = createAnim(-test+size, 0);
             Animation anim = AnimationUtils.loadAnimation(this, R.anim.slideout);
             anim.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -142,7 +149,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
             });
             newEditText.startAnimation(anim);
         } else {
-            anim2 = createAnim(-test-size, -size);
+            anim2 = createAnim(-test, -size);
             newItemOverlay.setVisibility(View.INVISIBLE);
             itemView.startAnimation(anim2);
         }

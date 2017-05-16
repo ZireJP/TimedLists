@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_size"
         android:textAllCaps="false"
-        android:gravity="center"
+        android:textAlignment="textStart"
         android:textSize="@dimen/text_size"
         android:background="@drawable/border_rv"
         android:textStyle="bold" />
