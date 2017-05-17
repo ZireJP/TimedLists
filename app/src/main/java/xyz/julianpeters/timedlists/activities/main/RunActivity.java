@@ -6,12 +6,8 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -42,10 +38,10 @@ public class RunActivity extends Activity {
 
     ArrayList<String[]> allItems;
     TextView countdown;
-    Button run_continue;
+    Button clickToContinue;
     public int current;
     int secondsLeft;
-    Ringtone ringtone;
+    //Ringtone ringtone;
     ProgressBar bar;
     ListView listView;
     RunArrayAdapter list;
@@ -62,7 +58,7 @@ public class RunActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
         countdown = (TextView) findViewById(R.id.run_countdown);
-        run_continue = (Button) findViewById(R.id.run_continue);
+        clickToContinue = (Button) findViewById(R.id.run_continue);
         bar = (ProgressBar) findViewById(R.id.run_progressbar);
         listView = (ListView) findViewById(R.id.run_listview);
         pauseButton = (ImageButton) findViewById(R.id.play_button);
@@ -76,10 +72,9 @@ public class RunActivity extends Activity {
         newArray(_id);
         list = new RunArrayAdapter(this, R.layout.adapter_item_run, allItems);
         listView.setAdapter(list);
-        int max = allItems.size();
         size = allItems.size();
-        String[] item = allItems.get(0);
-        timer(item, 0, max);
+        current = 0;
+        timer();
     }
 
     private void setProgressbarSize() {
@@ -93,7 +88,7 @@ public class RunActivity extends Activity {
             cd.cancel();
             animation.cancel();
         }
-        run_continue.setVisibility(View.GONE);
+        clickToContinue.setVisibility(View.GONE);
         current--;
         if (current < 0) {
             current = 0;
@@ -101,7 +96,7 @@ public class RunActivity extends Activity {
         list.setCurrent(current);
         list.notifyDataSetChanged();
         listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
-        timer(allItems.get(current), current, size);
+        timer();
     }
 
     public void skip(View v) {
@@ -109,15 +104,15 @@ public class RunActivity extends Activity {
             cd.cancel();
             animation.cancel();
         }
-        run_continue.setVisibility(View.GONE);
+        clickToContinue.setVisibility(View.GONE);
         current++;
-        if (current > size-1) {
+        if (current > size - 1) {
             current = size - 1;
         }
         list.setCurrent(current);
         list.notifyDataSetChanged();
         listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
-        timer(allItems.get(current), current, size);
+        timer();
     }
 
     public void pause(View v) {
@@ -133,12 +128,12 @@ public class RunActivity extends Activity {
         paused = !paused;
     }
 
-    private void timer(final String[] item, final int i, final int items) {
+    private void timer() {
+        String[] item = allItems.get(current);
         if (item[1].equals("0")) {
             saveTime = 0;
-            run_continue.setOnClickListener(newClick(i, items));
-            run_continue.setText(item[0] + "\n" + getString(R.string.run_continue));
-            run_continue.setVisibility(View.VISIBLE);
+            clickToContinue.setText(item[0] + "\n" + getString(R.string.run_continue));
+            clickToContinue.setVisibility(View.VISIBLE);
         } else {
             secondsLeft = 0;
             int time = Integer.parseInt(item[1]);
@@ -174,35 +169,28 @@ public class RunActivity extends Activity {
             //ringtone.play();
             mp.start();
             if (current < size - 1) {
-                final String[] item = allItems.get(current + 1);
                 current++;
                 list.setCurrent(current);
                 list.notifyDataSetChanged();
                 listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
-                timer(item, current, size);
+                timer();
             } else {
                 countdown.setText("Finished");
             }
         }
     }
 
-    private View.OnClickListener newClick(final int i, final int items) {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                run_continue.setVisibility(View.GONE);
-                if (i < items - 1) {
-                    final String[] item = allItems.get(i + 1);
-                    current++;
-                    list.setCurrent(current);
-                    list.notifyDataSetChanged();
-                    listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
-                    timer(item, i + 1, items);
-                } else {
-                    countdown.setText("Finished");
-                }
-            }
-        };
+    public void clickToContinue(View v) {
+        clickToContinue.setVisibility(View.GONE);
+        if (current < size - 1) {
+            current++;
+            list.setCurrent(current);
+            list.notifyDataSetChanged();
+            listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+            timer();
+        } else {
+            countdown.setText("Finished");
+        }
     }
 
     private void newArray(String _id) {
@@ -245,7 +233,7 @@ public class RunActivity extends Activity {
         try {
             cd.cancel();
         } catch (NullPointerException e) {
-            Log.d("NullPointerException" ,"timer already finished");
+            Log.d("NullPointerException", "timer already finished");
         } finally {
             super.onDestroy();
         }
