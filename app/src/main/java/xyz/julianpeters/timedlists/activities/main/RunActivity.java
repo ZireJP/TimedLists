@@ -39,8 +39,6 @@ import xyz.julianpeters.timedlists.adapters.RunArrayAdapter;
 
 public class RunActivity extends Activity {
 
-    int SCROLL_TIME = 200;
-
     ArrayList<String[]> allItems;
     TextView countdown;
     Button clickToContinue;
@@ -48,7 +46,6 @@ public class RunActivity extends Activity {
     int secondsLeft;
     int totalTimeLeft;
     int totalNotTimedLeft;
-    //Ringtone ringtone;
     TextView totalTime;
     ProgressBar bar;
     RecyclerView listView;
@@ -62,6 +59,7 @@ public class RunActivity extends Activity {
     long saveTime;
     int size;
     int runFor;
+    int repeat;
     CountDownTimer cd = null;
     StopWatch sw = null;
     ObjectAnimator animation;
@@ -94,10 +92,10 @@ public class RunActivity extends Activity {
         highlighted = new ArrayList<>();
         rvList = new RunRVAdapter(this, items, 0);
         listView.setAdapter(rvList);
-        size = allItems.size();
+        size = actualItems.size();
         current = 0;
         lastHighlight = 0;
-        timer();
+        timer(false);
     }
 
     private void setProgressbarSize() {
@@ -121,7 +119,7 @@ public class RunActivity extends Activity {
         if (current < 0) {
             current = 0;
         }
-        timer();
+        timer(false);
     }
 
     public void skip(View v) {
@@ -139,7 +137,7 @@ public class RunActivity extends Activity {
         if (current > size - 1) {
             current = size - 1;
         }
-        timer();
+        timer(false);
     }
 
     public void pause(View v) {
@@ -173,10 +171,11 @@ public class RunActivity extends Activity {
         int total = 0;
         int notTimed = 0;
         for (int i = current; i < size; i++) {
-            int time = Integer.parseInt(allItems.get(i)[1]);
+            RunItem r = actualItems.get(i);
+            int time = r.getTime() * (r.getRepeat() - repeat + 1);
             total += time;
             if (time == 0) {
-                notTimed++;
+                notTimed = notTimed + r.getRepeat() - repeat + 1;
             }
         }
         return new int[]{total, notTimed};
@@ -195,6 +194,7 @@ public class RunActivity extends Activity {
     }
 
     public void stopwatchSave(View v) {
+        // TODO
         current++;
         showSaveDiscard(View.GONE);
         String _id = allItems.get(current - 1)[2]; // [2] is the string column, -1 because current already updated
@@ -202,13 +202,14 @@ public class RunActivity extends Activity {
         String t = getResources().getString(R.string.date_format, Time.getDate(), Time.getCurrentTime());
         string.putString("string", Item.Items.NOTES + " || \"" + t + Time.getTimeString(runFor) + "\"");
         getContentResolver().call(Item.Items.CONTENT_URI, "appendNotes", _id, string);
-        timer();
+        timer(false);
     }
 
     public void stopwatchDiscard(View v) {
+        //TODO
         current++;
         showSaveDiscard(View.GONE);
-        timer();
+        timer(false);
     }
 
     void showSaveDiscard(int visibility) {
@@ -216,19 +217,18 @@ public class RunActivity extends Activity {
         stopwatchDiscard.setVisibility(visibility);
     }
 
-    private void timer() {
-        setHighlight();
-        String[] item = allItems.get(current);
+    private void timer(boolean repeating) {
+        if (!repeating) {
+            this.repeat = 1;
+            setHighlight();
+        }
+        RunItem item = actualItems.get(current);
         setCurrentTotalTime();
-        if (item[1].equals("0")) {
+        if (item.getTime() == 0) {
             startStopwatch();
-
-            /*saveTime = 0;
-            clickToContinue.setText(item[0] + "\n" + getString(R.string.run_continue));
-            clickToContinue.setVisibility(View.VISIBLE);*/
         } else {
             secondsLeft = 0;
-            int time = Integer.parseInt(item[1]);
+            int time = item.getTime();
             setProgressMax(bar, 1000);
             setProgressAnimate(bar, time * 1000);
             cd = new MyCd(time * 1000);
@@ -298,13 +298,13 @@ public class RunActivity extends Activity {
 
     private class MyCd extends CountDownTimer {
 
-        String name;
+        RunItem item;
 
         MyCd(long millisInFuture) {
             super(millisInFuture, 250);
-            name = allItems.get(current)[0];
-            secondsLeft = Integer.parseInt(allItems.get(current)[1]);
-            countdown.setText(name + "\n" + Time.getTimeString(secondsLeft));
+            item = actualItems.get(current);
+            secondsLeft = item.getTime();
+            countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat());
         }
 
         @Override
@@ -317,7 +317,7 @@ public class RunActivity extends Activity {
             }
             if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
                 secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
-                countdown.setText(name + "\n" + Time.getTimeString(secondsLeft));
+                countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat());
                 totalTimeLeft -= 1;
                 setTotalTime(totalTimeLeft, totalNotTimedLeft);
             }
@@ -325,22 +325,26 @@ public class RunActivity extends Activity {
 
         @Override
         public void onFinish() {
-            //ringtone.play();
             mp.start();
-            if (current < size - 1) {
+            if (repeat < item.getRepeat()) {
+                repeat++;
+                timer(true);
+            } else if (current < size - 1) {
                 current++;
-                timer();
+                timer(false);
             } else {
                 countdown.setText("Finished");
             }
         }
     }
 
+
     public void clickToContinue(View v) {
+        // TODO - probably delete
         clickToContinue.setVisibility(View.GONE);
         if (current < size - 1) {
             current++;
-            timer();
+            timer(false);
         } else {
             countdown.setText("Finished");
         }
@@ -484,7 +488,7 @@ public class RunActivity extends Activity {
         loop += i / item.getSize();
         i = i % item.getSize();
         if (items.get(position).getItems() != null) {
-            highlightCurrentItem(i, item.getItems(), nested+1);
+            highlightCurrentItem(i, item.getItems(), nested + 1);
         }
         item.setHighlight(true);
         //item.setVisibility(true);

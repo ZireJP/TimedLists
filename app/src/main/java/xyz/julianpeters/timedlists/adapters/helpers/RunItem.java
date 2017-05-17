@@ -110,4 +110,8 @@ public class RunItem {
     public boolean getVisibility() {
         return visible;
     }
+
+    public int getRepeat() {
+        return repeat;
+    }
 }
