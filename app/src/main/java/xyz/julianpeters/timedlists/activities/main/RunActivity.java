@@ -39,7 +39,6 @@ import xyz.julianpeters.timedlists.adapters.RunArrayAdapter;
 
 public class RunActivity extends Activity {
 
-    ArrayList<String[]> allItems;
     TextView countdown;
     Button clickToContinue;
     public int current;
@@ -194,22 +193,18 @@ public class RunActivity extends Activity {
     }
 
     public void stopwatchSave(View v) {
-        // TODO
-        current++;
         showSaveDiscard(View.GONE);
-        String _id = allItems.get(current - 1)[2]; // [2] is the string column, -1 because current already updated
+        String _id = actualItems.get(current).get_id();
         Bundle string = new Bundle();
         String t = getResources().getString(R.string.date_format, Time.getDate(), Time.getCurrentTime());
         string.putString("string", Item.Items.NOTES + " || \"" + t + Time.getTimeString(runFor) + "\"");
         getContentResolver().call(Item.Items.CONTENT_URI, "appendNotes", _id, string);
-        timer(false);
+        whatNext();
     }
 
     public void stopwatchDiscard(View v) {
-        //TODO
-        current++;
         showSaveDiscard(View.GONE);
-        timer(false);
+        whatNext();
     }
 
     void showSaveDiscard(int visibility) {
@@ -239,12 +234,12 @@ public class RunActivity extends Activity {
     private class StopWatch extends Timer {
 
         int runFor;
-        String name;
+        RunItem item;
         final MyTask task;
 
         StopWatch() {
             runFor = 0;
-            name = allItems.get(current)[0];
+            item = actualItems.get(current);
             task = new MyTask();
         }
 
@@ -257,7 +252,8 @@ public class RunActivity extends Activity {
                 runnable = new Runnable() {
                     @Override
                     public void run() {
-                        stopwatchStop.setText(getResources().getString(R.string.stopwatch_stop, name + "\n" + Time.getTimeString(runFor)));
+                        stopwatchStop.setText(getResources().getString(R.string.stopwatch_stop, item.getName()
+                                + "\n" + Time.getTimeString(runFor)) + "\n" + repeat + "/" + item.getRepeat());
                     }
                 };
             }
@@ -326,18 +322,21 @@ public class RunActivity extends Activity {
         @Override
         public void onFinish() {
             mp.start();
-            if (repeat < item.getRepeat()) {
-                repeat++;
-                timer(true);
-            } else if (current < size - 1) {
-                current++;
-                timer(false);
-            } else {
-                countdown.setText("Finished");
-            }
+            whatNext();
         }
     }
 
+    public void whatNext() {
+        if (repeat < actualItems.get(current).getRepeat()) {
+            repeat++;
+            timer(true);
+        } else if (current < size - 1) {
+            current++;
+            timer(false);
+        } else {
+            countdown.setText("Finished");
+        }
+    }
 
     public void clickToContinue(View v) {
         // TODO - probably delete
@@ -351,7 +350,6 @@ public class RunActivity extends Activity {
     }
 
     private void newArray(String _id) {
-        allItems = new ArrayList<>();
         items = new ArrayList<>();
         actualItems = new ArrayList<>();
         Cursor c = getAllItems(_id);
@@ -367,7 +365,6 @@ public class RunActivity extends Activity {
             item.calculateSize();
             item.calculateTimes();
         }
-        fillArray(_id, 1);
     }
 
     private Cursor getAllItems(String table_id) {
@@ -401,30 +398,6 @@ public class RunActivity extends Activity {
         }
         c.close();
         return parent;
-    }
-
-    private void fillArray(String _id, int repeat) {
-        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.IS_LIST};
-        String selection = Item.Items.ITEM_ID + " = ?";
-        Cursor cursor = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, new String[]{_id}, null);
-        cursor.moveToFirst();
-        String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
-        if (cursor.getInt(cursor.getColumnIndex(Item.Items.IS_LIST)) == 0) {
-            for (int i = 0; i < repeat; i++) {
-                allItems.add(new String[]{name, cursor.getString(cursor.getColumnIndex(Item.Items.TIME)), cursor.getString(cursor.getColumnIndex(Item.Items.ITEM_ID))});
-            }
-        } else {
-            cursor.close();
-            cursor = getAllItems(_id);
-            for (int i = 0; i < repeat; i++) {
-                if (cursor.moveToFirst()) {
-                    do {
-                        fillArray(cursor.getString(cursor.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY)),
-                                cursor.getInt(cursor.getColumnIndex(ItemInItem.ItemInItems.REPEAT)));
-                    } while (cursor.moveToNext());
-                }
-            }
-        }
     }
 
     @Override
