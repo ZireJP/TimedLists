@@ -1,10 +1,6 @@
 package xyz.julianpeters.timedlists.adapters.helpers;
 
 
-import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
@@ -17,6 +13,8 @@ public class RunItem {
     private String name;
     private ArrayList<RunItem> items;
     private int time;
+    private int size;
+    private int totalSize;
     int repeat;
     private boolean isList;
 
@@ -56,15 +54,49 @@ public class RunItem {
         return _id;
     }
 
-    public int getChildrenTimes() {
+    public int calculateTimes() {
         int time = 0;
         if (!isList) {
-            return this.time * repeat;
-        } else {
-            for (RunItem x : items) {
-                time += x.getChildrenTimes();
-            }
+            return this.time;
         }
+        for (RunItem x : items) {
+            time += x.calculateTimes() * x.repeat;
+        }
+        this.time = time;
         return time;
+    }
+
+    public int calculateSize() {
+        if (!isList) {
+            this.size = 1;
+            return 1;
+        }
+        int i = 0;
+        for (RunItem x : items) {
+            i += x.calculateTotalSize();
+        }
+        this.size = i;
+        return i;
+    }
+
+    public int calculateTotalSize() {
+        if (!isList) {
+            totalSize = repeat;
+            return totalSize;
+        }
+        int i = 0;
+        for (RunItem x : items) {
+            i += x.calculateTotalSize();
+        }
+        this.totalSize = i * repeat;
+        return totalSize;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getTotalSize() {
+        return totalSize;
     }
 }

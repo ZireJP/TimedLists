@@ -90,10 +90,11 @@ public class RunActivity extends Activity {
         String _id = getIntent().getStringExtra("_id");
         newArray(_id);
         list = new RunArrayAdapter(this, R.layout.adapter_item_run, allItems);
-        rvList = new RunRVAdapter(items);
+        rvList = new RunRVAdapter(this, items, 0);
         listView.setAdapter(rvList);
         size = allItems.size();
         current = 0;
+        getCurrentItem(0, items);
         timer();
     }
 
@@ -338,6 +339,7 @@ public class RunActivity extends Activity {
             mp.start();
             if (current < size - 1) {
                 current++;
+                getCurrentItem(current, items);
                 list.setCurrent(current);
                 list.notifyDataSetChanged();
                 //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
@@ -471,5 +473,21 @@ public class RunActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setProgressbarSize();
+    }
+
+    void getCurrentItem(int current, ArrayList<RunItem> items) {
+        int i = current;
+        int position = 0;
+        while (i >= items.get(position).getTotalSize()) {
+            i = i - items.get(position).getTotalSize();
+            position++;
+        }
+        RunItem item = items.get(position);
+        int loop = 1;
+        loop += i / item.getSize();
+        i = i % item.getSize();
+        if (items.get(position).getItems() != null) {
+            getCurrentItem(i, item.getItems());
+        }
     }
 }

@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <Button
-        android:id="@+id/run_list_text"
-        android:background="@android:color/holo_green_light"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/list_item_size" />
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/run_list_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/list_item_size"
+            android:layout_toLeftOf="@+id/run_item_notes"
+            android:background="@android:color/holo_green_light" />
+
+        <Button
+            android:id="@+id/run_item_notes"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/list_item_size"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/holo_green_light"
+            android:text="@string/notes" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/run_item_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layoutManager="android.support.v7.widget.GridLayoutManager">
+
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
