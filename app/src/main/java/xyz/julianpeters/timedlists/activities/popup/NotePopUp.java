@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 import xyz.julianpeters.timedlists.R;
 
@@ -58,14 +59,8 @@ public class NotePopUp extends Activity {
     }
 
     public void addDate(View v) {
-        Calendar c = Calendar.getInstance();
-        String date = c.get(Calendar.DATE) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.YEAR);
-        String time;
-        if (c.get(Calendar.AM_PM) == 1) {
-            time = c.get(Calendar.HOUR)+12 + ":" + c.get(Calendar.MINUTE);
-        } else {
-            time = c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE);
-        }
+        String date = Time.getDate();
+        String time = Time.getCurrentTime();
         notes.append(getResources().getString(R.string.date_format, date, time));
     }
 

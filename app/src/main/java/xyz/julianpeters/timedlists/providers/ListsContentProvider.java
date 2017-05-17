@@ -247,22 +247,26 @@ public class ListsContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
+        SQLiteDatabase db;
         Bundle bundle = new Bundle();
         switch(method) {
             case "getRows":
                 bundle.putInt("rows", getRows(USER_TABLE_NAME + arg));
                 return bundle;
             case "deleteAllItemsOf":
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                db = dbHelper.getWritableDatabase();
                 bundle.putInt("deletes", deleteAllItemsOf(db, arg));
                 return bundle;
             case "deleteIncrement":
-                SQLiteDatabase db3 = dbHelper.getWritableDatabase();
+                db = dbHelper.getWritableDatabase();
                 String y = extras.getString("position");
                 String tabley = extras.getString("table");
                 String ordery = extras.getString("order");
-                db3.execSQL("UPDATE " + tabley + " SET " + ordery + " = " + ordery + " -1" + " WHERE " + ordery + " > " + y);
+                db.execSQL("UPDATE " + tabley + " SET " + ordery + " = " + ordery + " -1" + " WHERE " + ordery + " > " + y);
                 return null;
+            case "appendNotes":
+                db = dbHelper.getWritableDatabase();
+                db.execSQL("UPDATE " + LISTS_TABLE_NAME + " SET " + Item.Items.NOTES + " = " + extras.getString("string") + " WHERE " + Item.Items.ITEM_ID + " = " + arg);
             default:
                 return null;
         }

@@ -2,12 +2,14 @@ package xyz.julianpeters.timedlists.activities.main;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +22,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import xyz.julianpeters.timedlists.helpers.DisplayDimension;
 import xyz.julianpeters.timedlists.helpers.Time;
@@ -45,10 +49,15 @@ public class RunActivity extends Activity {
     ProgressBar bar;
     ListView listView;
     RunArrayAdapter list;
+    Button stopwatchStop;
+    Button stopwatchSave;
+    Button stopwatchDiscard;
     boolean paused;
     long saveTime;
     int size;
+    int runFor;
     CountDownTimer cd = null;
+    StopWatch sw = null;
     ObjectAnimator animation;
     ImageButton pauseButton;
     MediaPlayer mp;
@@ -62,6 +71,9 @@ public class RunActivity extends Activity {
         bar = (ProgressBar) findViewById(R.id.run_progressbar);
         listView = (ListView) findViewById(R.id.run_listview);
         pauseButton = (ImageButton) findViewById(R.id.play_button);
+        stopwatchDiscard = (Button) findViewById(R.id.stopwatch_discard);
+        stopwatchStop = (Button) findViewById(R.id.stopwatch_stop);
+        stopwatchSave = (Button) findViewById(R.id.stopwatch_save);
 
         //Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //ringtone = RingtoneManager.getRingtone(this, notification);
@@ -88,7 +100,12 @@ public class RunActivity extends Activity {
             cd.cancel();
             animation.cancel();
         }
+        if (sw != null) {
+            sw.cancel();
+        }
         clickToContinue.setVisibility(View.GONE);
+        stopwatchStop.setVisibility(View.GONE);
+        showSaveDiscard(View.GONE);
         current--;
         if (current < 0) {
             current = 0;
@@ -104,7 +121,12 @@ public class RunActivity extends Activity {
             cd.cancel();
             animation.cancel();
         }
+        if (sw != null) {
+            sw.cancel();
+        }
         clickToContinue.setVisibility(View.GONE);
+        stopwatchStop.setVisibility(View.GONE);
+        showSaveDiscard(View.GONE);
         current++;
         if (current > size - 1) {
             current = size - 1;
@@ -128,26 +150,134 @@ public class RunActivity extends Activity {
         paused = !paused;
     }
 
+    public void startStopwatch() {
+        saveTime = 0;
+        stopwatchStop.setVisibility(View.VISIBLE);
+        sw = new StopWatch();
+        sw.schedule(0);
+    }
+
+    public void stopwatchStop(View v) {
+        runFor = sw.getRunFor();
+        sw.cancel();
+        stopwatchStop.setVisibility(View.GONE);
+        showSaveDiscard(View.VISIBLE);
+    }
+
+    public void stopwatchSave(View v) {
+        current++;
+        list.setCurrent(current);
+        list.notifyDataSetChanged();
+        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+        showSaveDiscard(View.GONE);
+        //TODO UPDATE TABLE
+        String _id = allItems.get(current-1)[2]; // [2] is the string column, -1 because current already updated
+        Bundle string = new Bundle();
+        String t = getResources().getString(R.string.date_format, Time.getDate(), Time.getCurrentTime());
+        string.putString("string" , Item.Items.NOTES + " || \"" + t + Time.getTimeString(runFor) + "\"");
+        getContentResolver().call(Item.Items.CONTENT_URI, "appendNotes", _id, string);
+        timer();
+    }
+
+    public void stopwatchDiscard(View v) {
+        current++;
+        showSaveDiscard(View.GONE);
+        list.setCurrent(current);
+        list.notifyDataSetChanged();
+        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+        timer();
+    }
+
+    void showSaveDiscard(int visibility) {
+        stopwatchSave.setVisibility(visibility);
+        stopwatchDiscard.setVisibility(visibility);
+    }
+
     private void timer() {
         String[] item = allItems.get(current);
         if (item[1].equals("0")) {
-            saveTime = 0;
+            startStopwatch();
+
+            /*saveTime = 0;
             clickToContinue.setText(item[0] + "\n" + getString(R.string.run_continue));
-            clickToContinue.setVisibility(View.VISIBLE);
+            clickToContinue.setVisibility(View.VISIBLE);*/
         } else {
             secondsLeft = 0;
             int time = Integer.parseInt(item[1]);
             setProgressMax(bar, 1000);
             setProgressAnimate(bar, time * 1000);
-            cd = new MyCd(Integer.parseInt(item[1]) * 1000);
+            cd = new MyCd(time * 1000);
             cd.start();
+        }
+    }
+
+    private class StopWatch extends Timer {
+
+        int runFor;
+        String name;
+        final MyTask task;
+
+        StopWatch() {
+            runFor = 0;
+            name = allItems.get(current)[0];
+            task = new MyTask();
+        }
+
+        class MyTask extends TimerTask {
+
+            Runnable runnable;
+            boolean stop = false;
+
+            public MyTask() {
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        stopwatchStop.setText(getResources().getString(R.string.stopwatch_stop, name + "\n" + Time.getTimeString(runFor)));
+                    }
+                };
+            }
+
+            @Override
+            public boolean cancel() {
+                stop = true;
+                return super.cancel();
+            }
+
+            @Override
+            public void run() {
+                while (!stop) {
+                    while (paused) {
+                        SystemClock.sleep(250);
+                    }
+                    runOnUiThread(runnable);
+                    SystemClock.sleep(1000);
+                    runFor++;
+                }
+            }
+        }
+
+        void schedule(long delay) {
+            schedule(task, delay);
+        }
+
+        @Override
+        public void cancel() {
+            task.cancel();
+            super.cancel();
+        }
+
+        public int getRunFor() {
+            return runFor;
         }
     }
 
     private class MyCd extends CountDownTimer {
 
+        String name;
+
         MyCd(long millisInFuture) {
             super(millisInFuture, 250);
+            name = allItems.get(current)[0];
         }
 
         @Override
@@ -160,7 +290,7 @@ public class RunActivity extends Activity {
             }
             if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
                 secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
-                countdown.setText(allItems.get(current)[0] + "\n" + Time.getTimeString(secondsLeft));
+                countdown.setText(name + "\n" + Time.getTimeString(secondsLeft));
             }
         }
 
@@ -233,10 +363,14 @@ public class RunActivity extends Activity {
         try {
             cd.cancel();
         } catch (NullPointerException e) {
-            Log.d("NullPointerException", "timer already finished");
-        } finally {
-            super.onDestroy();
+            Log.d("NullPointerException", "countdown already finished");
         }
+        try {
+            sw.cancel();
+        } catch (NullPointerException e) {
+            Log.d("NullPointerException", "stopwatch already finished");
+        }
+        super.onDestroy();
     }
 
     private void setProgressMax(ProgressBar pb, int max) {

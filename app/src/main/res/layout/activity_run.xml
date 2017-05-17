@@ -18,6 +18,7 @@
             <RelativeLayout
                 android:id="@+id/run_layout_top"
                 android:layout_width="match_parent"
+                android:background="@android:color/holo_orange_light"
                 android:layout_above="@+id/run_buttons"
                 android:layout_height="match_parent">
 
@@ -48,6 +49,9 @@
                     android:onClick="clickToContinue"
                     android:text="@string/run_continue"
                     android:visibility="gone" />
+
+                <include layout="@layout/fragment_stopwatch"/>
+
             </RelativeLayout>
             <LinearLayout
                 android:id="@+id/run_buttons"

@@ -1,5 +1,7 @@
 package xyz.julianpeters.timedlists.helpers;
 
+import java.util.Calendar;
+
 /**
  * Created by julian on 10.05.17.
  */
@@ -37,5 +39,21 @@ public class Time {
         } else {
             return Integer.toString(value);
         }
+    }
+
+    public static String getDate() {
+        Calendar c = Calendar.getInstance();
+        return c.get(Calendar.DATE) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.YEAR);
+    }
+
+    public static String getCurrentTime() {
+        Calendar c = Calendar.getInstance();
+        String time;
+        if (c.get(Calendar.AM_PM) == 1) {
+            time = c.get(Calendar.HOUR)+12 + ":" + c.get(Calendar.MINUTE);
+        } else {
+            time = c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE);
+        }
+        return time;
     }
 }
