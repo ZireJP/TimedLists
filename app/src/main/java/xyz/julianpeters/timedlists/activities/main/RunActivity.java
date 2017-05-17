@@ -391,10 +391,16 @@ public class RunActivity extends Activity {
         Cursor c = getAllItems(_id);
         int f = c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY);
         int r = c.getColumnIndex(ItemInItem.ItemInItems.REPEAT);
-        if (c.moveToFirst()) {
-            do {
-                parent.getItems().add(fillA(c.getString(f), c.getInt(r)));
-            } while (c.moveToNext());
+
+        for (int j = 0; j < repeat; j++) {
+            if (c.moveToFirst()) {
+                do {
+                    RunItem item = fillA(c.getString(f), c.getInt(r));
+                    if (j == 0) {
+                        parent.getItems().add(item);
+                    }
+                } while (c.moveToNext());
+            }
         }
         c.close();
         return parent;
@@ -457,8 +463,7 @@ public class RunActivity extends Activity {
             position++;
         }
         RunItem item = items.get(position);
-        int loop = 1;
-        loop += i / item.getSize();
+        int loop = i / item.getSize();
         i = i % item.getSize();
         if (items.get(position).getItems() != null) {
             highlightCurrentItem(i, item.getItems(), nested + 1);

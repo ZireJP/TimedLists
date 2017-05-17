@@ -71,16 +71,16 @@ public class RunItem {
     public int calculateSize() {
         if (!isList) {
             this.size = 1;
-            this.totalSize = repeat;
+            this.totalSize = 1;
             return 1;
         }
         int i = 0;
         for (RunItem x : items) {
-            i += x.calculateSize() * x.repeat;
+            i += x.calculateSize();
         }
         this.size = i;
         this.totalSize = i * repeat;
-        return i;
+        return totalSize;
     }
 
     public int getSize() {
