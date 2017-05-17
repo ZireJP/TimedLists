@@ -29,7 +29,6 @@
         android:id="@+id/run_item_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:layoutManager="android.support.v7.widget.GridLayoutManager">
 
 

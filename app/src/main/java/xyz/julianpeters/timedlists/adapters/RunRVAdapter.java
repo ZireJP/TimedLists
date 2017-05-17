@@ -27,21 +27,11 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
     int nestedLevel;
     ArrayList<RunItem> items;
     Context context;
-    int size;
-    int totalSize;
 
     public RunRVAdapter(Context context, ArrayList<RunItem> items, int nestedLevel) {
         this.items = items;
         this.nestedLevel = nestedLevel;
         this.context = context;
-        if (items != null) {
-            for (RunItem item : items) {
-                size += item.calculateSize();
-                totalSize += item.calculateTotalSize();
-            }
-        } else {
-            size = 1;
-        }
     }
 
 
@@ -79,11 +69,35 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final RunItem item = items.get(position);
-        holder.mainButton.setBackgroundColor(Color.HSVToColor(new float[] {nestedLevel*30, 1, 1}));
-        holder.noteButton.setBackgroundColor(Color.HSVToColor(new float[] {nestedLevel*30, 1, 1}));
+        if (item.getVisibility()) {
+            holder.recycler.setVisibility(View.VISIBLE);
+        } else {
+            holder.recycler.setVisibility(View.GONE);
+        }
+        int color;
+        if (item.getHighlight()) {
+            color = context.getColor(R.color.highlight);
+        } else {
+            color = Color.HSVToColor(new float[]{nestedLevel * 30, 1, 1});
+        }
+        holder.mainButton.setBackgroundColor(color);
+        holder.noteButton.setBackgroundColor(color);
         holder.mainButton.setText(item.getName() + " : " + Time.getTimeString(item.calculateTimes()));
         RunRVAdapter rv = new RunRVAdapter(context, items.get(position).getItems(), nestedLevel + 1);
         holder.recycler.setAdapter(rv);
+
+        final ViewHolder h = holder;
+        holder.mainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (h.recycler.getVisibility() == View.VISIBLE) {
+                    h.recycler.setVisibility(View.GONE);
+                } else {
+                    h.recycler.setVisibility(View.VISIBLE);
+                }
+                item.changeVisibility();
+            }
+        });
 
         holder.noteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,13 +132,4 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
 
     }
 
-    public int getNestedSize() {
-        return this.size;
-    }
-
-
-
-    public void setCurrent(int current) {
-        i = current;
-    }
 }

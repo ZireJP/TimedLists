@@ -52,9 +52,9 @@ public class RunActivity extends Activity {
     TextView totalTime;
     ProgressBar bar;
     RecyclerView listView;
-    RunArrayAdapter list;
     RunRVAdapter rvList;
     ArrayList<RunItem> items;
+    ArrayList<RunItem> actualItems;
     Button stopwatchStop;
     Button stopwatchSave;
     Button stopwatchDiscard;
@@ -67,6 +67,8 @@ public class RunActivity extends Activity {
     ObjectAnimator animation;
     ImageButton pauseButton;
     MediaPlayer mp;
+    ArrayList<RunItem> highlighted;
+    int lastHighlight;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,12 +91,12 @@ public class RunActivity extends Activity {
         setProgressbarSize();
         String _id = getIntent().getStringExtra("_id");
         newArray(_id);
-        list = new RunArrayAdapter(this, R.layout.adapter_item_run, allItems);
+        highlighted = new ArrayList<>();
         rvList = new RunRVAdapter(this, items, 0);
         listView.setAdapter(rvList);
         size = allItems.size();
         current = 0;
-        getCurrentItem(0, items);
+        lastHighlight = 0;
         timer();
     }
 
@@ -119,9 +121,6 @@ public class RunActivity extends Activity {
         if (current < 0) {
             current = 0;
         }
-        list.setCurrent(current);
-        list.notifyDataSetChanged();
-        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer();
     }
 
@@ -140,9 +139,6 @@ public class RunActivity extends Activity {
         if (current > size - 1) {
             current = size - 1;
         }
-        list.setCurrent(current);
-        list.notifyDataSetChanged();
-        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer();
     }
 
@@ -200,11 +196,7 @@ public class RunActivity extends Activity {
 
     public void stopwatchSave(View v) {
         current++;
-        list.setCurrent(current);
-        list.notifyDataSetChanged();
-        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         showSaveDiscard(View.GONE);
-        //TODO UPDATE TABLE
         String _id = allItems.get(current - 1)[2]; // [2] is the string column, -1 because current already updated
         Bundle string = new Bundle();
         String t = getResources().getString(R.string.date_format, Time.getDate(), Time.getCurrentTime());
@@ -216,9 +208,6 @@ public class RunActivity extends Activity {
     public void stopwatchDiscard(View v) {
         current++;
         showSaveDiscard(View.GONE);
-        list.setCurrent(current);
-        list.notifyDataSetChanged();
-        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer();
     }
 
@@ -228,6 +217,7 @@ public class RunActivity extends Activity {
     }
 
     private void timer() {
+        setHighlight();
         String[] item = allItems.get(current);
         setCurrentTotalTime();
         if (item[1].equals("0")) {
@@ -339,10 +329,6 @@ public class RunActivity extends Activity {
             mp.start();
             if (current < size - 1) {
                 current++;
-                getCurrentItem(current, items);
-                list.setCurrent(current);
-                list.notifyDataSetChanged();
-                //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
                 timer();
             } else {
                 countdown.setText("Finished");
@@ -354,9 +340,6 @@ public class RunActivity extends Activity {
         clickToContinue.setVisibility(View.GONE);
         if (current < size - 1) {
             current++;
-            list.setCurrent(current);
-            list.notifyDataSetChanged();
-            //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
             timer();
         } else {
             countdown.setText("Finished");
@@ -366,6 +349,7 @@ public class RunActivity extends Activity {
     private void newArray(String _id) {
         allItems = new ArrayList<>();
         items = new ArrayList<>();
+        actualItems = new ArrayList<>();
         Cursor c = getAllItems(_id);
         int f = c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY);
         int r = c.getColumnIndex(ItemInItem.ItemInItems.REPEAT);
@@ -375,6 +359,10 @@ public class RunActivity extends Activity {
             } while (c.moveToNext());
         }
         c.close();
+        for (RunItem item : items) {
+            item.calculateSize();
+            item.calculateTimes();
+        }
         fillArray(_id, 1);
     }
 
@@ -394,7 +382,9 @@ public class RunActivity extends Activity {
         boolean isList = cursor.getInt(cursor.getColumnIndex(Item.Items.IS_LIST)) > 0;
         cursor.close();
         if (!isList) {
-            return new RunItem(_id, name, time, repeat);
+            RunItem runny = new RunItem(_id, name, time, repeat);
+            actualItems.add(runny);
+            return runny;
         }
         RunItem parent = new RunItem(_id, name, repeat);
         Cursor c = getAllItems(_id);
@@ -475,7 +465,14 @@ public class RunActivity extends Activity {
         setProgressbarSize();
     }
 
-    void getCurrentItem(int current, ArrayList<RunItem> items) {
+    void resetHighlights() {
+        for (RunItem x : highlighted) {
+            x.setHighlight(false);
+        }
+        rvList.notifyItemChanged(lastHighlight);
+    }
+
+    void highlightCurrentItem(int current, ArrayList<RunItem> items, int nested) {
         int i = current;
         int position = 0;
         while (i >= items.get(position).getTotalSize()) {
@@ -487,7 +484,21 @@ public class RunActivity extends Activity {
         loop += i / item.getSize();
         i = i % item.getSize();
         if (items.get(position).getItems() != null) {
-            getCurrentItem(i, item.getItems());
+            highlightCurrentItem(i, item.getItems(), nested+1);
         }
+        item.setHighlight(true);
+        //item.setVisibility(true);
+        if (nested == 0) {
+            lastHighlight = position;
+            rvList.notifyItemChanged(position);
+            listView.scrollToPosition(position);
+        }
+        highlighted.add(item);
+    }
+
+    void setHighlight() {
+        resetHighlights();
+        highlighted = new ArrayList<>();
+        highlightCurrentItem(current, items, 0);
     }
 }

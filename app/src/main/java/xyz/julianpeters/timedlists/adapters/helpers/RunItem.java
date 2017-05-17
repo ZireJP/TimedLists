@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class RunItem {
 
     private String _id;
+    private boolean visible = false;
     private String name;
     private ArrayList<RunItem> items;
     private int time;
@@ -17,6 +18,7 @@ public class RunItem {
     private int totalSize;
     int repeat;
     private boolean isList;
+    private boolean highlight = false;
 
     public RunItem(String _id, String name, int time, int repeat) {
         this._id = _id;
@@ -69,27 +71,16 @@ public class RunItem {
     public int calculateSize() {
         if (!isList) {
             this.size = 1;
+            this.totalSize = repeat;
             return 1;
         }
         int i = 0;
         for (RunItem x : items) {
-            i += x.calculateTotalSize();
+            i += x.calculateSize() * x.repeat;
         }
         this.size = i;
-        return i;
-    }
-
-    public int calculateTotalSize() {
-        if (!isList) {
-            totalSize = repeat;
-            return totalSize;
-        }
-        int i = 0;
-        for (RunItem x : items) {
-            i += x.calculateTotalSize();
-        }
         this.totalSize = i * repeat;
-        return totalSize;
+        return i;
     }
 
     public int getSize() {
@@ -98,5 +89,25 @@ public class RunItem {
 
     public int getTotalSize() {
         return totalSize;
+    }
+
+    public void setHighlight(boolean highlight) {
+        this.highlight = highlight;
+    }
+
+    public boolean getHighlight() {
+        return highlight;
+    }
+
+    public void changeVisibility() {
+        visible = !visible;
+    }
+
+    public void setVisibility(boolean vis) {
+        visible = vis;
+    }
+
+    public boolean getVisibility() {
+        return visible;
     }
 }
