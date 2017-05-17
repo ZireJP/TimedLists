@@ -15,4 +15,5 @@
     <string name="stopwatch_stop">Click to stop\n%1$s</string>
     <string name="stopwatch_save">Save time</string>
     <string name="stopwatch_discard">Discard</string>
+    <string name="total_time">Total time left: %1$s and %2$s not timed items</string>
 </resources>

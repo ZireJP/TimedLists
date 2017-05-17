@@ -3,10 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/run_total_time"
+        android:layout_width="match_parent"
+        android:background="@android:color/holo_orange_light"
+        android:layout_height="@dimen/list_item_size" />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/run_stop"
+        android:layout_below="@+id/run_total_time"
         android:orientation="vertical"
         android:weightSum="2">
 

@@ -45,7 +45,10 @@ public class RunActivity extends Activity {
     Button clickToContinue;
     public int current;
     int secondsLeft;
+    int totalTimeLeft;
+    int totalNotTimedLeft;
     //Ringtone ringtone;
+    TextView totalTime;
     ProgressBar bar;
     ListView listView;
     RunArrayAdapter list;
@@ -74,6 +77,7 @@ public class RunActivity extends Activity {
         stopwatchDiscard = (Button) findViewById(R.id.stopwatch_discard);
         stopwatchStop = (Button) findViewById(R.id.stopwatch_stop);
         stopwatchSave = (Button) findViewById(R.id.stopwatch_save);
+        totalTime = (TextView) findViewById(R.id.run_total_time);
 
         //Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //ringtone = RingtoneManager.getRingtone(this, notification);
@@ -164,6 +168,31 @@ public class RunActivity extends Activity {
         showSaveDiscard(View.VISIBLE);
     }
 
+    public int[] totalTimeLeft(int current) {
+        int total = 0;
+        int notTimed = 0;
+        for (int i = current; i < size; i++) {
+            int time = Integer.parseInt(allItems.get(i)[1]);
+            total += time;
+            if (time == 0) {
+                notTimed++;
+            }
+        }
+        return new int[]{total, notTimed};
+    }
+
+    public void setTotalTime(int time, int notTimed) {
+        totalTime.setText(getResources().getString(
+                R.string.total_time, Time.getTimeString(time), "" + notTimed));
+    }
+
+    public void setCurrentTotalTime() {
+        int[] i = totalTimeLeft(current);
+        totalTimeLeft = i[0];
+        totalNotTimedLeft = i[1];
+        setTotalTime(totalTimeLeft, totalNotTimedLeft);
+    }
+
     public void stopwatchSave(View v) {
         current++;
         list.setCurrent(current);
@@ -171,10 +200,10 @@ public class RunActivity extends Activity {
         listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         showSaveDiscard(View.GONE);
         //TODO UPDATE TABLE
-        String _id = allItems.get(current-1)[2]; // [2] is the string column, -1 because current already updated
+        String _id = allItems.get(current - 1)[2]; // [2] is the string column, -1 because current already updated
         Bundle string = new Bundle();
         String t = getResources().getString(R.string.date_format, Time.getDate(), Time.getCurrentTime());
-        string.putString("string" , Item.Items.NOTES + " || \"" + t + Time.getTimeString(runFor) + "\"");
+        string.putString("string", Item.Items.NOTES + " || \"" + t + Time.getTimeString(runFor) + "\"");
         getContentResolver().call(Item.Items.CONTENT_URI, "appendNotes", _id, string);
         timer();
     }
@@ -195,6 +224,7 @@ public class RunActivity extends Activity {
 
     private void timer() {
         String[] item = allItems.get(current);
+        setCurrentTotalTime();
         if (item[1].equals("0")) {
             startStopwatch();
 
@@ -278,6 +308,7 @@ public class RunActivity extends Activity {
         MyCd(long millisInFuture) {
             super(millisInFuture, 250);
             name = allItems.get(current)[0];
+            secondsLeft = Integer.parseInt(allItems.get(current)[1]);
         }
 
         @Override
@@ -291,6 +322,8 @@ public class RunActivity extends Activity {
             if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
                 secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
                 countdown.setText(name + "\n" + Time.getTimeString(secondsLeft));
+                totalTimeLeft -= 1;
+                setTotalTime(totalTimeLeft, totalNotTimedLeft);
             }
         }
 
