@@ -59,7 +59,7 @@ public class RunArrayAdapter extends ArrayAdapter<String[]> {
                 }
             });
             if (i == position) {
-                v.setBackgroundColor(getContext().getResources().getColor(R.color.highlight));
+                v.setBackgroundColor(getContext().getColor(R.color.highlight));
             } else {
                 v.setBackgroundColor(Color.WHITE);
             }

@@ -2,7 +2,6 @@ package xyz.julianpeters.timedlists.activities.main;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Point;
@@ -11,13 +10,13 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import xyz.julianpeters.timedlists.adapters.helpers.RunItem;
+import xyz.julianpeters.timedlists.adapters.RunRVAdapter;
 import xyz.julianpeters.timedlists.helpers.DisplayDimension;
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
@@ -50,8 +51,10 @@ public class RunActivity extends Activity {
     //Ringtone ringtone;
     TextView totalTime;
     ProgressBar bar;
-    ListView listView;
+    RecyclerView listView;
     RunArrayAdapter list;
+    RunRVAdapter rvList;
+    ArrayList<RunItem> items;
     Button stopwatchStop;
     Button stopwatchSave;
     Button stopwatchDiscard;
@@ -72,7 +75,7 @@ public class RunActivity extends Activity {
         countdown = (TextView) findViewById(R.id.run_countdown);
         clickToContinue = (Button) findViewById(R.id.run_continue);
         bar = (ProgressBar) findViewById(R.id.run_progressbar);
-        listView = (ListView) findViewById(R.id.run_listview);
+        listView = (RecyclerView) findViewById(R.id.run_recycler);
         pauseButton = (ImageButton) findViewById(R.id.play_button);
         stopwatchDiscard = (Button) findViewById(R.id.stopwatch_discard);
         stopwatchStop = (Button) findViewById(R.id.stopwatch_stop);
@@ -87,7 +90,8 @@ public class RunActivity extends Activity {
         String _id = getIntent().getStringExtra("_id");
         newArray(_id);
         list = new RunArrayAdapter(this, R.layout.adapter_item_run, allItems);
-        listView.setAdapter(list);
+        rvList = new RunRVAdapter(items);
+        listView.setAdapter(rvList);
         size = allItems.size();
         current = 0;
         timer();
@@ -116,7 +120,7 @@ public class RunActivity extends Activity {
         }
         list.setCurrent(current);
         list.notifyDataSetChanged();
-        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer();
     }
 
@@ -137,7 +141,7 @@ public class RunActivity extends Activity {
         }
         list.setCurrent(current);
         list.notifyDataSetChanged();
-        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer();
     }
 
@@ -197,7 +201,7 @@ public class RunActivity extends Activity {
         current++;
         list.setCurrent(current);
         list.notifyDataSetChanged();
-        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         showSaveDiscard(View.GONE);
         //TODO UPDATE TABLE
         String _id = allItems.get(current - 1)[2]; // [2] is the string column, -1 because current already updated
@@ -213,7 +217,7 @@ public class RunActivity extends Activity {
         showSaveDiscard(View.GONE);
         list.setCurrent(current);
         list.notifyDataSetChanged();
-        listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+        //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
         timer();
     }
 
@@ -309,6 +313,7 @@ public class RunActivity extends Activity {
             super(millisInFuture, 250);
             name = allItems.get(current)[0];
             secondsLeft = Integer.parseInt(allItems.get(current)[1]);
+            countdown.setText(name + "\n" + Time.getTimeString(secondsLeft));
         }
 
         @Override
@@ -335,7 +340,7 @@ public class RunActivity extends Activity {
                 current++;
                 list.setCurrent(current);
                 list.notifyDataSetChanged();
-                listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+                //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
                 timer();
             } else {
                 countdown.setText("Finished");
@@ -349,7 +354,7 @@ public class RunActivity extends Activity {
             current++;
             list.setCurrent(current);
             list.notifyDataSetChanged();
-            listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
+            //listView.smoothScrollToPositionFromTop(current, 0, SCROLL_TIME);
             timer();
         } else {
             countdown.setText("Finished");
@@ -358,13 +363,48 @@ public class RunActivity extends Activity {
 
     private void newArray(String _id) {
         allItems = new ArrayList<>();
+        items = new ArrayList<>();
+        Cursor c = getAllItems(_id);
+        int f = c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY);
+        int r = c.getColumnIndex(ItemInItem.ItemInItems.REPEAT);
+        if (c.moveToFirst()) {
+            do {
+                items.add(fillA(c.getString(f), c.getInt(r)));
+            } while (c.moveToNext());
+        }
+        c.close();
         fillArray(_id, 1);
     }
 
     private Cursor getAllItems(String table_id) {
         String[] projection = {ItemInItem.ItemInItems.FOREIGN_KEY,
                 ItemInItem.ItemInItems.REPEAT};
-        return getContentResolver().query(ItemInItem.ItemInItems.CONTENT_URI, projection, table_id, null, ItemInItem.ItemInItems.ORDER);
+        return getContentResolver().query(ItemInItem.ItemInItems.getContentUri(table_id), projection, null, null, ItemInItem.ItemInItems.ORDER);
+    }
+
+    private RunItem fillA(String _id, int repeat) {
+        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.IS_LIST};
+        String selection = Item.Items.ITEM_ID + " = ?";
+        Cursor cursor = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, new String[]{_id}, null);
+        cursor.moveToFirst();
+        String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
+        int time = cursor.getInt(cursor.getColumnIndex(Item.Items.TIME));
+        boolean isList = cursor.getInt(cursor.getColumnIndex(Item.Items.IS_LIST)) > 0;
+        cursor.close();
+        if (!isList) {
+            return new RunItem(_id, name, time, repeat);
+        }
+        RunItem parent = new RunItem(_id, name, repeat);
+        Cursor c = getAllItems(_id);
+        int f = c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY);
+        int r = c.getColumnIndex(ItemInItem.ItemInItems.REPEAT);
+        if (c.moveToFirst()) {
+            do {
+                parent.getItems().add(fillA(c.getString(f), c.getInt(r)));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return parent;
     }
 
     private void fillArray(String _id, int repeat) {
@@ -379,7 +419,7 @@ public class RunActivity extends Activity {
             }
         } else {
             cursor.close();
-            cursor = getAllItems("table_" + _id);
+            cursor = getAllItems(_id);
             for (int i = 0; i < repeat; i++) {
                 if (cursor.moveToFirst()) {
                     do {

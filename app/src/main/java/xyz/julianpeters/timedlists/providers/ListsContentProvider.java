@@ -100,27 +100,22 @@ public class ListsContentProvider extends ContentProvider {
 
         switch (sUriMatcher.match(uri)) {
             case LISTS:
-                Log.d("CALLED", "LISTS");
                 qb.setTables(LISTS_TABLE_NAME);
                 qb.setProjectionMap(listsProjectionMap);
                 break;
             case LISTS_ID:
-                Log.d("CALLED", "LISTS_ID");
                 qb.setTables(LISTS_TABLE_NAME);
                 qb.setProjectionMap(listsProjectionMap);
                 selection = Item.Items.ITEM_ID + " = " +uri.getLastPathSegment();
                 break;
             case USER_TABLE:
-                Log.d("CALLED", "USER_TABLE");
                 qb.setTables(selection);
                 selection = null;
                 break;
             case USER_TABLE_ID:
-                Log.d("CALLED", "USER_TABLE_ID");
                 qb.setTables(ItemInItem.ItemInItems.table(uri.getLastPathSegment()));
                 break;
             default:
-                Log.d("CALLED", "DEFAULT");
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
@@ -159,7 +154,6 @@ public class ListsContentProvider extends ContentProvider {
             case LISTS:
                 rowId = db.insert(LISTS_TABLE_NAME, Item.Items.TIME, val);
                 createNewList(db, Long.toString(rowId));
-                Log.d("Created Table", "table_" + rowId);
                 if (rowId > 0) {
                     Uri itemUri = ContentUris.withAppendedId(Item.Items.CONTENT_URI, rowId);
                     getContext().getContentResolver().notifyChange(itemUri, null);
