@@ -44,11 +44,14 @@ public class SubCopyPopUp extends CopyPopUp {
         String _id = cursor.getString(0);
         int links = cursor.getInt(4);
         cursor.close();
-        if(selectedView != null) {
+        if (selectedView != null) {
             ContentValues values = new ContentValues();
-            values.put(Item.Items.LINKS, links+1);
+            values.put(Item.Items.IS_LIST, true);
+            getContentResolver().update(Item.Items.getIdUri(table_id), values, null, null);
+            values = new ContentValues();
+            values.put(Item.Items.LINKS, links + 1);
             getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
-
+            values = new ContentValues();
             values.put(ItemInItem.ItemInItems.FOREIGN_KEY, _id);
             values.put(ItemInItem.ItemInItems.REPEAT, 1);
             int rows = getContentResolver().call(Item.Items.CONTENT_URI, "getRows", table_id, null).getInt("rows");
