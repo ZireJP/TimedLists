@@ -37,12 +37,21 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView.Vi
         c.moveToPosition(position);
         int i = c.getColumnIndex(Item.Items.ITEM_ID);
         String _id = c.getString(i);
+        int links = c.getInt(c.getColumnIndex(Item.Items.LINKS));
         ContentResolver resolver = mContext.getContentResolver();
-        resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", _id, null);
+        if (links > 0) {
+            ContentValues val = new ContentValues();
+            val.put(Item.Items.LINKS, links - 1);
+            val.putNull(Item.Items.TAG);
+            resolver.update(Item.Items.getIdUri(_id), val, null, null);
+        } else {
+            resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", _id, null);
+        }
         Bundle b = new Bundle();
         b.putString("position", Integer.toString(position));
         b.putString("table", ListsContentProvider.LISTS_TABLE_NAME);
         b.putString("order", Item.Items.ORDER);
+
         resolver.call(Item.Items.CONTENT_URI, "deleteIncrement", null, b);
     }
 
@@ -74,7 +83,7 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView.Vi
             itemView.findViewById(R.id.footer).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((ListActivityMain)context).showAddItem(null);
+                    ((ListActivityMain) context).showAddItem(null);
                 }
             });
         }

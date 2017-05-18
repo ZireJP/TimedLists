@@ -45,7 +45,7 @@ public class ListActivityMain extends ListActivityBase {
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] proj = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.IS_LIST};
+        String[] proj = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.IS_LIST, Item.Items.LINKS};
         String selection = Item.Items.TAG + " = ?";
         String[] selectionArgs = {"fav"};
         return new CursorLoader(this,

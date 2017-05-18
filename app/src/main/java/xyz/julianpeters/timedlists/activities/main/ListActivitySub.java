@@ -2,12 +2,14 @@ package xyz.julianpeters.timedlists.activities.main;
 
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import xyz.julianpeters.timedlists.activities.popup.SubCopyPopUp;
 import xyz.julianpeters.timedlists.adapters.CursorRecyclerViewAdapter;
 import xyz.julianpeters.timedlists.adapters.SubListCursorAdapter;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
@@ -63,15 +65,26 @@ public class ListActivitySub extends ListActivityBase {
     @Override
     public Uri createItem() {
         Uri uri = super.createItem();
-        String foreignKey = uri.getLastPathSegment();
-        ContentValues values = new ContentValues();
-        values.put(Item.Items.IS_LIST, true);
-        getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
-        values = new ContentValues();
-        values.put(ItemInItem.ItemInItems.FOREIGN_KEY, foreignKey);
-        values.put(ItemInItem.ItemInItems.REPEAT, 1);
-        int rows = getContentResolver().call(Item.Items.CONTENT_URI, "getRows", _id, null).getInt("rows");
-        values.put(ItemInItem.ItemInItems.ORDER, rows);
-        return getContentResolver().insert(ItemInItem.ItemInItems.getContentUri(_id), values);
+        if (uri != null) {
+            String foreignKey = uri.getLastPathSegment();
+            ContentValues values = new ContentValues();
+            values.put(Item.Items.IS_LIST, true);
+            getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
+            values = new ContentValues();
+            values.put(ItemInItem.ItemInItems.FOREIGN_KEY, foreignKey);
+            values.put(ItemInItem.ItemInItems.REPEAT, 1);
+            int rows = getContentResolver().call(Item.Items.CONTENT_URI, "getRows", _id, null).getInt("rows");
+            values.put(ItemInItem.ItemInItems.ORDER, rows);
+            return getContentResolver().insert(ItemInItem.ItemInItems.getContentUri(_id), values);
+        }
+        return null;
+    }
+
+    @Override
+    void startCopyPop() {
+        Intent intent = new Intent(this, SubCopyPopUp.class);
+        intent.putExtra("name", newEditText.getText().toString());
+        intent.putExtra("table_id", _id);
+        startActivity(intent);
     }
 }

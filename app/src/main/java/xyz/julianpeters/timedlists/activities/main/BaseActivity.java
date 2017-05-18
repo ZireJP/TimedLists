@@ -206,15 +206,19 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         Uri uri = null;
         if (count > 0) {
             editIsActive = true;
-            Intent intent = new Intent(this, CopyPopUp.class);
-            intent.putExtra("name", newEditText.getText().toString());
-            startActivity(intent);
+            startCopyPop();
         } else {
             uri = getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues());
             createItemAnimation(true);
         }
         c.close();
         return uri;
+    }
+
+    void startCopyPop() {
+        Intent intent = new Intent(this, CopyPopUp.class);
+        intent.putExtra("name", newEditText.getText().toString());
+        startActivity(intent);
     }
 
     void createItemAnimation(boolean created) {
@@ -293,11 +297,4 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         overridePendingTransition(R.anim.list_switch_in_back, R.anim.list_switch_out_back);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (editIsActive) {
-            createItemAnimation(true);
-        }
-    }
 }

@@ -10,9 +10,10 @@ import xyz.julianpeters.timedlists.providers.helpers.Item;
 
 public class ValuesForItems {
 
-    public static ContentValues createdFromMain(String name) {
+    public static ContentValues createdFromMain(String name, int i) {
         ContentValues values = newItem(name);
         values.put(Item.Items.TAG, "fav");
+        values.put(Item.Items.ORDER, i);
         return values;
     }
 

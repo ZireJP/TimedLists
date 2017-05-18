@@ -58,4 +58,12 @@ abstract class ListActivityBase extends BaseActivity {
     public int adjustHeight() {
         return (int)getResources().getDimension(R.dimen.list_item_size);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (editIsActive) {
+            createItemAnimation(true);
+        }
+    }
 }

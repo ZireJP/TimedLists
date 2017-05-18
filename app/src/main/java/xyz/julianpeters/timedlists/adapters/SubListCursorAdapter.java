@@ -44,7 +44,16 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView
         c.moveToPosition(position);
         ContentResolver resolver = mContext.getContentResolver();
         String foreign_id = c.getString(c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY));
-        resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", foreign_id, null);
+        Cursor foreignCursor = resolver.query(Item.Items.getIdUri(foreign_id), new String[] {Item.Items.LINKS}, null, null, null);
+        foreignCursor.moveToFirst();
+        int links = foreignCursor.getInt(0);
+        if (links > 0) {
+            ContentValues val = new ContentValues();
+            val.put(Item.Items.LINKS, links - 1);
+            resolver.update(Item.Items.getIdUri(foreign_id), val, null, null);
+        } else {
+            resolver.call(Item.Items.CONTENT_URI, "deleteAllItemsOf", foreign_id, null);
+        }
 
         String _id = c.getString(c.getColumnIndex(ItemInItem.ItemInItems.ITEM_ID));
         String selection = ItemInItem.ItemInItems.ITEM_ID + " = ?";

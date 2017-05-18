@@ -8,10 +8,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import xyz.julianpeters.timedlists.activities.popup.SetTimePopUp;
+import xyz.julianpeters.timedlists.activities.popup.SubCopyPopUp;
 import xyz.julianpeters.timedlists.helpers.Helper;
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.R;
@@ -85,20 +87,47 @@ public class ItemActivity extends BaseActivity {
     @Override
     public Uri createItem() {
         Uri uri = super.createItem();
-        String foreignKey = uri.getLastPathSegment();
-        ContentValues values = new ContentValues();
-        values.put(Item.Items.IS_LIST, true);
-        getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
-        values = new ContentValues();
-        values.put(ItemInItem.ItemInItems.FOREIGN_KEY, foreignKey);
-        values.put(ItemInItem.ItemInItems.REPEAT, 1);
-        values.put(ItemInItem.ItemInItems.ORDER, 0);
-        return getContentResolver().insert(ItemInItem.ItemInItems.getContentUri(_id), values);
+        if (uri != null) {
+            String foreignKey = uri.getLastPathSegment();
+            ContentValues values = new ContentValues();
+            values.put(Item.Items.IS_LIST, true);
+            getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
+            values = new ContentValues();
+            values.put(ItemInItem.ItemInItems.FOREIGN_KEY, foreignKey);
+            values.put(ItemInItem.ItemInItems.REPEAT, 1);
+            values.put(ItemInItem.ItemInItems.ORDER, 0);
+            return getContentResolver().insert(ItemInItem.ItemInItems.getContentUri(_id), values);
+        }
+        return null;
     }
 
     @Override
     void createItemAnimation(boolean x) {
-        Helper.launchIntent(this, true, _id);
-        finish();
+        Cursor c = getContentResolver().query(Item.Items.getIdUri(_id), new String[]{Item.Items.IS_LIST}, null, null, null);
+        c.moveToFirst();
+        int i = c.getInt(0);
+        c.close();
+        if (i > 0 || x) {
+            Helper.launchIntent(this, true, _id);
+            finish();
+        } else {
+            slideOutAnimation(false);
+        }
+    }
+
+    @Override
+    void startCopyPop() {
+        Intent intent = new Intent(this, SubCopyPopUp.class);
+        intent.putExtra("name", newEditText.getText().toString());
+        intent.putExtra("table_id", _id);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (editIsActive) {
+            createItemAnimation(false);
+        }
     }
 }

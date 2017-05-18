@@ -50,6 +50,9 @@
             android:name="xyz.julianpeters.timedlists.activities.popup.CopyPopUp"
             android:theme="@style/AppTheme.PopUpTransparent"/>
         <activity
+            android:name="xyz.julianpeters.timedlists.activities.popup.SubCopyPopUp"
+            android:theme="@style/AppTheme.PopUpTransparent"/>
+        <activity
             android:name="xyz.julianpeters.timedlists.activities.popup.SetTimePopUp"
             android:theme="@style/AppTheme.PopUpTransparent"/>
 

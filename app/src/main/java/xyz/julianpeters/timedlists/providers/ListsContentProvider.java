@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 7;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -107,7 +107,7 @@ public class ListsContentProvider extends ContentProvider {
             case LISTS_ID:
                 qb.setTables(LISTS_TABLE_NAME);
                 qb.setProjectionMap(listsProjectionMap);
-                selection = Item.Items.ITEM_ID + " = " +uri.getLastPathSegment();
+                selection = Item.Items.ITEM_ID + " = " + uri.getLastPathSegment();
                 break;
             case USER_TABLE:
                 qb.setTables(selection);
@@ -234,7 +234,7 @@ public class ListsContentProvider extends ContentProvider {
         String count = "SELECT count(*) FROM " + table_id;
         Cursor cursor = db.rawQuery(count, null);
         cursor.moveToFirst();
-        int i =  cursor.getInt(0);
+        int i = cursor.getInt(0);
         cursor.close();
         return i;
     }
@@ -244,7 +244,7 @@ public class ListsContentProvider extends ContentProvider {
     public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
         SQLiteDatabase db;
         Bundle bundle = new Bundle();
-        switch(method) {
+        switch (method) {
             case "getRows":
                 bundle.putInt("rows", getRows(USER_TABLE_NAME + arg));
                 return bundle;
@@ -301,15 +301,26 @@ public class ListsContentProvider extends ContentProvider {
 
     private int _deleteAllItemsOf(SQLiteDatabase db, String _id) {
         int i = 0;
-        Cursor c = db.query(ItemInItem.ItemInItems.table(_id), new String[]{ItemInItem.ItemInItems.FOREIGN_KEY}, null, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                i += _deleteAllItemsOf(db, c.getString(0));
-            } while(c.moveToNext());
+        Cursor linkCursor = db.query(LISTS_TABLE_NAME, new String[]{Item.Items.LINKS}, Item.Items._ID + " = " + _id, null, null, null, null);
+        linkCursor.moveToFirst();
+        int links = linkCursor.getInt(0);
+        if (links > 0) {
+            ContentValues values = new ContentValues();
+            values.put(Item.Items.LINKS, links - 1);
+            db.update(LISTS_TABLE_NAME, values, Item.Items.ITEM_ID + " = " + _id, null);
+            return i;
+        } else {
+            Cursor c = db.query(ItemInItem.ItemInItems.table(_id), new String[]{ItemInItem.ItemInItems.FOREIGN_KEY}, null, null, null, null, null);
+            if (c.moveToFirst()) {
+                do {
+                    i += _deleteAllItemsOf(db, c.getString(0));
+                } while (c.moveToNext());
+            }
+            c.close();
+            dropList(db, _id);
+            i += db.delete(LISTS_TABLE_NAME, Item.Items.ITEM_ID + " = ?", new String[]{_id});
+            return i;
         }
-        dropList(db, _id);
-        i += db.delete(LISTS_TABLE_NAME, Item.Items.ITEM_ID + " = ?", new String[]{_id});
-        return i;
     }
 
     static {
@@ -327,5 +338,6 @@ public class ListsContentProvider extends ContentProvider {
         listsProjectionMap.put(Item.Items.TAG, Item.Items.TAG);
         listsProjectionMap.put(Item.Items.NOTES, Item.Items.NOTES);
         listsProjectionMap.put(Item.Items.ORDER, Item.Items.ORDER);
+        listsProjectionMap.put(Item.Items.LINKS, Item.Items.LINKS);
     }
 }

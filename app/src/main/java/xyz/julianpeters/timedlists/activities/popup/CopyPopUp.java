@@ -3,9 +3,11 @@ package xyz.julianpeters.timedlists.activities.popup;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import xyz.julianpeters.timedlists.helpers.Time;
+import xyz.julianpeters.timedlists.helpers.ValuesForItems;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 import xyz.julianpeters.timedlists.R;
 
@@ -26,9 +29,9 @@ public class CopyPopUp extends Activity {
     String name;
     ListView list;
     int selected;
-    String selectedId;
-    View selectedView;
+    View selectedView = null;
     Cursor cursor;
+    Uri uriId;
 
     String selectedName = "(selected)";
 
@@ -49,7 +52,7 @@ public class CopyPopUp extends Activity {
         getWindow().setLayout((int) (width * .8), (int) (height * .8));
         name = getIntent().getStringExtra("name");
         text.setText(getResources().getString(R.string.copy_text, name, selectedName));
-        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME};
+        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.TAG, Item.Items.LINKS};
         String selection = Item.Items.TITLE + " LIKE ?";
         String[] arg = {"%" + name + "%"};
         cursor = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, arg, null);
@@ -75,46 +78,47 @@ public class CopyPopUp extends Activity {
                 selectedView = view;
                 selected = position;
                 cursor.moveToPosition(position);
-                selectedId = cursor.getString(0);
             }
         });
     }
 
     public void newItem(View v) {
         cursor.close();
-        getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues(name));
+        uriId = getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues(name, getOrder()));
         finish();
     }
 
     public void copy(View v) {
         cursor.close();
+        finish();
         // return getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues());
     }
 
-    public void link(View v) {
-        cursor.close();
-        ContentValues values = new ContentValues();
-        values.put(Item.Items.TAG, "fav");
+    public int getOrder() {
         Cursor c = getContentResolver().query(Item.Items.CONTENT_URI, null, Item.Items.TAG + " = ?", new String[]{"fav"}, null);
         int i = c.getCount();
         c.close();
-        values.put(Item.Items.ORDER, i);
-        getContentResolver().update(Item.Items.getIdUri(selectedId), values, null, null);
+        return i;
+    }
+
+    public void link(View v) {
+        cursor.moveToPosition(selected);
+        String _id = cursor.getString(0);
+        String tag = cursor.getString(3);
+        int links = cursor.getInt(4);
+        cursor.close();
+        if(tag == null && selectedView != null) {
+            ContentValues values = new ContentValues();
+            values.put(Item.Items.TAG, "fav");
+            values.put(Item.Items.LINKS, links+1);
+            values.put(Item.Items.ORDER, getOrder());
+            getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
+        }
         finish();
     }
 
-    private ContentValues getContentValues(String name) {
-        ContentValues values = new ContentValues();
-        values.put(Item.Items.TITLE, name);
-        values.put(Item.Items.TIME, 0);
-        values.put(Item.Items.IS_LIST, false);
-        values.put(Item.Items.NOTES, "");
-        values.put(Item.Items.TAG, "fav");
-        Cursor c = getContentResolver().query(Item.Items.CONTENT_URI, null, Item.Items.TAG + " = ?", new String[]{"fav"}, null);
-        int i = c.getCount();
-        c.close();
-        values.put(Item.Items.ORDER, i);
-        return values;
+    protected ContentValues getContentValues(String name, int i) {
+        return ValuesForItems.createdFromMain(name, i);
     }
 
 
