@@ -97,7 +97,7 @@ public class ItemActivity extends BaseActivity {
     }
 
     @Override
-    void createItemAnimation() {
+    void createItemAnimation(boolean x) {
         Helper.launchIntent(this, true, _id);
         finish();
     }

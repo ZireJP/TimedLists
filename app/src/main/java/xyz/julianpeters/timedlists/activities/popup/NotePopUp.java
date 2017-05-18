@@ -3,7 +3,6 @@ package xyz.julianpeters.timedlists.activities.popup;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;

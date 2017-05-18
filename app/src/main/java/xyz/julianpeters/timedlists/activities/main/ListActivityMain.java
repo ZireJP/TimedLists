@@ -60,7 +60,6 @@ public class ListActivityMain extends ListActivityBase {
     public ContentValues getContentValues() {
         ContentValues values = super.getContentValues();
         values.put(Item.Items.TAG, "fav");
-        Log.d("ROW NUMBER", "" + getRowNumber());
         values.put(Item.Items.ORDER, getRowNumber());
         return values;
     }

@@ -47,6 +47,9 @@
             android:theme="@style/AppTheme.PopUpTransparent"
             android:windowSoftInputMode="adjustResize"/>
         <activity
+            android:name="xyz.julianpeters.timedlists.activities.popup.CopyPopUp"
+            android:theme="@style/AppTheme.PopUpTransparent"/>
+        <activity
             android:name="xyz.julianpeters.timedlists.activities.popup.SetTimePopUp"
             android:theme="@style/AppTheme.PopUpTransparent"/>
 

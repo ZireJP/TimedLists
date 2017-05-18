@@ -82,7 +82,7 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
         }
         holder.mainButton.setBackgroundColor(color);
         holder.noteButton.setBackgroundColor(color);
-        holder.mainButton.setText(item.getName() + " : " + Time.getTimeString(item.calculateTimes()));
+        holder.mainButton.setText(item.getName() + " : " + Time.getTimeString(item.getTime()));
         RunRVAdapter rv = new RunRVAdapter(context, items.get(position).getItems(), nestedLevel + 1);
         holder.recycler.setAdapter(rv);
 

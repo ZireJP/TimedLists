@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import xyz.julianpeters.timedlists.activities.popup.CopyPopUp;
 import xyz.julianpeters.timedlists.activities.popup.NotePopUp;
 import xyz.julianpeters.timedlists.R;
 import xyz.julianpeters.timedlists.activities.popup.RunMultiplePopUp;
@@ -29,6 +31,7 @@ import xyz.julianpeters.timedlists.providers.helpers.Item;
 
 abstract class BaseActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    final long ITEM_ANIMATION_TIME = 200;
     EditText titleView;
     View showNotes;
     View itemView;
@@ -76,7 +79,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         int test = itemView.getHeight();
         Animation anim2 = new TranslateAnimation(0, 0, 0, -test+adjustHeight());
         if (test-adjustHeight()!=0) {
-            anim2.setDuration(400);
+            anim2.setDuration(ITEM_ANIMATION_TIME);
         } else {
             anim2.setDuration(0);
         }
@@ -158,7 +161,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
 
     public Animation createAnim(long fromY, long toY) {
         Animation animation = new TranslateAnimation(0, 0, fromY, toY);
-        animation.setDuration(400);
+        animation.setDuration(ITEM_ANIMATION_TIME);
         animation.setFillAfter(true);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -194,13 +197,28 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     }
 
     public Uri createItem() {
-        Uri uri = getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues());
-        newEditText.setText("");
+        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME};
+        String selection = Item.Items.TITLE + " LIKE ?" ;
+        String[] arg = {"%" + newEditText.getText().toString() + "%"};
+        Cursor c = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, arg, null);
+        int count = c.getCount();
+        Uri uri = null;
+        if (count > 0) {
+            editIsActive = true;
+            Intent intent = new Intent(this, CopyPopUp.class);
+            intent.putExtra("name", newEditText.getText().toString());
+            startActivity(intent);
+        } else {
+            uri = getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues());
+            createItemAnimation(true);
+        }
+        c.close();
         return uri;
     }
 
-    void createItemAnimation() {
-       slideOutAnimation(true);
+    void createItemAnimation(boolean created) {
+       newEditText.setText("");
+       slideOutAnimation(created);
     }
 
     public void showAddItem(View v) {
@@ -212,7 +230,6 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         editIsActive = unFocusEdit(newEditText);
         if (!newEditText.getText().toString().equals("")) {
             createItem();
-            createItemAnimation();
         } else {
             slideOutAnimation(false);
         }
@@ -278,5 +295,13 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.list_switch_in_back, R.anim.list_switch_out_back);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (editIsActive) {
+            createItemAnimation(true);
+        }
     }
 }

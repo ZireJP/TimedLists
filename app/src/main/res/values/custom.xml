@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item format="float" name="disabled_alpha" type="dimen">.5</item>
-    <item format="integer" name="item_animation_time" type="dimen">400</item>
+    <item format="integer" name="item_animation_time" type="dimen">200</item>
 </resources>
