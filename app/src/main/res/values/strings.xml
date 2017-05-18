@@ -23,9 +23,9 @@
     <string name="link">Link</string>
     <string name="New">New</string>
 
-    <string name="copy_text">Listen!\nIt looks like there is already an item with a similar name.
+    <string name="copy_text">Listen!\nIt looks like there is at least one items with a similar names.
         \nWhat do you want to do?
         \n\n\t&#8212; New : Create a new item with the name %1$s.
-        \n\n\t&#8212; Copy : Creates a new item with the parameters of %2$s.
+        \n\n\t&#8212; Copy : Create a new item with the parameters of %2$s.
         \n\n\t&#8212; Link : Links to the item %2$s. Changing the parameters changes them for all instances.</string>
 </resources>

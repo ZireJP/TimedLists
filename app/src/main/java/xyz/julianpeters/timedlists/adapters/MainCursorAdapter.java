@@ -44,7 +44,6 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView.Vi
         b.putString("table", ListsContentProvider.LISTS_TABLE_NAME);
         b.putString("order", Item.Items.ORDER);
         resolver.call(Item.Items.CONTENT_URI, "deleteIncrement", null, b);
-        notifyItemRemoved(position);
     }
 
     @Override

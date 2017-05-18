@@ -55,7 +55,6 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView
         b.putString("table", ItemInItem.ItemInItems.table(table_id));
         b.putString("order", ItemInItem.ItemInItems.ORDER);
         resolver.call(Item.Items.CONTENT_URI, "deleteIncrement", null, b);
-        notifyItemRemoved(position);
 
         Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table_id, null);
         int i = rows.getInt("rows");
