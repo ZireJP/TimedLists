@@ -134,7 +134,12 @@ public class RunActivity extends Activity {
         showSaveDiscard(View.GONE);
         current--;
         if (current < 0) {
-            current = 0;
+            if (doneRepeat == 1) {
+                current = 0;
+            } else {
+                doneRepeat--;
+                current = size - 1;
+            }
         }
         timer(false);
     }
@@ -152,7 +157,12 @@ public class RunActivity extends Activity {
         showSaveDiscard(View.GONE);
         current++;
         if (current > size - 1) {
-            current = size - 1;
+            if (doneRepeat == totalRepeat) {
+                current = size - 1;
+            } else {
+                doneRepeat++;
+                current = 0;
+            }
         }
         timer(false);
     }
