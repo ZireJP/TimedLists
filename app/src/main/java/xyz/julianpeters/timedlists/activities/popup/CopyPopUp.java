@@ -70,7 +70,7 @@ public class CopyPopUp extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectedView != null) {
-                    selectedView.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                    selectedView.setBackgroundColor(getColor(R.color.holo_orange_light));
                 }
                 view.setBackgroundColor(getColor(R.color.highlight));
                 selectedName = ((TextView) view).getText().toString();

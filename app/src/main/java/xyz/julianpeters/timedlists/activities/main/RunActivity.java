@@ -31,7 +31,6 @@ import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 import xyz.julianpeters.timedlists.providers.helpers.ItemInItem;
 import xyz.julianpeters.timedlists.R;
-import xyz.julianpeters.timedlists.adapters.RunArrayAdapter;
 
 /**
  * Created by julian on 10.05.17.
