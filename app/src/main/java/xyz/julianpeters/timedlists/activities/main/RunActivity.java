@@ -46,6 +46,8 @@ public class RunActivity extends Activity {
     int totalTimeLeft;
     int totalNotTimedLeft;
     TextView totalTime;
+    TextView totalTimeSw;
+    TextView runItemRepeat;
     ProgressBar bar;
     RecyclerView listView;
     RunRVAdapter rvList;
@@ -61,10 +63,13 @@ public class RunActivity extends Activity {
     int repeat;
     CountDownTimer cd = null;
     StopWatch sw = null;
+    TotalStopWatch swTotal;
     ObjectAnimator animation;
     ImageButton pauseButton;
     MediaPlayer mp;
+    MediaPlayer mpEnd;
     ArrayList<RunItem> highlighted;
+    String highlightedString;
     int lastHighlight;
 
     @Override
@@ -80,10 +85,11 @@ public class RunActivity extends Activity {
         stopwatchStop = (Button) findViewById(R.id.stopwatch_stop);
         stopwatchSave = (Button) findViewById(R.id.stopwatch_save);
         totalTime = (TextView) findViewById(R.id.run_total_time);
+        totalTimeSw = (TextView) findViewById(R.id.run_time_run);
+        runItemRepeat = (TextView) findViewById(R.id.run_item_repeat);
 
-        //Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        //ringtone = RingtoneManager.getRingtone(this, notification);
         mp = MediaPlayer.create(this, R.raw.short_sound);
+        mpEnd = MediaPlayer.create(this, R.raw.endset);
 
         setProgressbarSize();
         String _id = getIntent().getStringExtra("_id");
@@ -94,6 +100,8 @@ public class RunActivity extends Activity {
         size = actualItems.size();
         current = 0;
         lastHighlight = 0;
+        swTotal = new TotalStopWatch();
+        swTotal.schedule(0);
         timer(false);
     }
 
@@ -221,8 +229,8 @@ public class RunActivity extends Activity {
     private void timer(boolean repeating) {
         if (!repeating) {
             this.repeat = 1;
-            setHighlight();
         }
+        setHighlight();
         RunItem item = actualItems.get(current);
         setCurrentTotalTime();
         if (item.getTime() == 0) {
@@ -234,6 +242,51 @@ public class RunActivity extends Activity {
             setProgressAnimate(bar, time * 1000);
             cd = new MyCd(time * 1000);
             cd.start();
+        }
+    }
+
+    private class TotalStopWatch extends Timer {
+
+        int runFor;
+        final TimerTask task;
+        boolean stop = false;
+
+        public TotalStopWatch() {
+            runFor = 0;
+            task = new TimerTask() {
+
+                Runnable run = new Runnable() {
+                    @Override
+                    public void run() {
+                        totalTimeSw.setText(getResources().getString(R.string.total_time_done, Time.getTimeString(runFor)));
+                    }
+                };
+
+                @Override
+                public void run() {
+                    while(!stop) {
+                        runOnUiThread(run);
+                        SystemClock.sleep(1000);
+                        runFor++;
+                    }
+                }
+
+                @Override
+                public boolean cancel() {
+                    stop = true;
+                    return super.cancel();
+                }
+            };
+        }
+
+        void schedule(long delay) {
+            schedule(task, delay);
+        }
+
+        @Override
+        public void cancel() {
+            task.cancel();
+            super.cancel();
         }
     }
 
@@ -312,7 +365,6 @@ public class RunActivity extends Activity {
         @Override
         public void onTick(long millisUntilFinished) {
             if (paused) {
-                //
                 this.cancel();
                 animation.cancel();
                 saveTime = millisUntilFinished;
@@ -327,7 +379,11 @@ public class RunActivity extends Activity {
 
         @Override
         public void onFinish() {
-            mp.start();
+            if (repeat == item.getRepeat()) {
+                mpEnd.start();
+            } else {
+                mp.start();
+            }
             whatNext();
         }
     }
@@ -424,6 +480,7 @@ public class RunActivity extends Activity {
         } catch (NullPointerException e) {
             Log.d("NullPointerException", "stopwatch already finished");
         }
+        swTotal.cancel();
         super.onDestroy();
     }
 
@@ -469,10 +526,14 @@ public class RunActivity extends Activity {
             position++;
         }
         RunItem item = items.get(position);
-        int loop = i / item.getSize();
+        int loop = (i / item.getSize()) + 1;
         i = i % item.getSize();
+        highlighted.add(item);
         if (items.get(position).getItems() != null) {
+            highlightedString += getResources().getString(R.string.highlight_repeat, item.getName(), loop, item.getRepeat());
             highlightCurrentItem(i, item.getItems(), nested + 1);
+        } else {
+            highlightedString += getResources().getString(R.string.highlight_repeat, item.getName(), repeat, item.getRepeat());
         }
         item.setHighlight(true);
         //item.setVisibility(true);
@@ -481,12 +542,14 @@ public class RunActivity extends Activity {
             rvList.notifyItemChanged(position);
             //listView.scrollToPosition(position);
         }
-        highlighted.add(item);
     }
 
     void setHighlight() {
         resetHighlights();
         highlighted = new ArrayList<>();
+        highlightedString = "";
         highlightCurrentItem(current, items, 0);
+        runItemRepeat.setText(highlightedString);
+
     }
 }
