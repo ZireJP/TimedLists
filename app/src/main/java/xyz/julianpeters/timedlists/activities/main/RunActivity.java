@@ -470,6 +470,13 @@ public class RunActivity extends Activity {
             do {
                 items.add(fillA(c.getString(f), c.getInt(r)));
             } while (c.moveToNext());
+        } else {
+            Cursor item = getContentResolver().query(Item.Items.getIdUri(_id), new String[] {Item.Items.TITLE, Item.Items.TIME}, null, null, null);
+            item.moveToFirst();
+            RunItem single = new RunItem(_id, item.getString(0), item.getInt(1), 1);
+            items.add(single);
+            actualItems.add(single);
+            item.close();
         }
         c.close();
         for (RunItem item : items) {
