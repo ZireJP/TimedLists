@@ -304,12 +304,14 @@ public class RunActivity extends Activity {
 
         int runFor;
         RunItem item;
+        String next;
         final MyTask task;
 
         StopWatch() {
             runFor = 0;
             item = actualItems.get(current);
             task = new MyTask();
+            next = findNext();
         }
 
         class MyTask extends TimerTask {
@@ -322,7 +324,8 @@ public class RunActivity extends Activity {
                     @Override
                     public void run() {
                         stopwatchStop.setText(getResources().getString(R.string.stopwatch_stop, item.getName()
-                                + "\n" + Time.getTimeString(runFor)) + "\n" + repeat + "/" + item.getRepeat());
+                                + "\n" + Time.getTimeString(runFor)) + "\n" + repeat + "/" + item.getRepeat()
+                                + "\nNext: " + next);
                     }
                 };
             }
@@ -364,12 +367,14 @@ public class RunActivity extends Activity {
     private class MyCd extends CountDownTimer {
 
         RunItem item;
+        String next;
 
         MyCd(long millisInFuture) {
             super(millisInFuture, 250);
             item = actualItems.get(current);
             secondsLeft = item.getTime();
-            countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat());
+            next = findNext();
+            countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat() + "\nNext: " + next);
         }
 
         @Override
@@ -381,7 +386,7 @@ public class RunActivity extends Activity {
             }
             if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
                 secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
-                countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat());
+                countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat() + "\nNext: " + next);
                 totalTimeLeft -= 1;
                 setTotalTime(totalTimeLeft, totalNotTimedLeft);
             }
@@ -398,6 +403,16 @@ public class RunActivity extends Activity {
         }
     }
 
+    public String findNext() {
+        if (current < size-1) {
+            return actualItems.get(current + 1).getName();
+        } else if (totalRepeat > doneRepeat){
+            return actualItems.get(0).getName();
+        } else {
+            return "Finished";
+        }
+    }
+
     public void whatNext() {
         if (repeat < actualItems.get(current).getRepeat()) {
             repeat++;
@@ -410,6 +425,8 @@ public class RunActivity extends Activity {
             current = 0;
             timer(false);
         } else {
+            current++;
+            bar.setProgress(0);
             countdown.setText("Finished");
         }
     }
@@ -561,7 +578,7 @@ public class RunActivity extends Activity {
     void setHighlight() {
         resetHighlights();
         highlighted = new ArrayList<>();
-        highlightedString = name + " " + doneRepeat + "\\" + totalRepeat + "\n";
+        highlightedString = getResources().getString(R.string.highlight_repeat, name, doneRepeat, totalRepeat);
         highlightCurrentItem(current, items, 0);
         runItemRepeat.setText(highlightedString);
 
