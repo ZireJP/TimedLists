@@ -36,6 +36,9 @@
             android:name="xyz.julianpeters.timedlists.activities.popup.SetRepeatPopup"
             android:theme="@style/AppTheme.PopUpTransparent"/>
         <activity
+            android:name="xyz.julianpeters.timedlists.activities.popup.RunMultiplePopUp"
+            android:theme="@style/AppTheme.PopUpTransparent"/>
+        <activity
             android:name="xyz.julianpeters.timedlists.activities.main.RunActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustNothing"/>

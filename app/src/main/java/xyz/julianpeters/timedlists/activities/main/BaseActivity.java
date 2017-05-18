@@ -20,6 +20,7 @@ import android.widget.EditText;
 
 import xyz.julianpeters.timedlists.activities.popup.NotePopUp;
 import xyz.julianpeters.timedlists.R;
+import xyz.julianpeters.timedlists.activities.popup.RunMultiplePopUp;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 
 /**
@@ -262,6 +263,12 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
 
     public void runTimer(View v) {
         Intent intent = new Intent(this, RunActivity.class);
+        intent.putExtra("_id", _id);
+        startActivity(intent);
+    }
+
+    public void showMultiplePopUp(View v) {
+        Intent intent = new Intent(this, RunMultiplePopUp.class);
         intent.putExtra("_id", _id);
         startActivity(intent);
     }

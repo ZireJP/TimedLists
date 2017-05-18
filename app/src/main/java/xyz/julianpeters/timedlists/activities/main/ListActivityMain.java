@@ -25,6 +25,7 @@ public class ListActivityMain extends ListActivityBase {
         showNotes.setEnabled(false);
         titleView.setEnabled(false);
         runButton.setVisibility(View.GONE);
+        findViewById(R.id.run_multiple).setVisibility(View.GONE);
     }
 
     @Override

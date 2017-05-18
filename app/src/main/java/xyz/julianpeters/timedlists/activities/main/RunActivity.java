@@ -39,6 +39,7 @@ import xyz.julianpeters.timedlists.adapters.RunArrayAdapter;
 
 public class RunActivity extends Activity {
 
+    String name;
     TextView countdown;
     Button clickToContinue;
     public int current;
@@ -71,6 +72,8 @@ public class RunActivity extends Activity {
     ArrayList<RunItem> highlighted;
     String highlightedString;
     int lastHighlight;
+    int totalRepeat;
+    int doneRepeat;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,6 +96,11 @@ public class RunActivity extends Activity {
 
         setProgressbarSize();
         String _id = getIntent().getStringExtra("_id");
+
+        Cursor c = getContentResolver().query(Item.Items.getIdUri(_id), new String[] {Item.Items.TITLE}, null, null, null);
+        c.moveToFirst();
+        name = c.getString(0);
+
         newArray(_id);
         highlighted = new ArrayList<>();
         rvList = new RunRVAdapter(this, items, 0);
@@ -102,6 +110,8 @@ public class RunActivity extends Activity {
         lastHighlight = 0;
         swTotal = new TotalStopWatch();
         swTotal.schedule(0);
+        totalRepeat = getIntent().getIntExtra("repeat", 1);
+        doneRepeat = 1;
         timer(false);
     }
 
@@ -395,6 +405,10 @@ public class RunActivity extends Activity {
         } else if (current < size - 1) {
             current++;
             timer(false);
+        } else if (totalRepeat > doneRepeat) {
+            doneRepeat++;
+            current = 0;
+            timer(false);
         } else {
             countdown.setText("Finished");
         }
@@ -431,7 +445,7 @@ public class RunActivity extends Activity {
 
     private Cursor getAllItems(String table_id) {
         String[] projection = {ItemInItem.ItemInItems.FOREIGN_KEY,
-                ItemInItem.ItemInItems.REPEAT};
+                ItemInItem.ItemInItems.REPEAT,};
         return getContentResolver().query(ItemInItem.ItemInItems.getContentUri(table_id), projection, null, null, ItemInItem.ItemInItems.ORDER);
     }
 
@@ -547,7 +561,7 @@ public class RunActivity extends Activity {
     void setHighlight() {
         resetHighlights();
         highlighted = new ArrayList<>();
-        highlightedString = "";
+        highlightedString = name + " " + doneRepeat + "\\" + totalRepeat + "\n";
         highlightCurrentItem(current, items, 0);
         runItemRepeat.setText(highlightedString);
 

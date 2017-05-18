@@ -4,6 +4,7 @@
     <string name="set">Set</string>
     <string name="cancel">Cancel</string>
     <string name="run">Run</string>
+    <string name="run_multi">Multi</string>
     <string name="run_continue">CLICK TO CONTINUE</string>
     <string name="stop">STOP TIMER</string>
     <string name="note_title">Notes of %1s</string>
