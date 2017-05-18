@@ -195,6 +195,14 @@ public class RunActivity extends Activity {
     }
 
     public int[] totalTimeLeft(int current) {
+        int[] i = _totalTimeLeft(current, repeat);
+        int[] r = _totalTimeLeft(0, 1);
+        r[0] = r[0] * (totalRepeat - doneRepeat);
+        r[1] = r[1] * (totalRepeat - doneRepeat);
+        return new int[] {i[0] + r[0], i[1] + r[1]};
+    }
+
+    public int[] _totalTimeLeft(int current, int repeat) {
         int total = 0;
         int notTimed = 0;
         RunItem r = actualItems.get(current);
