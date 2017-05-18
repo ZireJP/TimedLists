@@ -468,7 +468,10 @@ public class RunActivity extends Activity {
         int r = c.getColumnIndex(ItemInItem.ItemInItems.REPEAT);
         if (c.moveToFirst()) {
             do {
-                items.add(fillA(c.getString(f), c.getInt(r)));
+                RunItem run = fillA(c.getString(f), c.getInt(r));
+                if (run != null) {
+                    items.add(run);
+                }
             } while (c.moveToNext());
         } else {
             Cursor item = getContentResolver().query(Item.Items.getIdUri(_id), new String[] {Item.Items.TITLE, Item.Items.TIME}, null, null, null);
@@ -492,36 +495,39 @@ public class RunActivity extends Activity {
     }
 
     private RunItem fillA(String _id, int repeat) {
-        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.IS_LIST};
-        String selection = Item.Items.ITEM_ID + " = ?";
-        Cursor cursor = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, new String[]{_id}, null);
-        cursor.moveToFirst();
-        String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
-        int time = cursor.getInt(cursor.getColumnIndex(Item.Items.TIME));
-        boolean isList = cursor.getInt(cursor.getColumnIndex(Item.Items.IS_LIST)) > 0;
-        cursor.close();
-        if (!isList) {
-            RunItem runny = new RunItem(_id, name, time, repeat);
-            actualItems.add(runny);
-            return runny;
-        }
-        RunItem parent = new RunItem(_id, name, repeat);
-        Cursor c = getAllItems(_id);
-        int f = c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY);
-        int r = c.getColumnIndex(ItemInItem.ItemInItems.REPEAT);
-
-        for (int j = 0; j < repeat; j++) {
-            if (c.moveToFirst()) {
-                do {
-                    RunItem item = fillA(c.getString(f), c.getInt(r));
-                    if (j == 0) {
-                        parent.getItems().add(item);
-                    }
-                } while (c.moveToNext());
+        if (repeat != 0) {
+            String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.IS_LIST};
+            String selection = Item.Items.ITEM_ID + " = ?";
+            Cursor cursor = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, new String[]{_id}, null);
+            cursor.moveToFirst();
+            String name = cursor.getString(cursor.getColumnIndex(Item.Items.TITLE));
+            int time = cursor.getInt(cursor.getColumnIndex(Item.Items.TIME));
+            boolean isList = cursor.getInt(cursor.getColumnIndex(Item.Items.IS_LIST)) > 0;
+            cursor.close();
+            if (!isList) {
+                RunItem runny = new RunItem(_id, name, time, repeat);
+                actualItems.add(runny);
+                return runny;
             }
+            RunItem parent = new RunItem(_id, name, repeat);
+            Cursor c = getAllItems(_id);
+            int f = c.getColumnIndex(ItemInItem.ItemInItems.FOREIGN_KEY);
+            int r = c.getColumnIndex(ItemInItem.ItemInItems.REPEAT);
+
+            for (int j = 0; j < repeat; j++) {
+                if (c.moveToFirst()) {
+                    do {
+                        RunItem item = fillA(c.getString(f), c.getInt(r));
+                        if (j == 0 && item != null) {
+                            parent.getItems().add(item);
+                        }
+                    } while (c.moveToNext());
+                }
+            }
+            c.close();
+            return parent;
         }
-        c.close();
-        return parent;
+        return null;
     }
 
     @Override
