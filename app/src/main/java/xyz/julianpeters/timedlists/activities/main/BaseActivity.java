@@ -203,8 +203,12 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         String[] arg = {"%" + newEditText.getText().toString() + "%"};
         Cursor c = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, arg, null);
         int count = c.getCount();
+        c.moveToFirst();
         Uri uri = null;
-        if (count > 0) {
+        if (count > 1) {
+            editIsActive = true;
+            startCopyPop();
+        } else if (count == 1 && !c.getString(c.getColumnIndex(Item.Items.ITEM_ID)).equals(_id)) {
             editIsActive = true;
             startCopyPop();
         } else {

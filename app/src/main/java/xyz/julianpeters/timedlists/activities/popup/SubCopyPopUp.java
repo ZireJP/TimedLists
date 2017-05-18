@@ -15,12 +15,14 @@ import xyz.julianpeters.timedlists.providers.helpers.ItemInItem;
 
 public class SubCopyPopUp extends CopyPopUp {
 
-    String table_id;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        table_id = getIntent().getStringExtra("table_id");
+    }
+
+    @Override
+    public String tableId() {
+        return getIntent().getStringExtra("table_id");
     }
 
     @Override

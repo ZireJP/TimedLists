@@ -14,6 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.helpers.ValuesForItems;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
@@ -32,6 +34,7 @@ public class CopyPopUp extends Activity {
     View selectedView = null;
     Cursor cursor;
     Uri uriId;
+    String table_id;
 
     String selectedName = "(selected)";
 
@@ -51,6 +54,7 @@ public class CopyPopUp extends Activity {
 
         getWindow().setLayout((int) (width * .8), (int) (height * .8));
         name = getIntent().getStringExtra("name");
+        table_id = tableId();
         text.setText(getResources().getString(R.string.copy_text, name, selectedName));
         String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.TAG, Item.Items.LINKS};
         String selection = Item.Items.TITLE + " LIKE ?";
@@ -60,8 +64,12 @@ public class CopyPopUp extends Activity {
         if (cursor.moveToFirst()) {
             int i = 0;
             do {
-                items[i] = cursor.getString(1) + " (" + Time.getTimeString(cursor.getInt(2)) + ")";
-                i++;
+                if (!cursor.getString(0).equals(table_id)) {
+                    items[i] = cursor.getString(1) + " (" + Time.getTimeString(cursor.getInt(2)) + ")";
+                    i++;
+                } else {
+                    items = Arrays.copyOf(items, items.length-1);
+                }
             } while (cursor.moveToNext());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.adapter_item_copy, items);
@@ -80,6 +88,10 @@ public class CopyPopUp extends Activity {
                 cursor.moveToPosition(position);
             }
         });
+    }
+
+    public String tableId() {
+        return "-1";
     }
 
     public void newItem(View v) {
