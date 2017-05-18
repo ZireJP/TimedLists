@@ -38,5 +38,7 @@ public class Item {
         public static final String TAG = "tag";
 
         public static final String ORDER = "item_order";
+
+        public static final String LINKS = "links";
     }
 }

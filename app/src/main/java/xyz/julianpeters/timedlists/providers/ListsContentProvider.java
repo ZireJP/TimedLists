@@ -31,7 +31,7 @@ public class ListsContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "lists.db";
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public static final String LISTS_TABLE_NAME = "lists";
 
@@ -64,6 +64,7 @@ public class ListsContentProvider extends ContentProvider {
                     + Item.Items.NOTES + " VARCHAR(8000), "
                     + Item.Items.TIME + " INTEGER, " + Item.Items.IS_LIST + " BOOLEAN, "
                     + Item.Items.ORDER + " INTEGER, "
+                    + Item.Items.LINKS + " INTEGER, "
                     + Item.Items.TAG + " VARCHAR(8));");
         }
 

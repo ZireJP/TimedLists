@@ -23,6 +23,7 @@ import xyz.julianpeters.timedlists.activities.popup.CopyPopUp;
 import xyz.julianpeters.timedlists.activities.popup.NotePopUp;
 import xyz.julianpeters.timedlists.R;
 import xyz.julianpeters.timedlists.activities.popup.RunMultiplePopUp;
+import xyz.julianpeters.timedlists.helpers.ValuesForItems;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 
 /**
@@ -236,12 +237,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     }
 
     public ContentValues getContentValues() {
-        ContentValues values = new ContentValues();
-        values.put(Item.Items.TITLE, newEditText.getText().toString());
-        values.put(Item.Items.TIME, 0);
-        values.put(Item.Items.IS_LIST, false);
-        values.put(Item.Items.NOTES, "");
-        return values;
+        return ValuesForItems.newItem(newEditText.getText().toString());
     }
 
     public void showNotes(View v) {

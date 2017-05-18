@@ -10,7 +10,7 @@
     <string name="note_title">Notes of %1s</string>
     <string name="click_to_add">Click to add item</string>
     <string name="notes">Notes</string>
-    <string name="main_title">LISTS</string>
+    <string name="main_title">TIMEDLISTS</string>
     <string name="add_date">Add Date</string>
     <string name="date_format">\n&lt;++&gt; %1$s, %2$s:\n</string>
     <string name="stopwatch_stop">Click to stop\n%1$s</string>
