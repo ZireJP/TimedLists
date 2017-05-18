@@ -222,6 +222,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         values.put(Item.Items.TITLE, newEditText.getText().toString());
         values.put(Item.Items.TIME, 0);
         values.put(Item.Items.IS_LIST, false);
+        values.put(Item.Items.NOTES, "");
         return values;
     }
 

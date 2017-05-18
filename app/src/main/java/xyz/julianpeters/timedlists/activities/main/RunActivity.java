@@ -169,12 +169,18 @@ public class RunActivity extends Activity {
     public int[] totalTimeLeft(int current) {
         int total = 0;
         int notTimed = 0;
-        for (int i = current; i < size; i++) {
-            RunItem r = actualItems.get(i);
-            int time = r.getTime() * (r.getRepeat() - repeat + 1);
+        RunItem r = actualItems.get(current);
+        int time = r.getTime() * (r.getRepeat() - repeat + 1);
+        total += time;
+        if (time == 0) {
+            notTimed = notTimed + r.getRepeat() - repeat + 1;
+        }
+        for (int i = current+1; i < size; i++) {
+            r = actualItems.get(i);
+            time = r.getTime() * (r.getRepeat());
             total += time;
             if (time == 0) {
-                notTimed = notTimed + r.getRepeat() - repeat + 1;
+                notTimed = notTimed + r.getRepeat();
             }
         }
         return new int[]{total, notTimed};
@@ -473,7 +479,7 @@ public class RunActivity extends Activity {
         if (nested == 0) {
             lastHighlight = position;
             rvList.notifyItemChanged(position);
-            listView.scrollToPosition(position);
+            //listView.scrollToPosition(position);
         }
         highlighted.add(item);
     }

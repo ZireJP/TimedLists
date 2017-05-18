@@ -50,11 +50,12 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView
         String selection = ItemInItem.ItemInItems.ITEM_ID + " = ?";
         resolver.delete(ItemInItem.ItemInItems.getContentUri(table_id), selection, new String[]{_id});
 
-        ContentValues values = new ContentValues();
-        values.put(Item.Items.ORDER, Item.Items.ORDER + " -1");
-        selection = ItemInItem.ItemInItems.ORDER + " > " + position;
-        int updates = resolver.update(ItemInItem.ItemInItems.getContentUri(table_id), values, selection, null);
-        Log.d("Table updates", "" + updates);
+        Bundle b = new Bundle();
+        b.putString("position", Integer.toString(position));
+        b.putString("table", ItemInItem.ItemInItems.table(table_id));
+        b.putString("order", ItemInItem.ItemInItems.ORDER);
+        resolver.call(Item.Items.CONTENT_URI, "deleteIncrement", null, b);
+        notifyItemRemoved(position);
 
         Bundle rows = resolver.call(Item.Items.CONTENT_URI, "getRows", table_id, null);
         int i = rows.getInt("rows");
