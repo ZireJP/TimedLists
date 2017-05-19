@@ -3,11 +3,14 @@ package xyz.julianpeters.timedlists.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
@@ -27,6 +30,7 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
     int nestedLevel;
     ArrayList<RunItem> items;
     Context context;
+    RecyclerView mRecyclerView;
 
     public RunRVAdapter(Context context, ArrayList<RunItem> items, int nestedLevel) {
         this.items = items;
@@ -69,6 +73,7 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final RunItem item = items.get(position);
+        final int pos = position;
         if (item.getVisibility()) {
             holder.recycler.setVisibility(View.VISIBLE);
         } else {
@@ -94,8 +99,14 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
                     h.recycler.setVisibility(View.GONE);
                 } else {
                     h.recycler.setVisibility(View.VISIBLE);
+                    /*if (nestedLevel == 0) {
+                        ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(pos, 0);
+                    }*/
                 }
                 item.changeVisibility();
+                /*if (nestedLevel == 0) {
+                    notifyItemChanged(pos);
+                }*/
             }
         });
 
@@ -132,4 +143,10 @@ public class RunRVAdapter extends RecyclerView.Adapter<RunRVAdapter.ViewHolder> 
 
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+        ((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+    }
 }
