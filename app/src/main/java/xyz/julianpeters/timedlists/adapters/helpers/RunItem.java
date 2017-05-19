@@ -14,6 +14,7 @@ public class RunItem {
     private String name;
     private ArrayList<RunItem> items;
     private int time;
+    private int totalTime;
     private int size;
     private int totalSize;
     int repeat;
@@ -59,12 +60,14 @@ public class RunItem {
     public int calculateTimes() {
         int time = 0;
         if (!isList) {
+            this.totalTime = this.time * repeat;
             return this.time;
         }
         for (RunItem x : items) {
             time += x.calculateTimes() * x.repeat;
         }
         this.time = time;
+        this.totalTime = time * repeat;
         return time;
     }
 
@@ -89,6 +92,10 @@ public class RunItem {
 
     public int getTotalSize() {
         return totalSize;
+    }
+
+    public int getTotalTime() {
+        return totalTime;
     }
 
     public void setHighlight(boolean highlight) {
