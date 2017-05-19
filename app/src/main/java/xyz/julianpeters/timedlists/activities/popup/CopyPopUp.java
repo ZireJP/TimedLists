@@ -56,7 +56,7 @@ public class CopyPopUp extends Activity {
         name = getIntent().getStringExtra("name");
         table_id = tableId();
         text.setText(getResources().getString(R.string.copy_text, name, selectedName));
-        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.TAG, Item.Items.LINKS};
+        String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME, Item.Items.TAG, Item.Items.LINKS, Item.Items.IS_LIST};
         String selection = Item.Items.TITLE + " LIKE ?";
         String[] arg = {"%" + name + "%"};
         cursor = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, arg, null);
@@ -65,7 +65,11 @@ public class CopyPopUp extends Activity {
             int i = 0;
             do {
                 if (!cursor.getString(0).equals(table_id)) {
-                    items[i] = cursor.getString(1) + " (" + Time.getTimeString(cursor.getInt(2)) + ")";
+                    if (cursor.getInt(5) > 0) {
+                        items[i] = cursor.getString(1) + " (List)";
+                    } else {
+                        items[i] = cursor.getString(1) + " (" + Time.getTimeString(cursor.getInt(2)) + ")";
+                    }
                     i++;
                 } else {
                     items = Arrays.copyOf(items, items.length-1);

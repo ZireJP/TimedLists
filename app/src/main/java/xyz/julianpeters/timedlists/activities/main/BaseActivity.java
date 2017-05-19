@@ -228,6 +228,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     void createItemAnimation(boolean created) {
        newEditText.setText("");
        slideOutAnimation(created);
+       editIsActive = false;
     }
 
     public void showAddItem(View v) {
@@ -293,7 +294,6 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         intent.putExtra("_id", _id);
         startActivity(intent);
     }
-
 
     @Override
     public void onBackPressed() {
