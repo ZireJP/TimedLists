@@ -4,13 +4,16 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -65,7 +68,7 @@ public class RunActivity extends Activity {
     StopWatch sw = null;
     TotalStopWatch swTotal;
     ObjectAnimator animation;
-    ImageButton pauseButton;
+    TextView pauseButton;
     MediaPlayer mp;
     MediaPlayer mpEnd;
     ArrayList<RunItem> highlighted;
@@ -82,7 +85,7 @@ public class RunActivity extends Activity {
         clickToContinue = (Button) findViewById(R.id.run_continue);
         bar = (ProgressBar) findViewById(R.id.run_progressbar);
         listView = (RecyclerView) findViewById(R.id.run_recycler);
-        pauseButton = (ImageButton) findViewById(R.id.play_button);
+        pauseButton = (TextView) findViewById(R.id.pause_button);
         stopwatchDiscard = (Button) findViewById(R.id.stopwatch_discard);
         stopwatchStop = (Button) findViewById(R.id.stopwatch_stop);
         stopwatchSave = (Button) findViewById(R.id.stopwatch_save);
@@ -96,7 +99,7 @@ public class RunActivity extends Activity {
         setProgressbarSize();
         String _id = getIntent().getStringExtra("_id");
 
-        Cursor c = getContentResolver().query(Item.Items.getIdUri(_id), new String[] {Item.Items.TITLE}, null, null, null);
+        Cursor c = getContentResolver().query(Item.Items.getIdUri(_id), new String[]{Item.Items.TITLE}, null, null, null);
         c.moveToFirst();
         name = c.getString(0);
 
@@ -112,6 +115,18 @@ public class RunActivity extends Activity {
         totalRepeat = getIntent().getIntExtra("repeat", 1);
         doneRepeat = 1;
         timer(false);
+    }
+
+    private void drawPauseButton() {
+        Paint p = new Paint();
+        p.setColor(getColor(R.color.highlight));
+        Drawable draw;
+        if (paused) {
+            draw = getDrawable(R.drawable.pause);
+        } else {
+            draw = getDrawable(R.drawable.play);
+        }
+        pauseButton.setCompoundDrawablesWithIntrinsicBounds(draw, null, null, null);
     }
 
     private void setProgressbarSize() {
@@ -168,14 +183,12 @@ public class RunActivity extends Activity {
 
     public void pause(View v) {
         if (paused) {
-            pauseButton.setImageDrawable(getDrawable(R.drawable.pause));
             if (saveTime != 0) {
                 cd = new MyCd(saveTime).start();
                 setProgressAnimate(bar, saveTime);
             }
-        } else {
-            pauseButton.setImageDrawable(getDrawable(R.drawable.play));
         }
+        drawPauseButton();
         paused = !paused;
     }
 
@@ -198,7 +211,7 @@ public class RunActivity extends Activity {
         int[] r = _totalTimeLeft(0, 1);
         r[0] = r[0] * (totalRepeat - doneRepeat);
         r[1] = r[1] * (totalRepeat - doneRepeat);
-        return new int[] {i[0] + r[0], i[1] + r[1]};
+        return new int[]{i[0] + r[0], i[1] + r[1]};
     }
 
     public int[] _totalTimeLeft(int current, int repeat) {
@@ -210,7 +223,7 @@ public class RunActivity extends Activity {
         if (time == 0) {
             notTimed = notTimed + r.getRepeat() - repeat + 1;
         }
-        for (int i = current+1; i < size; i++) {
+        for (int i = current + 1; i < size; i++) {
             r = actualItems.get(i);
             time = r.getTime() * (r.getRepeat());
             total += time;
@@ -291,7 +304,7 @@ public class RunActivity extends Activity {
 
                 @Override
                 public void run() {
-                    while(!stop) {
+                    while (!stop) {
                         runOnUiThread(run);
                         SystemClock.sleep(1000);
                         runFor++;
@@ -421,9 +434,9 @@ public class RunActivity extends Activity {
     }
 
     public String findNext() {
-        if (current < size-1) {
+        if (current < size - 1) {
             return actualItems.get(current + 1).getName();
-        } else if (totalRepeat > doneRepeat){
+        } else if (totalRepeat > doneRepeat) {
             return actualItems.get(0).getName();
         } else {
             return "Finished";
@@ -473,7 +486,7 @@ public class RunActivity extends Activity {
                 }
             } while (c.moveToNext());
         } else {
-            Cursor item = getContentResolver().query(Item.Items.getIdUri(_id), new String[] {Item.Items.TITLE, Item.Items.TIME}, null, null, null);
+            Cursor item = getContentResolver().query(Item.Items.getIdUri(_id), new String[]{Item.Items.TITLE, Item.Items.TIME}, null, null, null);
             item.moveToFirst();
             RunItem single = new RunItem(_id, item.getString(0), item.getInt(1), 1);
             items.add(single);
