@@ -398,6 +398,7 @@ public class RunActivity extends Activity {
 
         RunItem item;
         String next;
+        int midBeep;
 
         MyCd(long millisInFuture) {
             super(millisInFuture, 250);
@@ -405,6 +406,7 @@ public class RunActivity extends Activity {
             secondsLeft = item.getTime();
             next = findNext();
             countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat() + "\nNext: " + next);
+            midBeep = 0;
         }
 
         @Override
@@ -414,18 +416,25 @@ public class RunActivity extends Activity {
                 animation.cancel();
                 saveTime = millisUntilFinished;
             }
-            if (Math.round((float) millisUntilFinished / 1000.0f) != secondsLeft) {
+            if (millisUntilFinished / 1000.0f < secondsLeft - 0.75f) {
                 secondsLeft = Math.round((float) millisUntilFinished / 1000.0f);
                 countdown.setText(item.getName() + "\n" + Time.getTimeString(secondsLeft) + "\n" + repeat + "/" + item.getRepeat() + "\nNext: " + next);
-                totalTimeLeft -= 1;
+                totalTimeLeft--;
+                /*midBeep++;
+                if (item.getMidBeep() != 0 && midBeep == item.getMidBeep()) {  // TODO Placeholder for Column in RunItem)
+                    mp.start();
+                    midBeep = 0;
+                }*/
                 setTotalTime(totalTimeLeft, totalNotTimedLeft);
             }
         }
 
         @Override
         public void onFinish() {
+            totalTimeLeft--;
+            setTotalTime(totalTimeLeft, totalNotTimedLeft);
             if (repeat == item.getRepeat()) {
-                mpEnd.start();
+                mpEnd.start(); // TODO delete if midBeep implemented
             } else {
                 mp.start();
             }
