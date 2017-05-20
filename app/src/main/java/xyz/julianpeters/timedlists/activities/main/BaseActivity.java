@@ -23,6 +23,7 @@ import xyz.julianpeters.timedlists.activities.popup.CopyPopUp;
 import xyz.julianpeters.timedlists.activities.popup.NotePopUp;
 import xyz.julianpeters.timedlists.R;
 import xyz.julianpeters.timedlists.activities.popup.RunMultiplePopUp;
+import xyz.julianpeters.timedlists.helpers.Helper;
 import xyz.julianpeters.timedlists.helpers.ValuesForItems;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 
@@ -42,6 +43,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     View fullOverlay;
     boolean editIsActive;
     boolean titleIsActive;
+    boolean timeSettingIsActive;
 
     String _id;
 
@@ -213,7 +215,8 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
             startCopyPop();
         } else {
             uri = getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues());
-            createItemAnimation(true);
+            Helper.launchTimeSetting(this, uri.getLastPathSegment());
+            timeSettingIsActive = true;
         }
         c.close();
         return uri;
@@ -229,6 +232,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
        newEditText.setText("");
        slideOutAnimation(created);
        editIsActive = false;
+       timeSettingIsActive = false;
     }
 
     public void showAddItem(View v) {
@@ -293,6 +297,14 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         Intent intent = new Intent(this, RunMultiplePopUp.class);
         intent.putExtra("_id", _id);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (timeSettingIsActive) {
+            createItemAnimation(true);
+        }
     }
 
     @Override

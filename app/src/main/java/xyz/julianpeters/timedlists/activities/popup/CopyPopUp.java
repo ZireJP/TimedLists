@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 
+import xyz.julianpeters.timedlists.helpers.Helper;
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.helpers.ValuesForItems;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
@@ -101,6 +102,7 @@ public class CopyPopUp extends Activity {
     public void newItem(View v) {
         cursor.close();
         uriId = getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues(name, getOrder()));
+        Helper.launchTimeSetting(this, uriId.getLastPathSegment());
         finish();
     }
 

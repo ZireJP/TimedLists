@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import xyz.julianpeters.timedlists.activities.main.ItemActivity;
 import xyz.julianpeters.timedlists.activities.main.ListActivitySub;
+import xyz.julianpeters.timedlists.activities.popup.SetTimePopUp;
 
 /**
  * Created by julian on 15.05.17.
@@ -26,4 +27,9 @@ public class Helper {
         context.startActivity(launchActivity);
     }
 
+    public static void launchTimeSetting(Context context, String _id) {
+        Intent spinner = new Intent(context, SetTimePopUp.class);
+        spinner.putExtra("_id", _id);
+        context.startActivity(spinner);
+    }
 }
