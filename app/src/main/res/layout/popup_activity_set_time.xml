@@ -38,8 +38,8 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/set_time"
         android:onClick="setTime"
-        android:background="@android:color/holo_orange_light"
         android:text="@string/set"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_size" />

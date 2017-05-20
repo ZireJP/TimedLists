@@ -6,10 +6,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -24,6 +24,7 @@ import xyz.julianpeters.timedlists.activities.popup.NotePopUp;
 import xyz.julianpeters.timedlists.R;
 import xyz.julianpeters.timedlists.activities.popup.RunMultiplePopUp;
 import xyz.julianpeters.timedlists.helpers.Helper;
+import xyz.julianpeters.timedlists.helpers.StaticValues;
 import xyz.julianpeters.timedlists.helpers.ValuesForItems;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 
@@ -54,7 +55,6 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         setContentView(findLayout());
         findBasicViews();
         titleView.setOnTouchListener(onTouch());
-        //newEditText.setVisibility(View.GONE);
         editIsActive = false;
         titleIsActive = false;
         _id = setId();
@@ -78,6 +78,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     }
 
     public void slideInAnimation() {
+        newEditText.setBackgroundColor(getHSV());
         final Animation anim = AnimationUtils.loadAnimation(this, R.anim.slidein);
         int test = itemView.getHeight();
         Animation anim2 = new TranslateAnimation(0, 0, 0, -test+adjustHeight());
@@ -309,8 +310,11 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
 
     @Override
     public void onBackPressed() {
+        StaticValues.nestedLevel--;
         super.onBackPressed();
         overridePendingTransition(R.anim.list_switch_in_back, R.anim.list_switch_out_back);
     }
+
+    abstract int getHSV();
 
 }

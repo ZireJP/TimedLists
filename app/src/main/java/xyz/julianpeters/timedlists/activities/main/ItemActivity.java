@@ -5,6 +5,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import xyz.julianpeters.timedlists.activities.popup.SetTimePopUp;
 import xyz.julianpeters.timedlists.activities.popup.SubCopyPopUp;
 import xyz.julianpeters.timedlists.helpers.Helper;
+import xyz.julianpeters.timedlists.helpers.StaticValues;
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.R;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
@@ -31,6 +33,7 @@ public class ItemActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         timeButton = (Button) findViewById(R.id.time_button);
+        timeButton.setBackgroundColor(getHSV());
     }
 
     @Override
@@ -129,5 +132,10 @@ public class ItemActivity extends BaseActivity {
         if (editIsActive) {
             createItemAnimation(false);
         }
+    }
+
+    @Override
+    public int getHSV() {
+        return Color.HSVToColor(StaticValues.hsvValues(0));
     }
 }

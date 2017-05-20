@@ -4,8 +4,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import xyz.julianpeters.timedlists.activities.main.ListActivityMain;
 import xyz.julianpeters.timedlists.adapters.helpers.MainListItem;
 import xyz.julianpeters.timedlists.helpers.Helper;
 import xyz.julianpeters.timedlists.R;
+import xyz.julianpeters.timedlists.helpers.StaticValues;
 import xyz.julianpeters.timedlists.providers.ListsContentProvider;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 
@@ -110,9 +113,22 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView.Vi
             final boolean isList = mainListItem.isList();
             ids.add(_id);
 
+            int pos = cursor.getPosition();
+            float[] color;
+            int max = 7;
+            float ch = (float)cursor.getPosition()/20;
+            float chm = (float)max/20;
+            if (pos <= max) {
+                color = new float[] {StaticValues.hue(), StaticValues.sat()-ch, StaticValues.bright()};
+            } else {
+                color = new float[] {StaticValues.hue(), StaticValues.sat()-chm, StaticValues.bright()};
+            }
+            ((ViewHolder)viewHolder).text.setBackgroundColor(Color.HSVToColor(color));
+
             ((ViewHolder) viewHolder).text.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    StaticValues.nestedLevel++;
                     Helper.launchIntent(mContext, isList, _id);
                 }
             });

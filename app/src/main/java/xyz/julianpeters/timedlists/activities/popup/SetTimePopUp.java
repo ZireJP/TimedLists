@@ -3,12 +3,14 @@ package xyz.julianpeters.timedlists.activities.popup;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
 
+import xyz.julianpeters.timedlists.helpers.StaticValues;
 import xyz.julianpeters.timedlists.views.CustomNumberPicker;
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
@@ -34,6 +36,8 @@ public class SetTimePopUp extends Activity {
         hours = (CustomNumberPicker) findViewById(R.id.set_item_hours);
         minutes = (CustomNumberPicker) findViewById(R.id.set_item_minutes);
         seconds = (CustomNumberPicker) findViewById(R.id.set_item_seconds);
+        View set = findViewById(R.id.set_time);
+        set.setBackgroundColor(Color.HSVToColor(StaticValues.hsvValues(0)));
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);

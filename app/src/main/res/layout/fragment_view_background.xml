@@ -6,8 +6,9 @@
     <TextView
         android:id="@+id/background"
         android:text="@string/click_to_add"
+        android:textColor="@color/teal"
         android:gravity="center"
-        android:background="@android:color/holo_green_light"
+        android:background="@android:color/black"
         android:layout_width="match_parent"
         android:onClick="showAddItem"
         android:layout_height="match_parent"/>
