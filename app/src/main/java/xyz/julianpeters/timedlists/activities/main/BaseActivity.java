@@ -185,7 +185,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
             public void onAnimationEnd(Animation animation) {
                 newEditText.setVisibility(View.GONE);
                 itemView.clearAnimation();
-                if (StaticValues.getNested() == 0) {
+                if (StaticValues.getCreated() != null && StaticValues.getNested() == 0) {
                     StaticValues.nestedLevel++;
                     Helper.launchIntent(context, StaticValues.getCreated());
                 }
@@ -261,6 +261,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         if (!newEditText.getText().toString().equals("")) {
             createItem();
         } else {
+            StaticValues.newlyCreated = null;
             slideOutAnimation(false);
         }
     }
