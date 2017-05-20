@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import xyz.julianpeters.timedlists.activities.popup.SubCopyPopUp;
 import xyz.julianpeters.timedlists.adapters.CursorRecyclerViewAdapter;
@@ -82,6 +83,7 @@ public class ListActivitySub extends ListActivityBase {
 
     @Override
     void startCopyPop() {
+        completeOverlay.setVisibility(View.VISIBLE);
         Intent intent = new Intent(this, SubCopyPopUp.class);
         intent.putExtra("name", newEditText.getText().toString());
         intent.putExtra("table_id", _id);

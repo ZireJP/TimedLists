@@ -42,15 +42,18 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     Button runButton;
     View newItemOverlay;
     View fullOverlay;
+    View completeOverlay;
     boolean editIsActive;
     boolean titleIsActive;
     boolean timeSettingIsActive;
+    Context context;
 
     String _id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         overridePendingTransition(R.anim.list_switch_in, R.anim.list_switch_out);
         setContentView(findLayout());
         findBasicViews();
@@ -63,8 +66,11 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     }
 
     abstract int findLayout();
+
     abstract View setItemView();
+
     abstract void setTitle();
+
     abstract String setId();
 
     public void findBasicViews() {
@@ -75,14 +81,15 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
         runButton = (Button) findViewById(R.id.run_button);
         newItemOverlay = findViewById(R.id.main_overlay);
         fullOverlay = findViewById(R.id.full_overlay);
+        completeOverlay = findViewById(R.id.disable_activity_overlay);
     }
 
     public void slideInAnimation() {
         newEditText.setBackgroundColor(getHSV());
         final Animation anim = AnimationUtils.loadAnimation(this, R.anim.slidein);
         int test = itemView.getHeight();
-        Animation anim2 = new TranslateAnimation(0, 0, 0, -test+adjustHeight());
-        if (test-adjustHeight()!=0) {
+        Animation anim2 = new TranslateAnimation(0, 0, 0, -test + adjustHeight());
+        if (test - adjustHeight() != 0) {
             anim2.setDuration(ITEM_ANIMATION_TIME);
         } else {
             anim2.setDuration(0);
@@ -130,12 +137,13 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     public int adjustHeight() {
         return 0;
     }
+
     public void slideOutAnimation(boolean newItem) {
         int test = itemView.getHeight();
-        int size = (int)getResources().getDimension(R.dimen.list_item_size);
+        int size = (int) getResources().getDimension(R.dimen.list_item_size);
         final Animation anim2;
         if (!newItem) {
-            anim2 = createAnim(-test+size, 0);
+            anim2 = createAnim(-test + size, 0);
             Animation anim = AnimationUtils.loadAnimation(this, R.anim.slideout);
             anim.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -177,6 +185,10 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
             public void onAnimationEnd(Animation animation) {
                 newEditText.setVisibility(View.GONE);
                 itemView.clearAnimation();
+                if (StaticValues.getNested() == 0) {
+                    StaticValues.nestedLevel++;
+                    Helper.launchIntent(context, StaticValues.getCreated());
+                }
             }
 
             @Override
@@ -202,7 +214,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
 
     public Uri createItem() {
         String[] projection = {Item.Items.ITEM_ID, Item.Items.TITLE, Item.Items.TIME};
-        String selection = Item.Items.TITLE + " LIKE ?" ;
+        String selection = Item.Items.TITLE + " LIKE ?";
         String[] arg = {"%" + newEditText.getText().toString() + "%"};
         Cursor c = getContentResolver().query(Item.Items.CONTENT_URI, projection, selection, arg, null);
         int count = c.getCount();
@@ -216,7 +228,9 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
             startCopyPop();
         } else {
             uri = getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues());
-            Helper.launchTimeSetting(this, uri.getLastPathSegment());
+            completeOverlay.setVisibility(View.VISIBLE);
+            StaticValues.newlyCreated = uri.getLastPathSegment();
+            Helper.launchTimeSetting(this, StaticValues.newlyCreated);
             timeSettingIsActive = true;
         }
         c.close();
@@ -224,16 +238,17 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     }
 
     void startCopyPop() {
+        completeOverlay.setVisibility(View.VISIBLE);
         Intent intent = new Intent(this, CopyPopUp.class);
         intent.putExtra("name", newEditText.getText().toString());
         startActivity(intent);
     }
 
     void createItemAnimation(boolean created) {
-       newEditText.setText("");
-       slideOutAnimation(created);
-       editIsActive = false;
-       timeSettingIsActive = false;
+        newEditText.setText("");
+        slideOutAnimation(created);
+        editIsActive = false;
+        timeSettingIsActive = false;
     }
 
     public void showAddItem(View v) {
@@ -295,6 +310,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     }
 
     public void showMultiplePopUp(View v) {
+        completeOverlay.setVisibility(View.VISIBLE);
         Intent intent = new Intent(this, RunMultiplePopUp.class);
         intent.putExtra("_id", _id);
         startActivity(intent);
@@ -303,6 +319,7 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
     @Override
     protected void onResume() {
         super.onResume();
+        completeOverlay.setVisibility(View.INVISIBLE);
         if (timeSettingIsActive) {
             createItemAnimation(true);
         }
@@ -310,7 +327,9 @@ abstract class BaseActivity extends Activity implements LoaderManager.LoaderCall
 
     @Override
     public void onBackPressed() {
-        StaticValues.nestedLevel--;
+        if (StaticValues.nestedLevel > 0) {
+            StaticValues.nestedLevel--;
+        }
         super.onBackPressed();
         overridePendingTransition(R.anim.list_switch_in_back, R.anim.list_switch_out_back);
     }

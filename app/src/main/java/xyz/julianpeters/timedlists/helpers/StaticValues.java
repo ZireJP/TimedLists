@@ -1,11 +1,20 @@
 package xyz.julianpeters.timedlists.helpers;
 
+import android.graphics.Color;
+
 /**
  * Created by julian on 20.05.17.
  */
 
 public class StaticValues {
+    public static String newlyCreated;
+    public static String getCreated() {
+        return newlyCreated;
+    }
     public static int nestedLevel = 0;
+    public static int getNested() {
+        return nestedLevel;
+    }
 
     public static float hue() {
         if (nestedLevel == 0) {
@@ -49,5 +58,9 @@ public class StaticValues {
         } else {
             return new float[]{hue(), sat() - chm, bright()};
         }
+    }
+
+    public static int getHSVColor(int position) {
+        return Color.HSVToColor(hsvValues(position));
     }
 }

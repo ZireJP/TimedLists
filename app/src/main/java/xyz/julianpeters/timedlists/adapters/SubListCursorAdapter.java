@@ -75,7 +75,7 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView
             type.put(Item.Items.IS_LIST, false);
             selection = Item.Items._ID + " = ?";
             resolver.update(Item.Items.CONTENT_URI, type, selection, new String[]{table_id});
-            Helper.launchIntent(mContext, false, table_id);
+            Helper.launchIntent(mContext, table_id);
             ((Activity) mContext).finish();
         }
     }
@@ -146,10 +146,10 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView
             float chm = (float)max/20;
             if (pos < max) {
                 color = new float[] {StaticValues.hue(), StaticValues.sat()-ch, StaticValues.bright()};
-                colorR = new float[] {StaticValues.hue(), StaticValues.sat()-ch, StaticValues.bright()};
+                colorR = new float[] {StaticValues.hue(), StaticValues.sat()-ch, StaticValues.bright()-0.1f};
             } else {
                 color = new float[] {StaticValues.hue(), StaticValues.sat()-chm, StaticValues.bright()};
-                colorR = new float[] {StaticValues.hue(), StaticValues.sat()-chm, StaticValues.bright()};
+                colorR = new float[] {StaticValues.hue(), StaticValues.sat()-chm, StaticValues.bright()-0.1f};
             }
             ((ViewHolder)viewHolder).text.setBackgroundColor(Color.HSVToColor(color));
             ((ViewHolder)viewHolder).repeat.setBackgroundColor(Color.HSVToColor(colorR));
@@ -158,7 +158,7 @@ public class SubListCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView
                 @Override
                 public void onClick(View v) {
                     StaticValues.nestedLevel++;
-                    Helper.launchIntent(mContext, isList, subListItem.getForeign());
+                    Helper.launchIntent(mContext, subListItem.getForeign());
                 }
             });
 

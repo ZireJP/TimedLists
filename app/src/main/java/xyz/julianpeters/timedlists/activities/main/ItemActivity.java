@@ -82,6 +82,7 @@ public class ItemActivity extends BaseActivity {
     }
 
     public void showTimeSpinner(View v) {
+        completeOverlay.setVisibility(View.VISIBLE);
         Intent spinner = new Intent(this, SetTimePopUp.class);
         spinner.putExtra("_id", _id);
         startActivity(spinner);
@@ -111,7 +112,7 @@ public class ItemActivity extends BaseActivity {
         int i = c.getInt(0);
         c.close();
         if (i > 0 || x) {
-            Helper.launchIntent(this, true, _id);
+            Helper.launchIntent(this, _id);
             finish();
         } else {
             slideOutAnimation(false);
@@ -120,6 +121,7 @@ public class ItemActivity extends BaseActivity {
 
     @Override
     void startCopyPop() {
+        completeOverlay.setVisibility(View.VISIBLE);
         Intent intent = new Intent(this, SubCopyPopUp.class);
         intent.putExtra("name", newEditText.getText().toString());
         intent.putExtra("table_id", _id);

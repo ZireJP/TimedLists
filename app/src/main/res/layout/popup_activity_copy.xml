@@ -29,7 +29,6 @@
 
         <Button
             android:id="@+id/popup_new"
-            android:background="@android:color/holo_orange_light"
             android:onClick="newItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +38,6 @@
         <Button
             android:id="@+id/popup_copy"
             android:onClick="copy"
-            android:background="@android:color/holo_orange_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -47,7 +45,6 @@
 
         <Button
             android:id="@+id/popup_link"
-            android:background="@android:color/holo_orange_light"
             android:onClick="link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

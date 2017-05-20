@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import xyz.julianpeters.timedlists.helpers.StaticValues;
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
 import xyz.julianpeters.timedlists.R;
@@ -29,6 +31,7 @@ public class NotePopUp extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.popup_activity_note);
+
 
         notes = (EditText) findViewById(R.id.notes_text);
         title = (TextView) findViewById(R.id.notes_id);

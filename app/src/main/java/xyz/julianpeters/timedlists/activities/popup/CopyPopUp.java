@@ -11,12 +11,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Arrays;
 
 import xyz.julianpeters.timedlists.helpers.Helper;
+import xyz.julianpeters.timedlists.helpers.StaticValues;
 import xyz.julianpeters.timedlists.helpers.Time;
 import xyz.julianpeters.timedlists.helpers.ValuesForItems;
 import xyz.julianpeters.timedlists.providers.helpers.Item;
@@ -46,6 +48,14 @@ public class CopyPopUp extends Activity {
         list = (ListView) findViewById(R.id.copy_listview);
 
         text = (TextView) findViewById(R.id.popup_copy_text);
+
+        View b1 = findViewById(R.id.popup_new);
+        View b2 = findViewById(R.id.popup_copy);
+        View b3 = findViewById(R.id.popup_link);
+
+        b1.setBackgroundColor(StaticValues.getHSVColor(0));
+        b2.setBackgroundColor(StaticValues.getHSVColor(0));
+        b3.setBackgroundColor(StaticValues.getHSVColor(0));
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -83,9 +93,9 @@ public class CopyPopUp extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectedView != null) {
-                    selectedView.setBackgroundColor(getColor(R.color.holo_orange_light));
+                    selectedView.setBackgroundColor(getColor(R.color.teal));
                 }
-                view.setBackgroundColor(getColor(R.color.highlight));
+                view.setBackgroundColor(StaticValues.getHSVColor(0));
                 selectedName = ((TextView) view).getText().toString();
                 text.setText(getResources().getString(R.string.copy_text, name, selectedName));
                 selectedView = view;
@@ -107,8 +117,8 @@ public class CopyPopUp extends Activity {
     }
 
     public void copy(View v) {
-        cursor.close();
-        finish();
+        //cursor.close();
+        //finish();
         // return getContentResolver().insert(Item.Items.CONTENT_URI, getContentValues());
     }
 
@@ -124,15 +134,18 @@ public class CopyPopUp extends Activity {
         String _id = cursor.getString(0);
         String tag = cursor.getString(3);
         int links = cursor.getInt(4);
-        cursor.close();
-        if(tag == null && selectedView != null) {
-            ContentValues values = new ContentValues();
-            values.put(Item.Items.TAG, "fav");
-            values.put(Item.Items.LINKS, links+1);
-            values.put(Item.Items.ORDER, getOrder());
-            getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
+        if (selectedView != null) {
+            if (tag == null) {
+                cursor.close();
+                ContentValues values = new ContentValues();
+                values.put(Item.Items.TAG, "fav");
+                values.put(Item.Items.LINKS, links+1);
+                values.put(Item.Items.ORDER, getOrder());
+                getContentResolver().update(Item.Items.getIdUri(_id), values, null, null);
+            }
+            StaticValues.newlyCreated = _id;
+            finish();
         }
-        finish();
     }
 
     protected ContentValues getContentValues(String name, int i) {

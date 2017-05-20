@@ -129,7 +129,7 @@ public class MainCursorAdapter extends CursorRecyclerViewAdapter<RecyclerView.Vi
                 @Override
                 public void onClick(View v) {
                     StaticValues.nestedLevel++;
-                    Helper.launchIntent(mContext, isList, _id);
+                    Helper.launchIntent(mContext, _id);
                 }
             });
         }

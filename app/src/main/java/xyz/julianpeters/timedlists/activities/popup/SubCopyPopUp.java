@@ -45,8 +45,8 @@ public class SubCopyPopUp extends CopyPopUp {
         cursor.moveToPosition(selected);
         String _id = cursor.getString(0);
         int links = cursor.getInt(4);
-        cursor.close();
         if (selectedView != null) {
+            cursor.close();
             ContentValues values = new ContentValues();
             values.put(Item.Items.IS_LIST, true);
             getContentResolver().update(Item.Items.getIdUri(table_id), values, null, null);
@@ -59,8 +59,8 @@ public class SubCopyPopUp extends CopyPopUp {
             int rows = getContentResolver().call(Item.Items.CONTENT_URI, "getRows", table_id, null).getInt("rows");
             values.put(ItemInItem.ItemInItems.ORDER, rows);
             getContentResolver().insert(ItemInItem.ItemInItems.getContentUri(table_id), values);
+            finish();
         }
-        finish();
     }
 
     @Override
